@@ -1,0 +1,62 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 01_default_config.dpatch" by David Gil <dgil@telefonica.net>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Debian modifications to the configuration file.
+
+@DPATCH@
+--- acidbase-1.2.4.orig/base_conf.php.dist	2006-04-03 12:04:04.000000000 +0200
++++ acidbase-1.2.4/base_conf.php.dist	2006-04-03 12:09:57.000000000 +0200
+@@ -40,7 +40,7 @@
+  But also put the preceding slash. e.g. Your URL is http://127.0.0.1/base
+  set this to /base
+  */
+-$BASE_urlpath = '';
++$BASE_urlpath = '/acidbase';
+ 
+ /* Unique BASE ID.  The below variable, if set, will append its value to the
+  * title bar of the browser.  This is for people who manage multiple installs
+@@ -62,7 +62,7 @@
+  *        $foo = 'c:\tmp'    [OK]
+  *        $foo = 'c:\tmp\'   [WRONG]
+  */
+-$DBlib_path = '';
++$DBlib_path = '/usr/share/php/adodb';
+ 
+ 
+ /* The type of underlying alert database
+@@ -72,7 +72,6 @@
+  *  MS SQL Server : 'mssql'
+  *  Oracle      : 'oci8'
+  */
+-$DBtype = 'mysql';
+ 
+ /* Alert DB connection parameters
+  *   - $alert_dbname   : MySQL database name of Snort alert DB
+@@ -84,11 +83,12 @@
+  *  This information can be gleaned from the Snort database
+  *  output plugin configuration.
+  */
+-$alert_dbname   = 'snort_log';
+-$alert_host     = 'localhost';
+-$alert_port     = '';
+-$alert_user     = 'snort';
+-$alert_password = 'mypassword';
++
++###### Begin of variables configured through dbconfig-common
++
++require('/etc/acidbase/database.php');
++
++###### End of variables configured through dbconfig-common
+ 
+ /* Archive DB connection parameters */
+ $archive_exists   = 0; # Set this to 1 if you have an archive DB
+@@ -362,7 +362,7 @@
+ /*
+  The below line should not be changed!
+  */
+-$BASE_path = dirname(__FILE__);
++$BASE_path = '/usr/share/acidbase';
+ 
+ // _BASE_INC is a variable set to prevent direct access to certain include files....
+ define( "_BASE_INC", 1 );
