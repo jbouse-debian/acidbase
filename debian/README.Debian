@@ -1,0 +1,30 @@
+acidbase for Debian
+------------------
+
+USAGE
+-----
+
+The application should be availabe at http{s}://localhost/acidbase/
+after install. It is highly recommended that you:
+   
+   a) make it only available through HTTPs, as confidential information might
+   be disclosed when viewing alerts that include packet traces
+   
+   b) use some for of access control to limit access to this interface. Notice
+   that the application does not provide any kind of per-user access control
+   and anyone accessing the above URLs will be able to view the full Snort
+   database
+   
+The Debian package ships with a default configuration that limits access to
+acidbase to only the loopback address. Users attempting to access the BASE
+application from other IP addresses will be denied. This ensures that
+unauthorised users cannot access ACID and also, if a security vulnerability is
+found in the code, a default Debian package installation will not be remotely
+exploitable.
+
+Make sure to adjust the Apache configuration file provided to suit your needs.
+If you are using a web browser different from Apache you will have to configure
+it to make the webserver retrieve the pages for the URI /acidbase/ 
+from the package installation directory (/usr/share/acidbase/).
+
+ -- Javier Fernandez-Sanguino <jfs@debian.org>  Sat, 17 Dec 2005 18:49:11 +0100

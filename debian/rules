@@ -1,0 +1,86 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export DH_COMPAT=5
+
+include /usr/share/dpatch/dpatch.make
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	# Add here commands to configure the package.
+
+	touch configure-stamp
+
+
+build: build-stamp
+
+build-stamp: patch configure-stamp 
+	dh_testdir
+	touch build-stamp
+
+clean: unpatch
+	dh_testdir
+	dh_testroot
+	debconf-updatepo
+	rm -f build-stamp configure-stamp
+	dh_clean 
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k 
+	dh_installdirs
+
+	# php pages
+	install -d $(CURDIR)/debian/acidbase/usr/share/acidbase/
+	cp -r *.php admin/ contrib/ help/ images/ includes/ languages/ \
+		setup/ scripts/ styles/ $(CURDIR)/debian/acidbase/usr/share/acidbase/
+
+	# configuration
+	install -d $(CURDIR)/debian/acidbase/etc/acidbase/
+	install -m 640 -o root -g www-data $(CURDIR)/base_conf.php.dist \
+		$(CURDIR)/debian/acidbase/etc/acidbase/base_conf.php
+	ln -sf /etc/acidbase/base_conf.php \
+		$(CURDIR)/debian/acidbase/usr/share/acidbase/
+	cp $(CURDIR)/debian/apache.conf \
+		$(CURDIR)/debian/acidbase/etc/acidbase/
+
+	# sql
+	install -d $(CURDIR)/debian/acidbase/usr/share/doc/acidbase/sql/
+	cp -r $(CURDIR)/sql $(CURDIR)/debian/acidbase/usr/share/doc/acidbase/
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs docs/CHANGELOG
+	dh_installdocs
+	dh_installexamples
+	dh_installdebconf	
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_perl
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

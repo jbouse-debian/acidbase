@@ -1,0 +1,19 @@
+Template: acidbase/webserver
+Type: select
+#flag:translate:4,5
+__Choices: Apache, Apache2, Apache-SSL, All, None
+Default: ${webserver}
+_Description: Version(s) of Apache to configure automatically:
+ BASE requires a few things to be set up in your web server configuration.
+ .
+ The Debian packaged version can usually automatically configure apache by
+ dropping a symlink into the /etc/APACHE-SERVER/conf.d directory.
+ Select "None" if you aren't running apache or you would prefer to set up
+ the web server yourself. If you select a version to configure, all
+ configuration changes will also be removed when the package is purged.
+
+Template: acidbase/base_advisory
+Type: note
+_Description: NOTE: Manual configuration required
+ You will need to go to http://localhost/acidbase first to force the
+ database modifications for BASE.
