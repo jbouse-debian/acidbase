@@ -1,3 +1,52 @@
+acidbase (1.3.9-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Changes in source package:
+    + Renamed from base to acidbase
+    + Removed contrib/docs/CVS directory
+  * debian/patches/CVE-2007-6156.dpatch: Fixed XSS bug in index.php
+    Thanks to Nico Golde for his patch (CVE-2007-6156; Closes: #453838)
+  * debian/patches/15_update_spanish_lang.dpatch: dropped, included upstream.
+  * debian/patches/00list: updated.
+  * Initial Dutch debconf translation (Closes: #436866)
+  * Added Homepage control field
+  * Added Vcs-{Cvs,Browser} fields
+
+ -- David Gil <dgil@telefonica.net>  Sun, 02 Dec 2007 16:40:23 +0100
+
+acidbase (1.3.8-1) unstable; urgency=low
+
+  * New upstream release.
+  * Updated spanish language translation:
+    + debian/patches/00list: updated.
+    + debian/patches/15_update_spanish_lang.dpatch: added.
+  * debian/copyright: don't include the fpdf license anymore since the
+    library has been removed from the source.
+  * Removed DH_COMPAT environment variable in debian/rules. Created
+    a debian/compat file instead.
+
+ -- David Gil <dgil@telefonica.net>  Wed, 11 Jul 2007 13:49:43 +0200
+
+acidbase (1.3.6-1) unstable; urgency=low
+
+  * New upstream release.
+  * Depends on 'postgresql-client' dummy package, which will always
+    point to the latest version. Removed dependencies on specific
+    postgresql-client-X.Y packages (Closes: #422019).
+  * Updated 12_remove_php_image_graph patch.
+
+ -- David Gil <dgil@telefonica.net>  Mon, 28 May 2007 11:16:30 +0200
+
+acidbase (1.3.5-1) unstable; urgency=low
+
+  * New upstream release.
+  * Merged 13_fix_postgresql.dpatch into 01_default_config.dpatch
+    + debian/patches/00list: Updated
+    + debian/patches/01_default_config.dpatch: Updated
+    + debian/patches/13_fix_postgresql.dpatch: Removed
+
+ -- David Gil <dgil@telefonica.net>  Sun, 04 Mar 2007 13:38:54 +0100
+
 acidbase (1.2.7-4) unstable; urgency=low
 
   * Initial debconf translations:

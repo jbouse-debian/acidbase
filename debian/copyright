@@ -36,22 +36,6 @@ On Debian systems, the complete text of the GNU General Public
 License, version 2, can be found in /usr/share/common-licenses/GPL-2.
 
 
-The FPDF library is included with the source.
-
-Author:
-    
-    Olivier PLATHEY <olivier@fpdf.org>
-
-Original copyright and license statement:
-
-    Software: FPDF
-    Version:  1.53
-    Date:     2004-12-31
-    Author:   Olivier PLATHEY
-    License:  Freeware
-
-    You may use, modify and redistribute this software as you wish.
-
 This distribution also provides 'SnortUnified' (under contrib/SnortUnified/), a
 Perl module to make easier the handling of snort unified files. This program is
 (c) 2006 Jason Brvenik and is also distributed under the GNU General Public

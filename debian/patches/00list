@@ -4,4 +4,4 @@
 08_update_whois_servers.dpatch
 11_use_trim_to_avoid_signature_problems.dpatch
 12_remove_php_image_graph.dpatch
-13_fix_postgresql.dpatch
+CVE-2007-6156.dpatch

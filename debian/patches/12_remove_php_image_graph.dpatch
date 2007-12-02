@@ -4,18 +4,9 @@
 ## All lines beginning with `## DP:' are a description of the patch.
 ## DP: Remove php image graph dependancies
 
---- base-1.2.7.orig/base_main.php	2006-12-12 20:21:38.000000000 +0100
-+++ base-1.2.7/base_main.php	2006-12-12 20:22:51.000000000 +0100
-@@ -318,7 +318,6 @@
- </div></td></tr>
- <tr><td align="center" valign="top">
- <B><A HREF="base_qry_main.php?new=1"><?php echo _SEARCH; ?></A></B><br>
--<B><A HREF="base_graph_main.php"><?php echo _GALERTD; ?></A></B><br>
- <A HREF="base_stat_time.php"><?php echo _GALERTDT; ?></A><br><br>
- <?php DBLink(); ?>
- </td></tr></table>
---- base-1.2.7.orig/base_graph_common.php	2006-12-12 20:24:12.000000000 +0100
-+++ base-1.2.7/base_graph_common.php	2006-12-12 21:19:34.000000000 +0100
+diff -ru base-1.3.6.orig/base_graph_common.php base-1.3.6/base_graph_common.php
+--- base-1.3.6.orig/base_graph_common.php	2007-05-28 09:28:30.000000000 +0000
++++ base-1.3.6/base_graph_common.php	2007-05-28 09:42:37.000000000 +0000
 @@ -25,6 +25,21 @@
  // Some colors to be used in graphs.
  $named_colors = array('aliceblue','antiquewhite','aqua','aquamarine','azure','beige','bisque','black','blanchedalmond','blue','blueviolet','brown','burlywood','cadetblue','chartreuse','chocolate','coral','cornflowerblue','cornsilk','crimson','cyan','darkblue','darkcyan','darkgoldenrod','darkdray','darkgreen','darkhaki','darkorange','darkolivegreen','darkmagenta','darkorchid','darkred','darksalmon','darkseagreen','darkviolet','deeppink','deepskyblue','dimgray','dodgerblue','firebrick','floralwhite','forestgreen','fuchsia','gainsboro','ghostwhite','gold','goldenrod','gray','green','greenyellow','indianred','indigo','ivory');
@@ -38,37 +29,34 @@
  function VerifyGraphingLib()
  {
    GLOBAL $debug_mode;
-@@ -41,30 +56,32 @@
-    }
-    
+@@ -46,28 +61,32 @@
+ 
      // We have to locate Image/Graph.php -- Alejandro
--    $file = "Image/Graph.php";
--    $found = false;
--    // Will search in Path   
--    $paths = explode(PATH_SEPARATOR, ini_get('include_path'));
--    foreach ($paths as $path) {
--        $fullpath = $path . DIRECTORY_SEPARATOR . $file; 
--        if (file_exists($fullpath)) {
--            $found = true;
--           break;         
--        }
--    }
--    
--    if ( $found ) {
-+    // We have to locate Image/Color.php too -- Javier
-+    if ( FindGraphingLib("Image/Graph.php") && FindGraphingLib("Image/Color.php") ) {
-             // Cool, file was found, so you have Image_Graph installed. -- Alejandro
--            include($file);
-+            include("Image/Graph.php");
-             return true;
-     } else {
-             // Sorry dude, you haven't finished your home work. -- Alejandro
--      echo "<P><B>Error loading the Graphing library: </B>".
--           "<P>Check your Pear::Image_Graph installation!".
--            "<P>".
--            "Image_Graph can be found here:".
--            "at <A HREF=\"http://pear.veggerby.dk/\">http://pear.veggerby.dk/</A>.  Without this ".
--            "library no graphing operations can be performed.";
+     if (!$fileIncluded) { // Will search in Path
+-    	$found = false;
+-    	$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
+-    	foreach ($paths as $path) {
+-	        $fullpath = $path . DIRECTORY_SEPARATOR . $file; 
+-    	    if (file_exists($fullpath)) {
+-        	    $found = true;
+-          	 break;         
+-        	}
+-    	}
+-
+-    	if ( $found ) {
++        // We have to locate Image/Color.php too -- Javier
++        if ( FindGraphingLib("Image/Graph.php") && FindGraphingLib("Image/Color.php") ) {
+             	// Cool, file was found, so you have Image_Graph installed. -- Alejandro
+             	include_once($file);
+             	return true;
+     	} else {
+         	    // Sorry dude, you haven't finished your home work. -- Alejandro
+-      	echo "<P><B>Error loading the Graphing library: </B>".
+-        	   "<P>Check your Pear::Image_Graph installation!".
+-            	"<P>".
+-            	"Image_Graph can be found here:".
+-            	"at <A HREF=\"http://pear.veggerby.dk/\">http://pear.veggerby.dk/</A>.  Without this ".
+-            	"library no graphing operations can be performed.";
 +      echo "<P><B>Error loading the Graphing libraries: </B>".
 +           "<P>You have to manually install Pear::Image_Graph and Pear::Image_Color if you want graphics. ".
 +           "In Debian it is not sufficient to install the php-image-graph package ".
@@ -89,5 +77,16 @@
 +            "<p>Without these ".
 +            "libraries no graphing operations can be performed.";
  
-       die();
- 
+       	die();
+     	}
+diff -ru base-1.3.6.orig/base_main.php base-1.3.6/base_main.php
+--- base-1.3.6.orig/base_main.php	2007-05-28 09:28:30.000000000 +0000
++++ base-1.3.6/base_main.php	2007-05-28 09:29:35.000000000 +0000
+@@ -302,7 +302,6 @@
+   <tr>
+     <td align="center" valign="top">
+       <strong><a href="base_qry_main.php?new=1"><?php echo _SEARCH; ?></a></strong><br />
+-      <strong><a href="base_graph_main.php"><?php echo _GALERTD; ?></a></strong><br />
+       <a href="base_stat_time.php"><?php echo _GALERTDT; ?></a><br /><br />
+ <?php DBLink(); ?>
+     </td>
