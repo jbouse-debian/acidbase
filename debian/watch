@@ -1,2 +1,2 @@
 version=3
-http://dl.sourceforge.net/s/se/secureideas/ (?:.*/)?base-?_?([\d+\.]+|\d+)\.tar.gz
+http://sf.net/secureideas/ base-?_?([\d+\.]+|\d+)\.tar.gz debian uupdate

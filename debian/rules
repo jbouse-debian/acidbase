@@ -56,6 +56,9 @@ install: build
 	install -d $(CURDIR)/debian/acidbase/usr/share/doc/acidbase/sql/
 	cp -r $(CURDIR)/sql $(CURDIR)/debian/acidbase/usr/share/doc/acidbase/
 
+	# remove snortunified LICENCE, already listed in debian/copyright
+	rm $(CURDIR)/debian/acidbase/usr/share/acidbase/contrib/SnortUnified/LICENSE
+
 # Build architecture-independent files here.
 binary-indep: build install
 # We have nothing to do by default.

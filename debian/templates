@@ -2,7 +2,7 @@ Template: acidbase/webserver
 Type: select
 #flag:translate:4,5
 __Choices: Apache, Apache2, Apache-SSL, All, None
-Default: ${webserver}
+Default: All
 _Description: Version(s) of Apache to configure automatically:
  BASE requires a few things to be set up in your web server configuration.
  .

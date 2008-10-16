@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: David Gil <dgil@telefonica.net>
 Uploaders: Jeremy T. Bouse <jbouse@debian.org>, Javier Fernandez-Sanguino Pen~a <jfs@computer.org>
 Build-Depends: debhelper (>= 5.0.0), po-debconf, dpatch
-Standards-Version: 3.7.2
+Standards-Version: 3.8.0
 Homepage: http://secureideas.sourceforge.net/
 Vcs-Cvs: -d:pserver:anonymous@secureideas.cvs.sf.net:/cvsroot/secureideas
 Vcs-Browser: http://secureideas.cvs.sf.net/secureideas
