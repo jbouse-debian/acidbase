@@ -60,11 +60,11 @@ install: build
 	rm $(CURDIR)/debian/acidbase/usr/share/acidbase/contrib/SnortUnified/LICENSE
 
 # Build architecture-independent files here.
-binary-indep: build install
+binary-arch: build install
 # We have nothing to do by default.
 
 # Build architecture-dependent files here.
-binary-arch: build install
+binary-indep: build install
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs docs/CHANGELOG
@@ -83,5 +83,5 @@ binary-arch: build install
 	dh_md5sums
 	dh_builddeb
 
-binary: binary-indep binary-arch
+binary: binary-indep 
 .PHONY: build clean binary-indep binary-arch binary install configure
