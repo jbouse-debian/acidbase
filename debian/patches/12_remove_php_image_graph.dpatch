@@ -1,15 +1,16 @@
 #! /bin/sh /usr/share/dpatch/dpatch-run
-## remove_php_image_graph.dpatch by  <jfs@computer.org>
+## 12_remove_php_image_graph.dpatch by  <jbouse@debian.org>
 ##
 ## All lines beginning with `## DP:' are a description of the patch.
 ## DP: Remove php image graph dependancies
 
-diff -ru base-1.3.6.orig/base_graph_common.php base-1.3.6/base_graph_common.php
---- base-1.3.6.orig/base_graph_common.php	2007-05-28 09:28:30.000000000 +0000
-+++ base-1.3.6/base_graph_common.php	2007-05-28 09:42:37.000000000 +0000
-@@ -25,6 +25,21 @@
- // Some colors to be used in graphs.
- $named_colors = array('aliceblue','antiquewhite','aqua','aquamarine','azure','beige','bisque','black','blanchedalmond','blue','blueviolet','brown','burlywood','cadetblue','chartreuse','chocolate','coral','cornflowerblue','cornsilk','crimson','cyan','darkblue','darkcyan','darkgoldenrod','darkdray','darkgreen','darkhaki','darkorange','darkolivegreen','darkmagenta','darkorchid','darkred','darksalmon','darkseagreen','darkviolet','deeppink','deepskyblue','dimgray','dodgerblue','firebrick','floralwhite','forestgreen','fuchsia','gainsboro','ghostwhite','gold','goldenrod','gray','green','greenyellow','indianred','indigo','ivory');
+@DPATCH@
+diff -urNad acidbase~/base_graph_common.php acidbase/base_graph_common.php
+--- acidbase~/base_graph_common.php	2009-11-27 14:27:39.000000000 -0500
++++ acidbase/base_graph_common.php	2009-11-27 14:49:34.000000000 -0500
+@@ -55,6 +55,21 @@
+ 
+ 
  
 +function FindGraphingLib($libfile)
 +{
@@ -29,7 +30,7 @@ diff -ru base-1.3.6.orig/base_graph_common.php base-1.3.6/base_graph_common.php
  function VerifyGraphingLib()
  {
    GLOBAL $debug_mode;
-@@ -46,28 +61,32 @@
+@@ -76,38 +91,33 @@
  
      // We have to locate Image/Graph.php -- Alejandro
      if (!$fileIncluded) { // Will search in Path
@@ -44,45 +45,57 @@ diff -ru base-1.3.6.orig/base_graph_common.php base-1.3.6/base_graph_common.php
 -    	}
 -
 -    	if ( $found ) {
-+        // We have to locate Image/Color.php too -- Javier
-+        if ( FindGraphingLib("Image/Graph.php") && FindGraphingLib("Image/Color.php") ) {
++    	// We have to locate Image/Color.php too -- Javier
++    	if ( FindGraphingLib("Image/Graph.php") && FindGraphingLib("Image/Color.php") ) {
              	// Cool, file was found, so you have Image_Graph installed. -- Alejandro
              	include_once($file);
              	return true;
      	} else {
-         	    // Sorry dude, you haven't finished your home work. -- Alejandro
+-        	    // Sorry dude, you haven't finished your home work. -- Alejandro
 -      	echo "<P><B>Error loading the Graphing library: </B>".
 -        	   "<P>Check your Pear::Image_Graph installation!".
--            	"<P>".
--            	"Image_Graph can be found here:".
+-            	"<P><UL>".
+-            	"<LI>Image_Graph can be found here:".
 -            	"at <A HREF=\"http://pear.veggerby.dk/\">http://pear.veggerby.dk/</A>.  Without this ".
--            	"library no graphing operations can be performed.";
-+      echo "<P><B>Error loading the Graphing libraries: </B>".
-+           "<P>You have to manually install Pear::Image_Graph and Pear::Image_Color if you want graphics. ".
-+           "In Debian it is not sufficient to install the php-image-graph package ".
-+           "since, due to license issues ".
-+           "(see <a href=\"http://bugs.debian.org/401797\">Bug #401797</a> and <a href=\"http://bugs.debian.org/402406\">Bug #402406</a>) ".
-+           "the Image_Color functionality is not available and will not be ".
-+           "available until the PEAR modules change their license.".
-+           "<P>A workaround is available: you can install the ".
-+           "pear modules manually with: <tt>pear install php-image-color</tt> and ".
-+           "<tt>pear install php-image-graph</tt>.".
-+           "If you do this, however, the modules will not be handled in Debian's ".
-+           "package management system.".
-+            "<p>Image_Graph can be found here:".
-+            "at <A HREF=\"http://pear.veggerby.dk/\">http://pear.veggerby.dk/</A>.".
-+            "or at <A HREF=\"http://http://pear.php.net/package/Image_Graph/\">http://pear.php.net/package/Image_Graph/</A>.".
-+            "<p>Image_Color can be found here:".
-+            "at <A HREF=\"http://http://pear.php.net/package/Image_Color/\">http://pear.php.net/package/Image_Color/</A>.".
-+            "<p>Without these ".
-+            "libraries no graphing operations can be performed.";
- 
-       	die();
-     	}
-diff -ru base-1.3.6.orig/base_main.php base-1.3.6/base_main.php
---- base-1.3.6.orig/base_main.php	2007-05-28 09:28:30.000000000 +0000
-+++ base-1.3.6/base_main.php	2007-05-28 09:29:35.000000000 +0000
-@@ -302,7 +302,6 @@
+-              "library no graphing operations can be performed.<BR>" .
+-              "<LI>Make sure PEAR libraries can be found by php at all:<BR>" .
+-              "<PRE>" .
+-              "pear config-show | grep &quot;PEAR directory&quot;<BR>" .
+-              "PEAR directory      php_dir     /usr/share/pear" .
+-              "</PRE>" .
+-              "This path must be part of the include path of php (cf. /etc/php.ini):<BR>" .
+-              "<PRE>" .
+-              "php -i | grep &quot;include_path&quot;<BR>" .
+-              "include_path => .:/usr/share/pear:/usr/share/php => .:/usr/share/pear:/usr/share/php" .
+-              "</PRE><BR>";
++            // Sorry dude, you haven't finished your home work. -- Alejandro
++            echo "<P><B>Error loading the Graphing libraries: </B>".
++                "<P>You have to manually install Pear::Image_Graph and Pear::Image_Color if you want graphics. ".
++                "In Debian it is not sufficient to install the php-image-graph package ".
++                "since, due to license issues ".
++                "(see <a href=\"http://bugs.debian.org/401797\">Bug #401797</a> and <a href=\"http://bugs.debian.org/402406\">Bug #402406</a>) ".
++                "the Image_Color functionality is not available and will not be ".
++                "available until the PEAR modules change their license.".
++                "<P>A workaround is available: you can install the ".
++                "pear modules manually with: <tt>pear install php-image-color</tt> and ".
++                "<tt>pear install php-image-graph</tt>.".
++                "If you do this, however, the modules will not be handled in Debian's ".
++                "package management system.".
++                "<p>Image_Graph can be found here:".
++                "at <A HREF=\"http://pear.veggerby.dk/\">http://pear.veggerby.dk/</A>.".
++                "or at <A HREF=\"http://http://pear.php.net/package/Image_Graph/\">http://pear.php.net/package/Image_Graph/</A>.".
++                "<p>Image_Color can be found here:".
++                "at <A HREF=\"http://http://pear.php.net/package/Image_Color/\">http://pear.php.net/package/Image_Color/</A>.".
++                "<p>Without these ".
++                "libraries no graphing operations can be performed.";
++
+         $rv = ini_get("safe_mode");
+         if ($rv == 1)
+         {
+diff -urNad acidbase~/base_main.php acidbase/base_main.php
+--- acidbase~/base_main.php	2009-11-27 14:27:39.000000000 -0500
++++ acidbase/base_main.php	2009-11-27 14:34:23.000000000 -0500
+@@ -295,7 +295,6 @@
    <tr>
      <td align="center" valign="top">
        <strong><a href="base_qry_main.php?new=1"><?php echo _SEARCH; ?></a></strong><br />
