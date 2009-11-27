@@ -1,11 +1,11 @@
 # Copyright (C) 2009 David Gil <dgil@telefonica.net>
 # This file is distributed under the same license as acidbase package.
 # Hideki Yamane (Debian-JP) <henrich@debian.or.jp>, 2009.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: acidbase 1.3.9-2\n"
-"Report-Msgid-Bugs-To: dgil@telefonica.net\n"
+"Report-Msgid-Bugs-To: jbouse@debian.org\n"
 "POT-Creation-Date: 2006-09-03 11:24+0200\n"
 "PO-Revision-Date: 2009-11-07 14:26+0900\n"
 "Last-Translator: Hideki Yamane (Debian-JP) <henrich@debian.or.jp>\n"
@@ -37,8 +37,7 @@ msgstr "自動的に設定する Apache のバージョン:"
 #: ../templates:1002
 msgid ""
 "BASE requires a few things to be set up in your web server configuration."
-msgstr ""
-"BASE は、ウェブサーバの設定を少し変更する必要があります。"
+msgstr "BASE は、ウェブサーバの設定を少し変更する必要があります。"
 
 #. Type: select
 #. Description
@@ -50,11 +49,11 @@ msgid ""
 "server yourself. If you select a version to configure, all configuration "
 "changes will also be removed when the package is purged."
 msgstr ""
-"Debian パッケージになったバージョンでは、/etc/APACHE-SERVER/conf.d ディレク"
-"トリへのシンボリックリンクを削除することで、通常自動的に apache を設定できます。"
-"apache を動作させていない、あるいはウェブサーバを自分で設定したい場合は「どれでもない」"
-"を選んでください。設定するバージョンを選んだ場合は、全ての設定変更は、パッケージ"
-"が完全に削除 (purge) された場合に同時に削除されます。"
+"Debian パッケージになったバージョンでは、/etc/APACHE-SERVER/conf.d ディレクト"
+"リへのシンボリックリンクを削除することで、通常自動的に apache を設定できま"
+"す。apache を動作させていない、あるいはウェブサーバを自分で設定したい場合は"
+"「どれでもない」を選んでください。設定するバージョンを選んだ場合は、全ての設"
+"定変更は、パッケージが完全に削除 (purge) された場合に同時に削除されます。"
 
 #. Type: note
 #. Description
@@ -69,6 +68,5 @@ msgid ""
 "You will need to go to http://localhost/acidbase first to force the database "
 "modifications for BASE."
 msgstr ""
-"BASE のためにデータベースの変更を実施するため、まずは http://localhost/acidbase "
-"にアクセスする必要があります。"
-
+"BASE のためにデータベースの変更を実施するため、まずは http://localhost/"
+"acidbase にアクセスする必要があります。"

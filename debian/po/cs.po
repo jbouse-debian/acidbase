@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: acidbase\n"
-"Report-Msgid-Bugs-To: dgil@telefonica.net\n"
+"Report-Msgid-Bugs-To: jbouse@debian.org\n"
 "POT-Creation-Date: 2006-09-03 11:24+0200\n"
 "PO-Revision-Date: 2007-01-27 15:11+0100\n"
 "Last-Translator: Miroslav Kure <kurem@debian.cz>\n"
