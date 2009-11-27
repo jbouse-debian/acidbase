@@ -7,38 +7,38 @@
 ## DP: Database)
 
 @DPATCH@
---- acidbase-1.2.5.orig/base_conf.php.dist	2006-06-05 10:54:23.000000000 +0200
-+++ acidbase-1.2.5/base_conf.php.dist	2006-06-05 11:05:35.000000000 +0200
-@@ -292,9 +292,13 @@
+diff -urNad acidbase~/base_conf.php.dist acidbase/base_conf.php.dist
+--- acidbase~/base_conf.php.dist	2009-11-27 13:38:06.000000000 -0500
++++ acidbase/base_conf.php.dist	2009-11-27 13:44:42.000000000 -0500
+@@ -356,6 +356,8 @@
  
  /* Whois query */
  $external_whois_link = 'http://www.dnsstuff.com/tools/whois.ch?ip=';
 +/* Alternative query */
 +//  $external_whois_link = 'http://www.samspade.org/t/ipwhois?a=';
  
-  /* DNS query */
+ /* Local whois */
+ /* IP addresses of whois servers. Updated on Aug, 1st 2009.
+@@ -383,6 +385,8 @@
+ 
+ /* DNS query */
  $external_dns_link = 'http://www.dnsstuff.com/tools/ptr.ch?ip=';
 +/* Alternative query */
 +//  $external_dns_link = 'http://www.samspade.org/t/dns?a=';
  
- /* SamSpade "all" query */
+ /* SamSpade 'all' query */
  $external_all_link = 'http://www.whois.sc/';
-@@ -309,13 +313,16 @@
+@@ -394,11 +398,10 @@
+ 
+ /* Signature references */
  $external_sig_link = array('bugtraq'   => array('http://www.securityfocus.com/bid/', ''),
-                            'snort'     => array('http://www.snort.org/pub-bin/sigs.cgi?sid=', ''),
+-                           'snort'     => array('http://www.snort.org/pub-bin/sigs.cgi?sid=', ''),
++                           'snort'     => array('http://www.snortid.com/snortid.asp?QueryId=', ''),
                             'cve'       => array('http://cve.mitre.org/cgi-bin/cvename.cgi?name=', ''),
 -                           'arachnids' => array('http://www.whitehats.com/info/ids', ''),
                             'mcafee'    => array('http://vil.nai.com/vil/content/v_', '.htm'),
 -                           'icat'      => array('http://icat.nist.gov/icat.cfm?cvename=CAN-', ''),
 +                           'icat'      => array('http://nvd.nist.gov/nvd.cfm?cvename=CAN-', ''),
-                            'nessus'    => array('http://www.nessus.org/plugins/index.php?view=single&id=', ''),
+                            'nessus'    => array('http://www.nessus.org/plugins/index.php?view=single&amp;id=', ''),
                             'url'       => array('http://', ''),
-                            'local' => array('signatures/', '.txt'));
- 
-+// No longer valid:
-+// 'arachnids' => array('http://www.whitehats.com/info/ids', ''),
-+
-+
- /* Email Alert action
-  *
-  * - action_email_from : email address to use in the FROM field of the mail message
+                            'local'     => array('signatures/', '.txt'),
