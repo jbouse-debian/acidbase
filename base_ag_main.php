@@ -7,7 +7,6 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
-**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Maintenance and configuration page for
@@ -41,7 +40,7 @@
   $qs = new QueryState();
   $submit = ImportHTTPVar("submit", VAR_ALPHA | VAR_SPACE, array(_SELECTED, _ALLONSCREEN, _ENTIREQUERY));
   $ag_action = ImportHTTPVar("ag_action", VAR_ALPHA | VAR_USCORE);
-  $ag_id = ImportHTTPVar("ag_id", VAR_DIGIT);
+  $ag_id = filterSql(ImportHTTPVar("ag_id", VAR_DIGIT));
   $ag_name = filterSql(ImportHTTPVar("ag_name"));
   $ag_desc = filterSql(ImportHTTPVar("ag_desc"));
 
@@ -52,7 +51,7 @@
     base_header("Location: ". $BASE_urlpath . "/index.php");
 
   $page_title = _AGMAINTTITLE;
-  PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+  PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), $refresh_all_pages);
 
   /* Connect to the Alert database */
   $db = NewBASEDBConnection($DBlib_path, $DBtype);
@@ -88,9 +87,9 @@ echo "
       <td>submit</td>
       <td>ag_id</td>
     </tr>
-    <tr><td>$ag_action</td>
+    <tr><td>htmlspecialchars($ag_action)</td>
     <td>$submit</td>
-    <td>$ag_id</td>
+    <td>htmlspecialchars($ag_id)</td>
   </tr>
   </table>
 ";
@@ -232,14 +231,14 @@ if ($ag_action == "list") {
 
             echo '<tr>
                     <td class="plfield">
-                      <a href="base_ag_main.php?ag_action=view&amp;ag_id='.$myrow[0].'&amp;submit=x">'.$myrow[0].'</a></td>
-                      <td class="plfield">'.$myrow[1].'</TD>
+                      <a href="base_ag_main.php?ag_action=view&amp;ag_id='.htmlspecialchars($myrow[0]).'&amp;submit=x">'.htmlspecialchars($myrow[0]).'</a></td>
+                      <td class="plfield">'.htmlspecialchars($myrow[1]).'</TD>
                       <td class="plfield">'.$num_alerts.'</TD>
-                      <td class="plfield">'.$myrow[2].'</TD>
+                      <td class="plfield">'.htmlspecialchars($myrow[2]).'</TD>
                       <td class="plfield"> 
-                        <a href="base_ag_main.php?ag_action=edit&amp;ag_id='.$myrow[0].'&amp;submit=x">'._EDIT.'</a> |
-                        <a href="base_ag_main.php?ag_action=delete&amp;ag_id='.$myrow[0].'&amp;submit=x">'._DELETE.'</a> |
-                        <a href="base_ag_main.php?ag_action=clear&amp;ag_id='.$myrow[0].'&amp;submit=x">'._CLEAR.'</a>
+                        <a href="base_ag_main.php?ag_action=edit&amp;ag_id='.urlencode($myrow[0]).'&amp;submit=x">'._EDIT.'</a> |
+                        <a href="base_ag_main.php?ag_action=delete&amp;ag_id='.urlencode($myrow[0]).'&amp;submit=x">'._DELETE.'</a> |
+                        <a href="base_ag_main.php?ag_action=clear&amp;ag_id='.urlencode($myrow[0]).'&amp;submit=x">'._CLEAR.'</a>
                       </td>
                   </tr>';
         }
@@ -258,9 +257,9 @@ if ($ag_action != "list") {
     if ($ag_action == "create" && $submit == "") {
         echo '&nbsp;<em> '._NOTASSIGN.' </em>&nbsp';
     } else if ($submit == "") {
-        echo '<input type="text" name="ag_id" value="'.$ag_id.'">';
+        echo '<input type="text" name="ag_id" value="'.htmlspecialchars($ag_id).'">';
     } else if ( ($ag_action == "view" || $ag_action == "edit" || $ag_action == "delete" || $ag_action == "clear") && $submit != "" ) {
-        echo '<input type="hidden" name="ag_id" value="'.$ag_id.'">';
+        echo '<input type="hidden" name="ag_id" value="'.htmlspecialchars($ag_id).'">';
         echo $ag_id;
     }
 
@@ -270,7 +269,7 @@ if ($ag_action != "list") {
            <td>';
 
     if ($ag_action == "create" && $submit == "") {
-        echo '<input type="text" name="ag_name" size="40" value="'.$ag_name.'">';
+        echo '<input type="text" name="ag_name" size="40" value="'.htmlspecialchars($ag_name).'">';
     } else if ($submit == "") {
         echo '<select name="ag_name">
               <option value="">{ AG Name }';
@@ -278,7 +277,7 @@ if ($ag_action != "list") {
         $result = $db->baseExecute($sql);
         if ($result) {
              while ($myrow = $result->baseFetchRow()) {
-                echo '<option value="'.$myrow[0].'">'.$myrow[0];
+                echo '<option value="'.htmlspecialchars($myrow[0]).'">'.htmlspecialchars($myrow[0]);
              }
 
              $result->baseFreeRows();
@@ -286,9 +285,9 @@ if ($ag_action != "list") {
 
         echo '</select>';
     } else if ( $ag_action == "edit" && $submit != "" ) {
-        echo '<input type="text" name="ag_name" size="40" value="'.$ag_name.'">';
+        echo '<input type="text" name="ag_name" size="40" value="'.htmlspecialchars($ag_name).'">';
     } else if ( ($ag_action == "view" || $ag_action == "delete" || $ag_action = "clear") && $submit != "" ) {
-        echo $ag_name;
+        echo htmlspecialchars($ag_name);
     }
 
     echo ' </td>';
@@ -300,11 +299,11 @@ if ($ag_action != "list") {
          <td>';
 
         if ( $ag_action == "create" && $submit == "" ) {
-            echo '<textarea name="ag_desc" cols="70" rows=4>'.$ag_desc.'</textarea>';
+            echo '<textarea name="ag_desc" cols="70" rows=4>'.htmlspecialchars($ag_desc).'</textarea>';
         } else if ( $ag_action == "edit" && $submit != "" ) {
-            echo '<textarea name="ag_desc" cols="70" rows=4>'.$ag_desc.'</textarea>';
+            echo '<textarea name="ag_desc" cols="70" rows=4>'.htmlspecialchars($ag_desc).'</textarea>';
         } else if ( ($ag_action == "view" || $ag_action == "delete" ||$ag_action == "clear") && $submit != "" ) {
-            echo $ag_desc;
+            echo(htmlspecialchars($ag_desc));
         }
 
         echo '
@@ -339,7 +338,7 @@ if ($ag_action != "list") {
     }
 } // if ($ag_action != "list")
     
-echo '<input type="hidden" name="ag_action" value="'.$ag_action.'">';
+echo '<input type="hidden" name="ag_action" value="'.htmlspecialchars($ag_action).'">';
 if ( $ag_action == "view" && $submit != "" ) {
     /* Calculate the Number of Alerts */
     $cnt_sql = "SELECT count(ag_sid) FROM acid_ag_alert WHERE ag_id='".$ag_id."'";

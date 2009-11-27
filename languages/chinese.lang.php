@@ -26,7 +26,7 @@
 //locale
 DEFINE('_LOCALESTR1', 'eng_ENG.ISO8859-1'); //NEW
 DEFINE('_LOCALESTR2', 'eng_ENG.utf-8'); //NEW
-DEFINE('_LOCALESTR3', '中文'); //NEW
+DEFINE('_LOCALESTR3', '繁體中文'); //NEW
 DEFINE('_STRFTIMEFORMAT','%a %B %d, %Y %H:%M:%S'); //NEW - see strftime() sintax
 
 //common phrases
@@ -51,7 +51,7 @@ DEFINE('_ROLEID','角色 ID');
 DEFINE('_ENABLED','啟用');
 DEFINE('_SUCCESS','已成功 ');
 DEFINE('_SENSOR','偵測器');
-DEFINE('_SENSORS','Sensors'); //NEW
+DEFINE('_SENSORS','偵測器s'); //NEW
 DEFINE('_SIGNATURE','特徵');
 DEFINE('_TIMESTAMP','時間戳記');
 DEFINE('_NBSOURCEADDR','來源&nbsp;位址');
@@ -84,10 +84,10 @@ DEFINE('_ON','on'); //NEW
 DEFINE('_IN','in'); //NEW
 DEFINE('_ANY','any'); //NEW
 DEFINE('_NONE','無'); //NEW
-DEFINE('_HOUR','Hour'); //NEW
-DEFINE('_DAY','Day'); //NEW
-DEFINE('_MONTH','Month'); //NEW
-DEFINE('_YEAR','Year'); //NEW
+DEFINE('_HOUR',' 時'); //NEW
+DEFINE('_DAY',' 日'); //NEW
+DEFINE('_MONTH',' 月'); //NEW
+DEFINE('_YEAR',' 年'); //NEW
 DEFINE('_ALERTGROUP','警告群組'); //NEW
 DEFINE('_ALERTTIME','警告時間'); //NEW
 DEFINE('_CONTAINS','包含'); //NEW
@@ -99,7 +99,7 @@ DEFINE('_HASNOT','不具有'); //NEW
 DEFINE('_PORT','通訊埠'); //NEW
 DEFINE('_FLAGS','旗標'); //NEW
 DEFINE('_MISC','其他'); //NEW
-DEFINE('_BACK','Back'); //NEW
+DEFINE('_BACK','返回'); //NEW
 DEFINE('_DISPYEAR','{ 年 }'); //NEW
 DEFINE('_DISPMONTH','{ 月 }'); //NEW
 DEFINE('_DISPHOUR','{ 時 }'); //NEW
@@ -155,14 +155,14 @@ DEFINE('_LISTALL','列出全部');
 DEFINE('_CREATE','建立');
 DEFINE('_VIEW','顯示');
 DEFINE('_CLEAR','清除');
-DEFINE('_LISTGROUPS','列出群組');
-DEFINE('_CREATEGROUPS','建立群組');
-DEFINE('_VIEWGROUPS','顯示群組');
-DEFINE('_EDITGROUPS','編輯群組');
-DEFINE('_DELETEGROUPS','刪除群組');
-DEFINE('_CLEARGROUPS','清除群組');
-DEFINE('_CHNGPWD','變更密碼');
-DEFINE('_DISPLAYU','顯示使用者');
+DEFINE('_LISTGROUPS',' 列出群組');
+DEFINE('_CREATEGROUPS',' 建立群組');
+DEFINE('_VIEWGROUPS',' 顯示群組');
+DEFINE('_EDITGROUPS',' 編輯群組');
+DEFINE('_DELETEGROUPS',' 刪除群組');
+DEFINE('_CLEARGROUPS',' 清除群組');
+DEFINE('_CHNGPWD',' 變更密碼');
+DEFINE('_DISPLAYU',' 顯示使用者');
 
 //base_footer.php
 DEFINE('_FOOTER','(by <A class="largemenuitem" href="mailto:base@secureideas.net">Kevin Johnson</A> and the <A class="largemenuitem" href="http://sourceforge.net/project/memberlist.php?group_id=103348">BASE Project Team</A><BR>Built on ACID by Roman Danyliw 中文 <a href="mailto:js547441@ms15.hinet.net">Johnson Chiang</a>  )');
@@ -213,15 +213,15 @@ DEFINE('_ROLEADMIN','基本角色管理');
 DEFINE('_FRMROLEID','角色識別碼:');
 DEFINE('_FRMROLENAME','角色名稱:');
 DEFINE('_FRMROLEDESC','說明:');
-DEFINE('_UPDATEROLE','更新角色'); //NEW
+DEFINE('_UPDATEROLE',' 更新角色'); //NEW
 
 //base_useradmin.php
 DEFINE('_USERADMIN','基本使用者管理');
 DEFINE('_FRMFULLNAME','全名:');
 DEFINE('_FRMROLE','角色:');
 DEFINE('_FRMUID','使用者識別碼:');
-DEFINE('_SUBMITQUERY','確認送出查詢'); //NEW
-DEFINE('_UPDATEUSER','更新使用者'); //NEW
+DEFINE('_SUBMITQUERY',' 確認送出查詢'); //NEW
+DEFINE('_UPDATEUSER',' 更新使用者'); //NEW
 
 //admin/index.php
 DEFINE('_BASEADMIN','基本管理');
@@ -393,9 +393,9 @@ DEFINE('_NOALERTGOUPS','這裏沒有警告群組');
 DEFINE('_NUMALERTS','# 警告數');
 DEFINE('_ACTIONS','動作');
 DEFINE('_NOTASSIGN','還未指定');
-DEFINE('_SAVECHANGES','儲存變更'); //NEW
-DEFINE('_CONFIRMDELETE','確認刪除'); //NEW
-DEFINE('_CONFIRMCLEAR','確認清除'); //NEW
+DEFINE('_SAVECHANGES',' 儲存變更'); //NEW
+DEFINE('_CONFIRMDELETE',' 確認刪除'); //NEW
+DEFINE('_CONFIRMCLEAR',' 確認清除'); //NEW
 
 //base_common.php
 DEFINE('_PORTSCAN','通訊埠掃描傳輸情形');
@@ -496,9 +496,9 @@ DEFINE('_CHRTCLASS','分類');
 DEFINE('_CHRTSENSORNUMBER','偵測器 vs. 警告數');
 DEFINE('_CHRTHANDLEPERIOD','維持週期 如果需要');
 DEFINE('_CHRTDUMP','頃入資料中 ... (每次只寫入');
-DEFINE('_CHRTDRAW','繪製圖表');
+DEFINE('_CHRTDRAW',' 繪製圖表');
 DEFINE('_ERRCHRTNODATAPOINTS','沒有資料點可以繪製');
-DEFINE('_GRAPHALERTDATA','繪出警告資料'); //NEW
+DEFINE('_GRAPHALERTDATA',' 繪出警告資料'); //NEW
 
 //base_maintenance.php
 DEFINE('_MAINTTITLE','維護');
@@ -609,7 +609,7 @@ DEFINE('_SCPORT','通訊埠');
 
 //base_stat_ipaddr.php
 DEFINE('_PSEVENTERR','PORTSCAN 事件錯誤: ');
-DEFINE('_PSEVENTERRNOFILE','沒有檔案被指定在 \$portscan_file 變數.');
+DEFINE('_PSEVENTERRNOFILE','沒有檔案被指定在 $portscan_file 變數.');
 DEFINE('_PSEVENTERROPENFILE','無法開啟 通訊埠掃描 事件檔');
 DEFINE('_PSDATETIME','日期/時間');
 DEFINE('_PSSRCIP','來源 IP');
@@ -632,7 +632,7 @@ DEFINE('_PSWHOISINFO','Whois 資訊');
 DEFINE('_PSTOTALHOSTS','全部掃描到主機'); //NEW
 DEFINE('_PSDETECTAMONG','%d 單項偵測到警告在 %d 之中為 %s'); //NEW
 DEFINE('_PSALLALERTSAS','全部警告數為 %s/%s as'); //NEW
-DEFINE('_PSSHOW','顯示'); //NEW
+DEFINE('_PSSHOW',' 顯示'); //NEW
 DEFINE('_PSEXTERNAL','外部'); //NEW
 
 //base_stat_iplink.php
@@ -662,10 +662,10 @@ DEFINE('_BSTERRTIMETYPE','<FONT><B>通過的時間參數型態沒有被指定!</
 DEFINE('_BSTERRNOYEAR','<FONT><B>沒有年參數被指定!</B></FONT>');
 DEFINE('_BSTERRNOMONTH','<FONT><B>沒有月參數被指定!</B></FONT>');
 DEFINE('_BSTERRNODAY','<FONT><B>沒有日參數被指定!</B></FONT>');
-DEFINE('_BSTPROFILEBY','Profile by'); //NEW
+DEFINE('_BSTPROFILEBY',' 曲線圖表-自'); //NEW
 DEFINE('_TIMEON','on'); //NEW
 DEFINE('_TIMEBETWEEN','之間'); //NEW
-DEFINE('_PROFILEALERT','Profile Alert'); //NEW
+DEFINE('_PROFILEALERT',' 曲線圖表 警告資料'); //NEW
 
 //base_stat_uaddr.php
 DEFINE('_UNISADD','單一來源位址數)');
@@ -682,8 +682,8 @@ DEFINE('_BASEUSERTITLE','BASE 使用者參數');
 DEFINE('_BASEUSERERRPWD','您的密碼不能為空白或兩個密碼沒有吻合!');
 DEFINE('_BASEUSEROLDPWD','舊密碼:');
 DEFINE('_BASEUSERNEWPWD','新密碼:');
-DEFINE('_BASEUSERNEWPWDAGAIN','再輸入新密碼一次:');
+DEFINE('_BASEUSERNEWPWDAGAIN',' 再輸入新密碼一次:');
 
-DEFINE('_LOGOUT','登出');
+DEFINE('_LOGOUT',' 登出');
 
 ?>

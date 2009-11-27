@@ -40,9 +40,9 @@ $file = shift;
 $UF_Data = {};
 $record = {};
 
-$sids = get_snort_sids("/Users/jbrvenik/src/test/unified/sid-msg.map",
-                       "/Users/jbrvenik/src/test/unified/gen-msg.map");
-$class = get_snort_classifications("/Users/jbrvenik/src/test/unified/classification.config");
+$sids = get_snort_sids("/tmp/sid-msg.map",
+                       "/tmp/gen-msg.map_DISABLED"); # old format!
+$class = get_snort_classifications("/tmp/classification.config");
 
 # If you want to see them
 # print_snort_sids($sids);
@@ -50,11 +50,12 @@ $class = get_snort_classifications("/Users/jbrvenik/src/test/unified/classificat
 # If you want to see them
 # print_snort_classifications($class);
 
-setSnortConnParam('user', 'root');
-setSnortConnParam('password', '');
+setSnortConnParam('user', 'snort');
+setSnortConnParam('password', 'snort');
 setSnortConnParam('interface', 'eth1');
 setSnortConnParam('database', 'snorttest');
-setSnortConnParam('hostname', Sys::Hostname::hostname());
+#setSnortConnParam('hostname', Sys::Hostname::hostname());
+setSnortConnParam('hostname', 'localhost');
 setSnortConnParam('filter', '');
 
 die unless getSnortDBHandle();

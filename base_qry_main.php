@@ -7,7 +7,6 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
-**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Input GET/POST variables
@@ -147,9 +146,9 @@
   $page_title = _QUERYRESULTS;
   if ( $qs->isCannedQuery() )
      PrintBASESubHeader($page_title.": ".$qs->GetCurrentCannedQueryDesc(),
-                        $page_title.": ".$qs->GetCurrentCannedQueryDesc(), $cs->GetBackLink(), 1);
+                        $page_title.": ".$qs->GetCurrentCannedQueryDesc(), $cs->GetBackLink(), $refresh_all_pages);
   else
-     PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+     PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), $refresh_all_pages);
 
   /* Connect to the Alert database */
   $db = NewBASEDBConnection($DBlib_path, $DBtype);
@@ -178,8 +177,25 @@ if ( is_numeric($submit) )
     $submit = _QUERYDB;
 }
 
+/* Return the input form to get more criteria from user */
+if (
+     ($submit == _ADDTIME) ||
+     ($submit == _ADDADDRESS) ||
+     ($submit == _ADDIPFIELD) ||
+     ($submit == _ADDTCPPORT) ||
+     ($submit == _ADDUDPPORT) ||
+     ($submit == _ADDICMPFIELD) ||
+     ($submit == _ADDPAYLOAD) ||
+     ($submit == "TCP") ||
+     ($submit == "UDP") ||
+     ($submit == "ICMP") ||
+     ($submit == _NOLAYER4) 
+   )
+{
+  include("$BASE_path/base_qry_form.php");
+}
 /* Run the SQL Query and get results */
-if ( $submit == _QUERYDB || $submit == _QUERYDBP ||
+elseif ( $submit == _QUERYDB || $submit == _QUERYDBP ||
      $submit == _SELECTED || $submit == _ALLONSCREEN || $submit == _ENTIREQUERY || 
      $qs->isCannedQuery() || 
      $qs->GetCurrentSort() != "" )

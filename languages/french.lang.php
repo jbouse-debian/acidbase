@@ -770,7 +770,7 @@ DEFINE('_QCERRDATETIME','La date ou l\'heure');
 DEFINE('_QCERRPAYLOAD','Le contenu (payload)');
 // A payload value of
 DEFINE('_QCERRIP','L\'adresse IP');
-// A IP address of
+// An IP address of
 DEFINE('_QCERRIPTYPE','Une adresse IP de type');
 // An IP address of type
 DEFINE('_QCERRSPECFIELD','était saisi pour un champ de protocole, mais le champ précis n\'est pas spécifié.');
@@ -877,8 +877,8 @@ DEFINE('_SCPORT','Port');
 //base_stat_ipaddr.php
 DEFINE('_PSEVENTERR','ERREUR D\'EVENEMENT PORTSCAN');
 // PORTSCAN EVENT ERROR: 
-DEFINE('_PSEVENTERRNOFILE','Aucun fichier précisé dans la variable \$portscan_file.');
-// No file was specified in the \$portscan_file variable.
+DEFINE('_PSEVENTERRNOFILE','Aucun fichier précisé dans la variable $portscan_file.');
+// No file was specified in the $portscan_file variable.
 DEFINE('_PSEVENTERROPENFILE','Impossible d\ouvrir le fichier des événements Portscan.');
 // Unable to open Portscan event file
 DEFINE('_PSDATETIME','Date/Heure');

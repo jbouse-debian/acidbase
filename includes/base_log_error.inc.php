@@ -50,10 +50,39 @@ function PrintPageHeader()
 {
      GLOBAL $DBtype, $ADODB_vers;
 
-   $tmp = session_encode();   
+     $tmp = session_encode();
+     $php_version = phpversion();
+     $ver = $php_version[0]; 
 
-      $request_uri = XSSPrintSafe($_SERVER['REQUEST_URI']);
-      $http_referer = XSSPrintSafe($_SERVER['HTTP_REFERER']);
+     $request_uri = XSSPrintSafe($_SERVER['REQUEST_URI']);
+     if (
+          ($ver >= 5) ||
+          (
+            ($ver == 4) &&
+            ($php_version[1] >= 1)
+          )
+        )
+     {
+       if (array_key_exists("HTTP_REFERER", $_SERVER))
+       {
+         $http_referer = XSSPrintSafe($_SERVER['HTTP_REFERER']);
+       }
+       else
+       {
+         $http_referer = "";
+       }
+     }
+     else
+     {
+       if (key_exists("HTTP_REFERER", $_SERVER))
+       {
+         $http_referer = XSSPrintSafe($_SERVER['HTTP_REFERER']);
+       }
+       else
+       {
+         $http_referer = "";
+       }
+     }
       $http_user_agent = XSSPrintSafe($_SERVER['HTTP_USER_AGENT']);
       $server_software = XSSPrintSafe($_SERVER['SERVER_SOFTWARE']);
       $query_string = XSSPrintSafe($_SERVER['QUERY_STRING']);
@@ -79,4 +108,40 @@ function PrintHTTPPost()
    echo "</PRE>";
 }
 
+
+function SQLTraceLog($message)
+{
+  GLOBAL $sql_trace_mode, $sql_trace_file;
+
+
+  if ($sql_trace_mode < 1)
+  // then fallback to http server's error log:
+  {
+    error_log($message);
+  }
+  else
+  // preferred
+  {
+    if (($sql_trace_file != "") && file_exists($sql_trace_file))
+    {
+      $fd = fopen($sql_trace_file, "a");
+      if ($fd)
+      {
+        fputs($fd, $message);
+        fputs($fd, "\n");
+        fflush($fd);
+        fclose($fd);
+      }
+      else
+      {
+        ErrorMessage("ERROR: Could not open " . $sql_trace_file);
+      }
+    }
+    else
+    {
+      error_log($message);
+    }
+  }
+}
+// vim:tabstop=2:shiftwidth=2:expandtab
 ?>

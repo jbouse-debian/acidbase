@@ -49,7 +49,7 @@
    }
 
   $page_title = _MAINTTITLE;
-  PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+  PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), $refresh_all_pages);
 
   $submit = ImportHTTPVar("submit", VAR_ALPHA | VAR_SPACE);
 ?>

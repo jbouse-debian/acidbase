@@ -9,9 +9,9 @@ $UF_Data = {};
 $record = {};
 $prepend = "Snort Alert:";
 
-$sids = get_snort_sids("/Users/jbrvenik/src/test/unified/sid-msg.map",
-                       "/Users/jbrvenik/src/test/unified/gen-msg.map");
-$class = get_snort_classifications("/Users/jbrvenik/src/test/unified/classification.config");
+$sids = get_snort_sids("/tmp/sid-msg.map",
+                       "/tmp/gen-msg.map_DISABLED"); # old format!
+$class = get_snort_classifications("/tmp/classification.config");
 
 $UF_Data = openSnortUnified($file);
 die unless $UF_Data;
@@ -28,7 +28,7 @@ syslog('info', "$0: Processing file $file");
 
 while ( $record = readSnortUnifiedRecord() ) {
     
-    syslog('info', format_alert($record, $sids, $class);
+    syslog('info', format_alert($record, $sids, $class));
     
 }
 

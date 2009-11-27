@@ -7,7 +7,6 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
-**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: page for the role admin functions (create, disable etc....)
@@ -122,13 +121,13 @@
         //explode array rows and build table
         $tmpRow = explode("|", $row);
         
-        $tmpHTML = $tmpHTML . "<tr><td align='center'><a href='base_roleadmin.php?action=editrole&amp;roleid=".$tmpRow[0]."'>";
+        $tmpHTML = $tmpHTML . "<tr><td align='center'><a href='base_roleadmin.php?action=editrole&amp;roleid=".urlencode($tmpRow[0])."'>";
         $tmpHTML = $tmpHTML . "<img src='" . $BASE_urlpath ."/images/button_edit.png' border='0' alt='button_edit'></a></td>";
-        $tmpHTML = $tmpHTML . "<td align='center'><a href='base_roleadmin.php?action=deleterole&amp;roleid=".$tmpRow[0]."'>";
+        $tmpHTML = $tmpHTML . "<td align='center'><a href='base_roleadmin.php?action=deleterole&amp;roleid=".urlencode($tmpRow[0])."'>";
         $tmpHTML = $tmpHTML . "<img src='" . $BASE_urlpath ."/images/button_delete.png' border='0' alt='button_delete'></a></td>";
-        $tmpHTML = $tmpHTML . "<td align='center'>" . $tmpRow[0];
-        $tmpHTML = $tmpHTML . "</td><td align='center'>" . $tmpRow[1];
-        $tmpHTML = $tmpHTML . "</td><td align='center'>" . $tmpRow[2];
+        $tmpHTML = $tmpHTML . "<td align='center'>" . htmlspecialchars($tmpRow[0]);
+        $tmpHTML = $tmpHTML . "</td><td align='center'>" . htmlspecialchars($tmpRow[1]);
+        $tmpHTML = $tmpHTML . "</td><td align='center'>" . htmlspecialchars($tmpRow[2]);
         $tmpHTML = $tmpHTML . "</td></tr>";
       }
       // Footer of table
@@ -138,7 +137,7 @@
       break;
   }
     // Start the output to the page.....
-    PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+    PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), $refresh_all_pages);
 
     PrintBASEAdminMenuHeader();
 

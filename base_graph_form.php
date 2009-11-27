@@ -19,49 +19,66 @@
 ********************************************************************************
 */
 
+  include_once ("$BASE_path/base_graph_common.php"); 
+
+
+
   echo '<FORM ACTION="base_graph_main.php" METHOD="post">';
 
-  echo '<TABLE WIDTH="100%" BORDER="2" class="query">
+  echo '<TABLE WIDTH="100%" BORDER="2" class="query" cellpadding="20" summary="Outer table">
           <TR>
            <TD COLSPAN=2>';
-
-  echo '<B>'._CHARTTITLE.'</B> &nbsp;
-            <INPUT TYPE="text" NAME="user_chart_title" SIZE="60" VALUE="'.$user_chart_title.'"><BR>';
-
-  echo '<B>'._CHARTTYPE.'</B>&nbsp;
+  echo '<TABLE WIDTH="100%" BORDER="1" SUMMARY="1st inner table"><TR>';
+  //  echo '<B>'._CHARTTYPE.'</B>&nbsp;
+  echo '<TD><B>What do you want to know:</B></TD><TD>
         <SELECT NAME="chart_type">
-         <OPTION VALUE=" "  '.chk_select($chart_type, " ").'>'._CHARTTYPES.'
-         <OPTION VALUE="1" '.chk_select($chart_type, "1").'>'._CHRTTYPEHOUR.'
-         <OPTION VALUE="2" '.chk_select($chart_type, "2").'>'._CHRTTYPEDAY.'
-         <!--<OPTION VALUE="3" '.chk_select($chart_type, "3").'>'._CHRTTYPEWEEK.'-->
-         <OPTION VALUE="4" '.chk_select($chart_type, "4").'>'._CHRTTYPEMONTH.'
-         <!--<OPTION VALUE="5" '.chk_select($chart_type, "5").'>'._CHRTTYPEYEAR.'-->
-         <OPTION VALUE="6" '.chk_select($chart_type, "6").'>'._CHRTTYPESRCIP.'
-         <OPTION VALUE="7" '.chk_select($chart_type, "7").'>'._CHRTTYPEDSTIP.'
-         <OPTION VALUE="8" '.chk_select($chart_type, "8").'>'._CHRTTYPEDSTUDP.'
-         <OPTION VALUE="10" '.chk_select($chart_type, "10").'>'._CHRTTYPESRCUDP.'
-         <OPTION VALUE="9" '.chk_select($chart_type, "9").'>'._CHRTTYPEDSTPORT.'
-         <OPTION VALUE="11" '.chk_select($chart_type, "11").'>'._CHRTTYPESRCPORT.'
-         <OPTION VALUE="12" '.chk_select($chart_type, "12").'>'._CHRTTYPESIG.'
-         <OPTION VALUE="13" '.chk_select($chart_type, "13").'>'._CHRTTYPESENSOR.'
-        </SELECT>';
+         <OPTION VALUE=" "  '. chk_select($chart_type, " ").'>'._CHARTTYPES.'
+         <OPTION VALUE="' . CHARTTYPE_HOUR . '" ' . chk_select($chart_type, CHARTTYPE_HOUR).'>'._CHRTTYPEHOUR.'
+         <OPTION VALUE="' . CHARTTYPE_DAY . '" ' . chk_select($chart_type, CHARTTYPE_DAY).'>'._CHRTTYPEDAY.'
+         <!--<OPTION VALUE="' . CHARTTYPE_WEEK . '" ' . chk_select($chart_type, CHARTTYPE_WEEK).'>'._CHRTTYPEWEEK.'-->
+         <OPTION VALUE="' . CHARTTYPE_MONTH . '" ' . chk_select($chart_type, CHARTTYPE_MONTH).'>'._CHRTTYPEMONTH.'
+         <!--<OPTION VALUE="' . CHARTTYPE_YEAR . '" ' . chk_select($chart_type, CHARTTYPE_YEAR).'>'._CHRTTYPEYEAR.'-->
+         <OPTION VALUE="' . CHARTTYPE_SRC_IP . '" ' . chk_select($chart_type, CHARTTYPE_SRC_IP).'>'._CHRTTYPESRCIP.'
+         <OPTION VALUE="' . CHARTTYPE_DST_IP . '" ' . chk_select($chart_type, CHARTTYPE_DST_IP).'>'._CHRTTYPEDSTIP.'
+         <OPTION VALUE="' . CHARTTYPE_SRC_TCP_PORT . '" ' . chk_select($chart_type, CHARTTYPE_SRC_TCP_PORT).'>'._CHRTTYPESRCPORT.'
+         <OPTION VALUE="' . CHARTTYPE_DST_TCP_PORT . '" ' . chk_select($chart_type, CHARTTYPE_DST_TCP_PORT).'>'._CHRTTYPEDSTPORT.'
+         <OPTION VALUE="' . CHARTTYPE_SRC_UDP_PORT . '" ' . chk_select($chart_type, CHARTTYPE_SRC_UDP_PORT).'>'._CHRTTYPESRCUDP.'
+         <OPTION VALUE="' . CHARTTYPE_DST_UDP_PORT . '" ' . chk_select($chart_type, CHARTTYPE_DST_UDP_PORT).'>'._CHRTTYPEDSTUDP.'
 
-  // Do you need other periods? Simply add them!
-  echo '&nbsp;&nbsp;<b>'._CHARTPERIOD.'</B>&nbsp;
-        <SELECT NAME="chart_interval">
-         <OPTION VALUE="0"  '.chk_select($chart_interval, "0").'>'._PERIODNO.'
-         <OPTION VALUE="7" '.chk_select($chart_interval, "7").'>'._PERIODWEEK.'
-         <OPTION VALUE="24" '.chk_select($chart_interval, "24").'>'._PERIODDAY.'
-         <OPTION VALUE="168" '.chk_select($chart_interval, "168").'>'._PERIOD168.'
-        </SELECT><BR>';
+         <OPTION VALUE="' . CHARTTYPE_SRC_COUNTRY . '" ' . chk_select($chart_type, CHARTTYPE_SRC_COUNTRY).'>'. 'Src. countries vs. number of alerts
+         <OPTION VALUE="' . CHARTTYPE_SRC_COUNTRY_ON_MAP . '" ' . chk_select($chart_type, CHARTTYPE_SRC_COUNTRY_ON_MAP).'>'. 'Src. countries vs. number of alerts on a worldmap
+         <OPTION VALUE="' . CHARTTYPE_DST_COUNTRY . '" ' . chk_select($chart_type, CHARTTYPE_DST_COUNTRY).'>'. 'Dst. countries vs. number of alerts
+         <OPTION VALUE="' . CHARTTYPE_DST_COUNTRY_ON_MAP . '" ' . chk_select($chart_type, CHARTTYPE_DST_COUNTRY_ON_MAP).'>'. 'Dst. countries vs. number of alerts on a worldmap
+         <OPTION VALUE="' . CHARTTYPE_SENSOR . '" ' . chk_select($chart_type, CHARTTYPE_SENSOR).'>'._CHRTTYPESENSOR.'
+         <OPTION VALUE="' . CHARTTYPE_UNIQUE_SIGNATURE .'" ' . chk_select($chart_type, CHARTTYPE_UNIQUE_SIGNATURE).'>'. 'Unique alerts vs. number of alerts' . '
+         <OPTION VALUE="' . CHARTTYPE_CLASSIFICATION . '" ' . chk_select($chart_type, CHARTTYPE_CLASSIFICATION).'>'._CHRTTYPESIG;
+ 
 
-  echo '&nbsp;&nbsp;<B>'._CHARTSIZE.'</B>
+	echo '</SELECT>
+	      </TD></TR>';
+  
+  
+  //echo '&nbsp;&nbsp;<B>'._PLOTTYPE.'</B> &nbsp;&nbsp;
+  echo '<TR><TD><B>How should it be displayed?</B></TD><TD>As&nbsp;
+            <INPUT TYPE="radio" NAME="chart_style"
+                   VALUE="bar" '.chk_check($chart_style, "bar").'> '._TYPEBAR.' &nbsp;&nbsp;
+            <INPUT TYPE="radio" NAME="chart_style"
+                   VALUE="line" '.chk_check($chart_style, "line").'> '._TYPELINE.' &nbsp;&nbsp;
+            <INPUT TYPE="radio" NAME="chart_style"
+                   VALUE="pie" '.chk_check($chart_style, "pie").'> '._TYPEPIE.' ';
+  echo '</TD></TR>';
+
+  //  echo '&nbsp;&nbsp;<B>'._CHARTSIZE.'</B>
+  echo '<TD><B>... with a size of:</B></TD><TD>(width x height)
         &nbsp;<INPUT TYPE="text" NAME="width" SIZE=4 VALUE="'.$width.'">
         &nbsp;<B>x</B>
         &nbsp;<INPUT TYPE="text" NAME="height" SIZE=4 VALUE="'.$height.'">
-        &nbsp;&nbsp;<BR>';
+        &nbsp;&nbsp;<BR></TD></TR>';
 
-  echo '&nbsp;&nbsp;<B>'._PLOTMARGINS.'</B>
+// not implemented:
+/*
+  //echo '&nbsp;&nbsp;<B>'._PLOTMARGINS.'</B>
+  echo '<TR><TD><B>... and with margins of:</B></TD><TD>(left x right x top x bottom)<BR>
         &nbsp;<INPUT TYPE="text" NAME="pmargin0" SIZE=4 VALUE="'.$pmargin0.'">
         &nbsp;<B>x</B>
         &nbsp;<INPUT TYPE="text" NAME="pmargin1" SIZE=4 VALUE="'.$pmargin1.'">
@@ -69,17 +86,12 @@
         &nbsp;<INPUT TYPE="text" NAME="pmargin2" SIZE=4 VALUE="'.$pmargin2.'">
         &nbsp;<B>x</B>
         &nbsp;<INPUT TYPE="text" NAME="pmargin3" SIZE=4 VALUE="'.$pmargin3.'">
-        &nbsp;&nbsp;<BR>';
+        &nbsp;&nbsp;<BR></TD></TR>';
+*/
 
-  echo '&nbsp;&nbsp;<B>'._PLOTTYPE.'</B> &nbsp;&nbsp;
-            <INPUT TYPE="radio" NAME="chart_style"
-                   VALUE="bar" '.chk_check($chart_style, "bar").'> '._TYPEBAR.' &nbsp;&nbsp
-            <INPUT TYPE="radio" NAME="chart_style"
-                   VALUE="line" '.chk_check($chart_style, "line").'> '._TYPELINE.' &nbsp;&nbsp
-            <INPUT TYPE="radio" NAME="chart_style"
-                   VALUE="pie" '.chk_check($chart_style, "pie").'> '._TYPEPIE.' ';
 
-  echo '<br><b>'._CHRTBEGIN.'</B>&nbsp;
+    echo '<TR><TD><B>Do you want to know<BR>the data just of a<BR>particular time frame?</B>&nbsp;(optional)</TD><TD>';
+    echo '<b>'._CHRTBEGIN.'</B>&nbsp;
         <SELECT NAME="chart_begin_hour">
          <OPTION VALUE=" "  '.chk_select($chart_begin_hour, " ").'>'._CHARTHOUR."\n";
         for ( $i = 0; $i <= 23; $i++ )
@@ -141,17 +153,43 @@
         </SELECT>
         <SELECT NAME="chart_end_year">'.
         dispYearOptions($chart_end_year)
-        .'</SELECT>';
+        .'</SELECT></TD></TR>';
+      
+	echo '<TR><TD><B>'._CHARTTITLE.'</B></TD><TD>
+		<INPUT TYPE="text" NAME="user_chart_title" SIZE="35" VALUE="'.$user_chart_title.'"></TD></TR>';
+		
+		
+		
+	
+  //  echo '&nbsp;&nbsp;<b>'._CHARTPERIOD.'</B>&nbsp;
+  echo '<TR><TD><B>How many columns or elements do you want to see?</B>&nbsp;</TD><TD>';
+  echo '<SELECT NAME="chart_interval">'.
+	'<OPTION VALUE="0"  '.chk_select($chart_interval, "0").'>{all of them}' . /* _PERIODNO. */
+  '<OPTION VALUE="5"  '.chk_select($chart_interval, "5").'> 5 elements' .  
+	'<OPTION VALUE="10" '.chk_select($chart_interval, "10").'>10 elements' . /* _PERIODWEEK. */
+	'<OPTION VALUE="15" '.chk_select($chart_interval, "15").'>15 elements' . /* _PERIODDAY. */
+	'<OPTION VALUE="20" '.chk_select($chart_interval, "20").'>20 elements' . /* _PERIOD168. */
+  '<OPTION VALUE="25" '.chk_select($chart_interval, "25").'>25 elements' .
+  '<OPTION VALUE="30" '.chk_select($chart_interval, "30").'>30 elements' .
+	'</SELECT><BR></TD></TR>';
 
-  echo '<INPUT TYPE="submit" NAME="submit" VALUE="'._GRAPHALERTS.'"><BR>
-        &nbsp;&nbsp; <BR>
-        </TD></TR>';
+	echo '<TR><TD><B>... and starting from which element on?</B>&nbsp;</TD>' .
+       '<TD>From element no.&nbsp;<INPUT TYPE="text" NAME="element_start" SIZE="10" VALUE="'.$element_start.'"></TD></TR>';
 
-  echo '<TR><TD>
+
+  // submit button
+  echo '<TR align=middle><TD colspan="2">';
+  echo '<BR><BR><div class="center"><INPUT TYPE="submit" NAME="submit" VALUE="'._GRAPHALERTS.'" align=center></div><BR><BR>';
+	echo '</TR></TABLE>';
+
+
+
+
+
+  echo '<TR><TD COLSPAN=2>
   <ul id="zMenu">
-<li><a href="#">'._AXISCONTROLS.'</a>
-  <ul>
-        <TABLE WIDTH="100%" BORDER="1">
+    <li>'._AXISCONTROLS.':<BR>';
+  echo '<TABLE WIDTH="100%" BORDER="1" SUMMARY="2nd inner table">
         <TR>
          <TD ALIGN="CENTER" WIDTH="50%"><B>'._CHRTX.'</B></TD>
          <TD ALIGN="CENTER" WIDTH="50%"><B>'._CHRTY.'</B></TD>
@@ -174,7 +212,7 @@
            }
 
            echo '</SELECT><BR>'.
-                 '<B>'._CHRTMINTRESH.' ( &gt;= ):</B>
+                 '<B>'._CHRTMINTRESH.':</B>
                  <INPUT TYPE="text" NAME="min_size" SIZE="5" VALUE='.$min_size.'>
                  &nbsp;&nbsp;
                  <BR>
@@ -182,25 +220,47 @@
                    chk_check($rotate_xaxis_lbl, "1").'>
                  &nbsp;
                  <B>'._CHRTROTAXISLABEL.'</B><BR>
-                 <INPUT TYPE="checkbox" NAME="yaxis_grid" VALUE="1"  '.
+                 <INPUT TYPE="checkbox" NAME="xaxis_grid" VALUE="1"  '.
                    chk_check($xaxis_grid, "1").'>
                   &nbsp;
                  <B>'._CHRTSHOWX.'</B><BR>
+                 <!--
+                 Disabled because it unexpectedly prevents displaying
+                 the whole bar instead of just suppressing the label... 
+                 -->
+                 <!--
                  <B>'._CHRTDISPLABELX.'
                  <INPUT TYPE="text" NAME="xaxis_label_inc" SIZE=4 VALUE='.$xaxis_label_inc.'>
                  &nbsp; '._CHRTDATAPOINTS.'
+                 -->
+                 <INPUT TYPE="hidden" NAME="xaxis_label_inc" VALUE="1"><BR> 
          </TD>
+
+
          <TD VALIGN="top">
+         <!--
+         Logarithmic y-axis temporarily disabled, as the bars seem
+         to be displayed in a wrong way, although the y-axis grid lines
+         look correct
+         -->
+         <!--
            <INPUT TYPE="checkbox" NAME="yaxis_scale" VALUE="1" '.
              chk_check($yaxis_scale, "1").'>&nbsp;
-           <B>'._CHRTYLOG.'</B><BR>
+           <B>'._CHRTYLOG.'</B>
+           <BR>
+         --> 
+           <INPUT TYPE="hidden" NAME="yaxis_scale" VALUE="0">
+         
+           
+
            <INPUT TYPE="checkbox" NAME="yaxis_grid" VALUE="1"  '.
              chk_check($yaxis_grid, "1").'>&nbsp;
            <B>'._CHRTYGRID.'</B>
          </TD>
         </TR>
         </TABLE>
-        </ul></li>
+	</ul></li>
+
         </TD></TR>
      </TABLE>';
 
@@ -263,6 +323,11 @@ function showHide(){
 // ]]>
 </script>
 ';
+
+/*
+vim:shiftwidth=2:tabstop=2:expandtab
+*/
+
 ?>
 
 

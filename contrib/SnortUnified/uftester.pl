@@ -39,15 +39,15 @@ $debug = 1;
 $UF_Data = {};
 $record = {};
 
-$sids = get_snort_sids("/Users/jbrvenik/src/test/unified/sid-msg.map",
-                       "/Users/jbrvenik/src/test/unified/gen-msg.map");
-$class = get_snort_classifications("./classification.config");
+$sids = get_snort_sids("/tmp/sid-msg.map",
+                       "/tmp/gen-msg.map_DISABLED");
+$class = get_snort_classifications("/tmp/classification.config");
 
 # If you want to see them
-print_snort_sids($sids);
+#print_snort_sids($sids);
 
 # If you want to see them
-print_snort_classifications($class);
+#print_snort_classifications($class);
 
 # printf("Opening File %s\n", $file);
 

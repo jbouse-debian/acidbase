@@ -6,7 +6,7 @@
 ** 
 ** (see the file 'base_main.php' for license details)
 **
-** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
 **                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
@@ -18,8 +18,15 @@
 **
 ********************************************************************************
 */
+
+/*
+ Create a unique cookie name for each BASE installation.
+*/
+$sessionName = str_replace(' ', '_', $BASE_installID . session_name());
+session_name($sessionName);
+
 session_start();
-$BASE_VERSION = '1.3.9 (anne)';
+$BASE_VERSION = '1.4.4 (dawn)';
 
 /*
  Set the below to the language you would like people to use while viewing
@@ -45,6 +52,7 @@ $BASE_display_sig_links = 1;
  This must be set for BASE to function! Do not include a trailing slash!
  But also put the preceding slash. e.g. Your URL is http://127.0.0.1/base
  set this to /base
+
  */
 $BASE_urlpath = '';
 
@@ -125,6 +133,42 @@ $db_connect_method = 1;
  */
 $use_referential_integrity = 0;
 
+/* SMTP Email Alert action
+ *
+ * Requires the Pear-Mail package to be installed like so:
+ *
+ * # pear install --alldeps mail
+ *
+ * 
+ * - action_email_smtp_host : Which smtp server to use
+ * - action_email_smtp_localhost : What name to use for this server in the 
+ *   SMTP HELO statement. You will likely need to replace this with the name
+ *   of the machine running BASE when connecting to a remote mail server.
+ * - action_email_smtp_auth : Whether or not to authenticate with
+ *                            the smtp host
+ *     0: We do NOT authenticate ourselves towards the smtp host
+ *     1: We DO authenticate ourselves towards the smtp host
+ *        with the following credentials:
+ * - action_email_smtp_user : The user name with the smtp host
+ * - action_email_smtp_pw : The password for this mail account
+ * - action_email_from : email address to use in the FROM field of the mail message
+ *                       MUST be the same email address used for the SMTP account
+ * - action_email_subject : subject to use for the mail message
+ * - action_email_msg : additional text to include in the body of the mail message
+ * - action_email_mode : specifies how the alert information should be enclosed
+ *     0 : all emailed alerts should be in the body of the message
+ *     1 : all emailed alerts should be enclosed in an attachment
+ */
+$action_email_smtp_host = 'smtp.example.com';
+$action_email_smtp_localhost = 'localhost';
+$action_email_smtp_auth = 1;
+$action_email_smtp_user = 'username';
+$action_email_smtp_pw = 'password';
+$action_email_from = 'smtpuser@example.com';
+$action_email_subject = 'BASE Incident Report';
+$action_email_msg = '';
+$action_email_mode = 0;
+
 /* Variable to start the ability to handle themes... */
 $base_style = 'base_style.css';
 
@@ -181,9 +225,14 @@ $sql_trace_file = '';
 
 /* Auto-Screen refresh
  * - Refresh_Stat_Page - Should certain statistics pages refresh?
+ * - refresh_all_pages - Should all the pages trigger the http refresh,
+ *                       as well?
+ *                       0: No, they should not.
+ *                       1: Yes, even these pages should refresh.
  * - Stat_Page_Refresh_Time - refresh interval (in seconds)
  */
 $refresh_stat_page = 1;
+$refresh_all_pages = 0;
 $stat_page_refresh_time = 180;
 
 /* Display First/Previous/Last timestamps for alerts or
@@ -258,7 +307,7 @@ $portscan_payload_in_signature = '1';
  */
 $event_cache_auto_update = 1;
 
-/* Maintain a history of the visited pages so that the "Back"
+/* Maintain a history of the visited pages so that the 'Back'
  * button can be used.
  *
  * Note: Enabling this option will cause the PHP-session to
@@ -305,16 +354,40 @@ $show_first_last_links = 0;
 /* Whois query */
 $external_whois_link = 'http://www.dnsstuff.com/tools/whois.ch?ip=';
 
- /* DNS query */
+/* Local whois */
+/* IP addresses of whois servers. Updated on Aug, 1st 2009.
+ *
+ * Name:    whois.arin.net
+ * Addresses:  199.212.0.43
+ *
+ * Name:    whois4.apnic.net
+ * Address:  202.12.29.13
+ * Aliases:  whois.apnic.net
+ *
+ * Name:    whois.ripe.net
+ * Address:  193.0.6.135
+ *
+ * Name:    whois.nic.ad.jp
+ * Address:  192.41.192.40
+ *
+ */
+
+$arin_ip  = "199.212.0.43";
+$apnic_ip = "202.12.29.13";
+$ripe_ip  = "193.0.6.135";
+$jnic_ip  = "192.41.192.40";
+
+
+/* DNS query */
 $external_dns_link = 'http://www.dnsstuff.com/tools/ptr.ch?ip=';
 
-/* SamSpade "all" query */
+/* SamSpade 'all' query */
 $external_all_link = 'http://www.whois.sc/';
 
 /* TCP/UDP port database */
 $external_port_link = array('sans'     => 'http://isc.sans.org/port.html?port=',
                             'tantalo'  => 'http://ports.tantalo.net/?q=',
-                            'sstats'   => 'http://www.securitystats.com/tools/portsearch.php?type=port&select=any&Submit=Submit&input=');
+                            'sstats'   => 'http://www.securitystats.com/tools/portsearch.php?type=port&amp;select=any&amp;Submit=Submit&amp;input=');
 
 /* Signature references */
 $external_sig_link = array('bugtraq'   => array('http://www.securityfocus.com/bid/', ''),
@@ -323,23 +396,12 @@ $external_sig_link = array('bugtraq'   => array('http://www.securityfocus.com/bi
                            'arachnids' => array('http://www.whitehats.com/info/ids', ''),
                            'mcafee'    => array('http://vil.nai.com/vil/content/v_', '.htm'),
                            'icat'      => array('http://icat.nist.gov/icat.cfm?cvename=CAN-', ''),
-                           'nessus'    => array('http://www.nessus.org/plugins/index.php?view=single&id=', ''),
+                           'nessus'    => array('http://www.nessus.org/plugins/index.php?view=single&amp;id=', ''),
                            'url'       => array('http://', ''),
-                           'local' => array('signatures/', '.txt'));
+                           'local'     => array('signatures/', '.txt'),
+                           'local_rules_dir' => array('rules/', '.rules'),
+                           'EmThreats' => array('http://docs.emergingthreats.net/', ''));
 
-/* Email Alert action
- *
- * - action_email_from : email address to use in the FROM field of the mail message
- * - action_email_subject : subject to use for the mail message
- * - action_email_msg : additional text to include in the body of the mail message
- * - action_email_mode : specifies how the alert information should be enclosed
- *     0 : alerts should be in the body of the message
- *     1 : alerts should be enclosed in an attachment
- */
-$action_email_from = 'BASE Alert <base>';
-$action_email_subject = 'BASE Incident Report';
-$action_email_msg = '';
-$action_email_mode = 0;
 
 /* Custom (user) PHP session handlers
  *
@@ -370,13 +432,40 @@ $colored_alerts = 0;
 $priority_colors = array ('FF0000','FFFF00','FF9900','999999','FFFFFF','006600');
 
 
+/** IP address to country support
+ *
+ * 1. First method for the mapping of ip addresses to country names:
+ *
+ * If you have installed the perl module Geo::IPfree
+ * http://search.cpan.org/CPAN/authors/id/G/GM/GMPASSOS/Geo-IPfree-0.2.tar.gz
+ * then generate the country database in readable ASCII format,
+ * similarly to this:
+ *         cd /usr/lib/perl5/site_perl/5.8.8/Geo/
+ *         perl ipct2txt.pl ./ipscountry.dat /var/www/html/ips-ascii.txt
+ *
+ * Set the absolute path to this database accordingly:
+ */
+ //$Geo_IPfree_file_ascii = "/var/www/html/ips-ascii.txt";
+
+/** 2. Second method for the mapping of ip addresses to country names:
+ * 
+ * If you have installed the perl module IP::Country
+ * http://search.cpan.org/dist/IP-Country/
+ * (requires Geography::Countries as well),
+ * then uncomment and correct the absolute path to this perl executable:
+ */
+ //$IP2CC = "/usr/bin/ip2cc";
+
+
+
+
 /*
  The below line should not be changed!
  */
 $BASE_path = dirname(__FILE__);
 
 // _BASE_INC is a variable set to prevent direct access to certain include files....
-define( "_BASE_INC", 1 );
+define( '_BASE_INC', 1 );
 
 // Include for languages
 include("$BASE_path/languages/$BASE_Language.lang.php");

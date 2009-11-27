@@ -39,6 +39,8 @@
 
  $addr_type = ImportHTTPVar("addr_type", VAR_DIGIT);
  $submit = ImportHTTPVar("submit", VAR_ALPHA | VAR_SPACE, array(_SELECTED, _ALLONSCREEN, _ENTIREQUERY));
+ $sort_order=ImportHTTPVar("sort_order", VAR_LETTER | VAR_USCORE);
+ $action = ImportHTTPVar("action", VAR_ALPHA);
  $dst_ip = NULL;
 
    // Check role out and redirect if needed -- Kevin
@@ -85,10 +87,22 @@ if ( $debug_mode > 0 )
   }
 
   if ( $qs->isCannedQuery() )
+	{
      PrintBASESubHeader($page_title.": ".$qs->GetCurrentCannedQueryDesc(),
-                        $page_title.": ".$qs->GetCurrentCannedQueryDesc(), $cs->GetBackLink(), 1);
+                        $page_title.": ".$qs->GetCurrentCannedQueryDesc(), 
+                        $cs->GetBackLink(), 1);
+	}
   else
-     PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+	{
+		if ($action != "")
+		{
+			PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), $refresh_all_pages);
+		}
+		else
+		{
+    	PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+		}
+	}
   
   if ( $event_cache_auto_update == 1 )  UpdateAlertCache($db);
 
@@ -236,10 +250,12 @@ if ( $debug_mode > 0 )
       /* Print # of Occurances */
       $tmp_iplookup = 'base_qry_main.php?new=1'.
                       '&amp;num_result_rows=-1'.
+                      '&amp;sort_order='.$sort_order.
                       '&amp;submit='._QUERYDBP.'&amp;current_view=-1&amp;ip_addr_cnt=1';
 
       $tmp_iplookup2 = 'base_stat_alerts.php?new=1'.   
                        '&amp;num_result_rows=-1'.
+                       '&amp;sort_order='.$sort_order.
                        '&amp;submit='._QUERYDBP.'&amp;current_view=-1&amp;ip_addr_cnt=1';
 
       if ( $addr_type == 1 )
@@ -277,6 +293,7 @@ if ( $debug_mode > 0 )
   $qs->PrintAlertActionButtons();
   $qs->SaveState();
   ExportHTTPVar("addr_type", $addr_type);
+	ExportHTTPVar("sort_order", $sort_order);
 
   echo "\n</FORM>\n";
   $et->Mark("Get Query Elements");

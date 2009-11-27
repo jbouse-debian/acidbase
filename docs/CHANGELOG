@@ -379,5 +379,186 @@
     - Added Sean Muller as the Project Manager -- Kevin Johnson
     - Fixed error in contrib/base-rss.php -- Dan
     - Added INSTALL and INSTALL.rtf files to docs directory -- Sean Muller
-    - Bug #1801192 XSS bug in BASE fixed -- Kevin Johnson and Sean Muller
-    - Bug #1760615 Sort order ignored -- Kevin Johnson and Jordan Weins
+    - Bug #1801192 XSS bug in BASE fixed -- Kevin Johnson and Sean Muller (Discovered by Daniel Medianero)
+    - Bug #1760615 Sort order ignored -- Kevin Johnson and Jordan Wiens
+- 4/25/2008 1.4.0 (katherine)
+    - Fixed index.php redirect -- Kevin Johnson for Terry Burton
+    - Fixed Bug #1836274 base_qry_alert.php Showing corrupt HTML -- Kevin Johnson
+    - Fixed error in norwegian.lang.php with the SEARCH tag -- Kevin Johnson for Ronny Hansen
+    - Fixed Bug #1859481 You have an error in your SQL syntax -- Juergen Leising
+    - Fixed Bug #1846317 Paging does not work in base_stat_sensor.php -- Kevin Marion
+    - Updated Chinese language file -- Johnson Chiang
+    - Fixed Bug #1886513 Line Duplication -- Kevin Johnson
+    - Multiple graphing fixes -- Juergen Leising
+    - Added country support for source and destination ip in 
+      "graph alert data"; feature request no. 1399907 -- Juergen Leising
+    - Added Worldmap feature -- Juergen Leising
+    - Fixed Query bug regarding time -- Juergen Leising
+    - Added BASE64 support for TCP options -- Juergen Leising
+    - Added Vendor MAC Map -- Juergen Leising
+    - Added patch for Barnyard from University of Florida -- Kevin Johnson
+    - Updated INSTALL documents -- Sean Muller
+    - Added debug function calls -- Juergen Leising
+    - Fixed setup issues -- Juergen Leising
+
+- 06/29/2008 1.4.1 (lara)
+    - Fixed moving alerts with empty sig_priority -- Kevin Johnson for Michel Lundell
+    - Added support for new chart type "unique alerts vs. number of 
+      alerts". Feature request no. 1659968 -- Juergen Leising
+    - Further fixes in the setup procedure -- Juergen Leising
+    - Disabled the pcap download possibility for sfportscan alerts, as
+      these are just pseudo packets rather than real packets from the
+      network.  Answer to bug no. 1885673 -- Juergen Leising
+    - Workaround and fixes for the bugs reported under no. 1699443 
+      1. "Fatal error: Call to a member function MoveNext() on a non-object 
+          in /var/www/base-127/includes/base_db.inc.php on line 463".
+         Workaround.
+      2. Improved error handling in base_action.inc.php:
+         Errors are now shown in regular mode rather than with
+         $debug_mode > 1.  Not every kind of error is a duplicate error.
+      3. Fixed baseGetHostByAddr() in base_net.inc.php in cases, 
+         where it does not get provided with a numerical ("dotted") 
+         IP address.  This is the heart of the bug reported under this
+         number by the original poster twstdpear.  The "ERROR: invalid 
+         input syntax for integer is a rather late state", though.
+      4. Fixed a violation of referential integrity, that does not
+         get accepted by postgresql, at least not by those ones of
+         version 8.x.  Cf. base_action.inc.php, where I have essentially
+         moved the actions around the table "event" upwards, so that
+         these lines get performed prior to lines that change/update
+         any other tables.
+         -- Juergen Leising
+    - Same or at least similar problem as under no. 1699443 sub 1.
+      seems to be the one reported in 
+      https://sourceforge.net/forum/forum.php?thread_id=2014650&forum_id=404428
+      Workaround. -- Juergen Leising
+    - Workaround for bug no. 1762491.  Related to the last
+      two points (if not identical) -- Juergen Leising
+    - Fix for bug no. 1974990 -- Juergen Leising
+    - Added information to the docs about how to fix a pear::image::graph
+      library bug preventing legends from being displayed with pie charts
+      -- Juergen Leising
+    - Added information to the docs about how to fix a missing fonts problem
+      -- Juergen Leising
+    - Fixes in PrintPortscanEvents().  Reaction to 
+      https://sourceforge.net/forum/forum.php?thread_id=2035110&forum_id=404428
+      -- Juergen Leising
+    - Workaround for a potential bug in preg_replace(); should solve
+      problem mentioned in 
+      https://sourceforge.net/forum/forum.php?thread_id=1916121&forum_id=404428
+      -- Juergen Leising
+    - Some changes to the translations in
+      languages/german.lang.php  -- Juergen Leising
+    - Added patch from Chris Ryan for german.lang.php -- Juergen Leising
+    - Increased memory limit from 50 to 128 MB in base_graph_common.php
+      as proposed by Chris Ryan on
+      http://sourceforge.net/forum/forum.php?thread_id=2084987&forum_id=404428
+      -- Juergen Leising
+    - Added completely rewritten base.spec for building rpm packages
+      of BASE. -- Juergen Leising
+    - Workaround in base_graph_common.php for the case that signature
+      classification names are missing.  Even in this case different
+      bars should be displayed, not just one "unclassified" one.
+      -- Juergen Leising
+    - Fixed small HTML bugs in the query form.  -- Juergen Leising
+    - Fixed syntax error in setup1.php in case of a wrong adodb path -- Juergen Leising
+    - All of the sensors are now displayed in the search form.  Same problem
+      as in UpdateAlertCache() in base-php4/includes/base_cache.inc.php.
+      -- Juergen Leising
+    - Fixed SQL error with sig_priority when queried coming from the
+      query form. -- Juergen Leising
+    - Fixed "Select Signature from List" in the query form -- Juergen Leising
+    - Added a README about the usage of Jason Brvenik's SnortUnified plugin.
+      -- Juergen Leising
+    - Fixed some smaller issues with Jason Brvenik's SnortUnified plugin
+      and adjusted the whole plugin to perl-5.10 and Net::Packet-3.25,
+      as shipped with fedora 9. -- Juergen Leising
+      perl-5.10, as shipped with fedora 9. -- Juergen Leising
+    - Fix for bug no. 2001211. -- Juergen Leising
+    - Updated base.spec. The base-contrib rpm should now be installable
+      under fedora 9.
+    - uf_csv.pl puts out IP addresses in human readable form, now. -- Juergen Leising
+    - Newly generated coordinates file world_map6.txt. -- Juergen Leising
+    - Any potential relative paths of the adodb library are now
+      converted to an absolute path -- Juergen Leising
+    - Signatures from http://www.emergingthreats.net/ point now to
+      http://docs.emergingthreats.net/SID -- Juergen Leising 
+
+
+4/03/2009 1.4.2 (chandy)
+    - EmThreats_link opens now in separate browser window -- Juergen Leising for Micah Gersten
+    - A new reference "[rule]" points now to base_local_rules.php, 
+      which displays a particular rule for a given rules id (sid).
+      Prerequisite for this is that "local_rules_dir" in base_conf.php
+      points to an actually existing and readable/searchable directory which 
+      contains the snort rules.  Please note, that a web server
+      is usually NOT allowed to access any files outside of its
+      document root.  Feature request by Chris Ryan, cf.
+      https://sourceforge.net/forum/message.php?msg_id=5310420
+      https://sourceforge.net/forum/message.php?msg_id=5311517
+      -- Juergen Leising
+    - Update of base.spec; works with fedora 10 -- Juergen Leising
+    - I have applied two patches submitted by asavenkov
+      with regard to the oci8 driver (oracle 10), cf.
+      https://sourceforge.net/forum/message.php?msg_id=5795641
+      https://sourceforge.net/forum/message.php?msg_id=5796556
+      -- Juergen Leising
+    - The "email-the-alerts"-variables were defined twice at different
+      locations in base_conf.php.  Fixed this.  -- Juergen Leising
+    - Emails from BASE containing one or more alerts include now a
+      "To:"-header, as well.  Bug report no. 2234733 -- Juergen Leising
+    - $sort_order, once it has been chosen, survives now a possible "action",
+      even in base_stat_uaddr.php, base_stat_ports.php, base_stat_iplink.php,
+      base_stat_class.php and base_stat_sensor.php. 
+      Bug no. 2234745. -- Juergen Leising
+    - The refresh-problem, when an "action" has been taken, is now fixed in
+      base_stat_uaddr.php, base_stat_ports.php, base_stat_iplink.php,
+      base_stat_class.php and base_stat_sensor.php, as well. 
+      Bug no. 1681012. -- Juergen Leising
+    - I have corrected the way ICMP redirect messages are displayed
+      by BASE, inspired by Bruno G. San Alejo. -- Juergen Leising
+    - Several preprocessor events that did not get stored in the acid_event
+      table, so far, are now processed and displayed by BASE.  This affects
+      all those preprocessors which have sig names that do NOT start with
+      a "spp_" prefix. -- Juergen Leising
+    - Fixed bug with archiving IP options. -- Juergen Leising
+
+5/14/09 1.4.3 (gabi)
+    - XSS Flaws fixed in alert groups -- Kevin Johnson
+    - Possible SQL injection flaw fixed in AG -- Kevin Johnson
+    - XSS Flaws fixed in base_qry files -- Kevin Johnson
+    - Multiple XSS flaws fixed in citems -- Kevin Johnson
+
+5/30/09 1.4.3.1 (zig)
+    - Multiple XSS flaws fixed in User and Role management -- Kevin Johnson
+
+7/24/09 1.4.4 (dawn)
+    - Fixed SQL injection flaw reported by Peter Österberg -- Kevin Johnson
+    - Removed debug code that has triggered "WARNING: The following query 
+      key has not been implemented, yet." - Bugs no. 2813925, 2808291,
+      2798983 and 2828709 -- Juergen Leising
+    - Signature names were displayed as raw html rather than as real names
+      with clickable URLs. Fix for bug no. 2803137. -- Juergen Leising
+    - Rewrote code that produces a link to a local directory with 
+      documentation for alerts in front of the signature names.  
+      Proposal for this was filed as bug no. 2808527.  
+      Thanks go to Akos Daniel. -- Juergen Leising
+    - Applied and roughly tested patch that was submitted anonymously 
+      under bug no. 2825018.  It affects the email feature. -- Juergen Leising
+    - Fix for PHP Warning:  array_count_values(): Can only count STRING and 
+      INTEGER values! in base_qry_common.php -- Juergen Leising
+    - Fix for Undefined variable: sf_portscan_flag -- Juergen Leising
+    - Fix for the link "local whois": 
+      -- IP addresses updated and moved to the configuration file
+      -- No storage to cache in case of negative whois responses
+      -- New search strings to find out when the whois query should be 
+         forwarded to some other whois server, other than the original one.
+      This bug has been casually mentioned at
+      http://sourceforge.net/forum/forum.php?thread_id=3331857&forum_id=404428  
+      -- Juergen Leising
+    - Fixed Cross site scripting and local file include in base_local_rules.php -- Kevin Johnson Reported by Clint Ruoho
+
+
+
+
+

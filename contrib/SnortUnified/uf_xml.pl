@@ -10,9 +10,9 @@ $UF_Data = {};
 $record = {};
 $prepend = "Snort Alert:";
 
-$sids = get_snort_sids("/Users/jbrvenik/src/test/unified/sid-msg.map",
-                       "/Users/jbrvenik/src/test/unified/gen-msg.map");
-$class = get_snort_classifications("/Users/jbrvenik/src/test/unified/classification.config");
+$sids = get_snort_sids("/tmp/sid-msg.map",
+                       "/tmp/gen-msg.map_DISABLED"); # old format!
+$class = get_snort_classifications("/tmp/classification.config");
 
 $UF_Data = openSnortUnified($file);
 die unless $UF_Data;
@@ -46,7 +46,7 @@ while ( $record = readSnortUnifiedRecord() ) {
         if ( $field eq 'tv_sec' || $field eq 'tv_sec2' ) {
             print("\t\t");
             $xml->startTag($field . "_h");
-            $xml->characters(scalar gmtime($record->{$field}));
+            $xml->characters(scalar localtime($record->{$field}));
             $xml->endTag($field . "_h");
             print("\n");
         }

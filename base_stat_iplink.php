@@ -31,6 +31,8 @@
   include_once ("$BASE_path/base_stat_common.php");
 
   $submit = ImportHTTPVar("submit", VAR_ALPHA | VAR_SPACE, array(_SELECTED, _ALLONSCREEN, _ENTIREQUERY));
+	$sort_order=ImportHTTPVar("sort_order", VAR_LETTER | VAR_USCORE);
+ 	$action = ImportHTTPVar("action", VAR_ALPHA);	
 
   $et = new EventTiming($debug_time_mode);
   $cs = new CriteriaState("base_stat_iplink.php");
@@ -50,10 +52,31 @@
 
   $page_title = _SIPLTITLE;
   if ( $qs->isCannedQuery() )
-     PrintBASESubHeader($page_title.": ".$qs->GetCurrentCannedQueryDesc(),
-                        $page_title.": ".$qs->GetCurrentCannedQueryDesc(), $cs->GetBackLink(), 1);
+	{
+		if ($action == "")
+		{
+    	PrintBASESubHeader($page_title.": ".$qs->GetCurrentCannedQueryDesc(),
+     	                   $page_title.": ".$qs->GetCurrentCannedQueryDesc(), 
+      	                 $cs->GetBackLink(), 1);
+		}
+		else
+		{
+			PrintBASESubHeader($page_title.": ".$qs->GetCurrentCannedQueryDesc(),
+     	                   $page_title.": ".$qs->GetCurrentCannedQueryDesc(), 
+      	                 $cs->GetBackLink(), $refresh_all_pages);
+		}
+	}
   else
-     PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+	{
+		if ($action == "")
+		{
+    	PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+		}
+		else
+		{
+			PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), $refresh_all_pages);
+		}
+	}
   
   /* Connect to the Alert database */
   $db = NewBASEDBConnection($DBlib_path, $DBtype);
@@ -141,8 +164,16 @@
      $dip = $myrow[1];
      $proto = $myrow[2];  
 
-     $sip_fqdn = baseGetHostByAddr(baseLong2IP($sip), $db, $dns_cache_lifetime);
-     $dip_fqdn = baseGetHostByAddr(baseLong2IP($dip), $db, $dns_cache_lifetime);
+		if ($resolve_IP == 1)
+		{
+    	$sip_fqdn = baseGetHostByAddr(baseLong2IP($sip), $db, $dns_cache_lifetime);
+     	$dip_fqdn = baseGetHostByAddr(baseLong2IP($dip), $db, $dns_cache_lifetime);
+		}
+		else
+		{
+			$sip_fqdn =_PSNODNS; 
+			$sip_fqdn =_PSNODNS;
+		}
 
      /* Get stats on the link */
      if ( $sip && $dip )
@@ -168,7 +199,8 @@
           '&amp;ip_addr%5B1%5D%5B0%5D=+&amp;ip_addr%5B1%5D%5B1%5D=ip_dst&amp;ip_addr%5B1%5D%5B2%5D=%3D'.
           '&amp;ip_addr%5B1%5D%5B3%5D='.baseLong2IP($dip).
           '&amp;ip_addr%5B1%5D%5B8%5D=+&amp;ip_addr%5B1%5D%5B9%5D=+'.
-          '&amp;ip_addr_cnt=2&amp;layer4='.IPProto2str($proto);
+          '&amp;ip_addr_cnt=2&amp;layer4='.IPProto2str($proto).
+          '&amp;sort_order='.$sort_order;
 
         $tmp_rowid = $sip . "_" . $dip . "_" . $proto;
         echo '    <TD><INPUT TYPE="checkbox" NAME="action_chk_lst['.$i.']" VALUE="'.$tmp_rowid.'"></TD>';
@@ -204,6 +236,7 @@
   $qs->PrintBrowseButtons();
   $qs->PrintAlertActionButtons();
   $qs->SaveState();
+	ExportHTTPVar("sort_order", $sort_order);
   echo "\n</FORM>\n";
   
   PrintBASESubFooter();

@@ -22,7 +22,29 @@ session_start();
 
 define( "_BASE_INC", 1 );
 include("../includes/base_setup.inc.php");
-include($_SESSION['adodbpath']."/adodb.inc.php");
+if (!array_key_exists("adodbpath", $_SESSION))
+{
+  $errorMsg = "ERROR: The php session does not contain the array key \"adodbpath\". This is typically caused by not having allowed cookies. Exiting.";
+  print $errorMsg;
+  exit();
+}
+$ado_inc_php = $_SESSION['adodbpath'] . "/adodb.inc.php";
+if ($ado_inc_php == "")
+{
+  print __FILE__ . ":" . __LINE__ . ": ERROR: The variable \$ado_inc_php is empty. Exiting.";
+  exit();
+}
+else if (!file_exists($ado_inc_php))
+{
+  print "ERROR: The file \"" . $ado_inc_php . "\" does not exist. Exiting.";
+  exit();
+}
+else if (!is_readable($ado_inc_php))
+{
+  print "ERROR: " . $ado_inc_php . " does exist, but is not readable. Typically a permission problem. Exiting.";
+  exit();
+}
+include($ado_inc_php);
 include("../includes/base_state_common.inc.php");
 include("../includes/base_constants.inc.php");
 
@@ -118,7 +140,7 @@ if (@$_GET['action'] == "check")
 <option value="postgres" <?php if ($_SESSION['dbtype'] == 'postgres') echo "selected";?>>PostGRES
 <option value="mssql" <?php if ($_SESSION['dbtype'] == 'mssql') echo "selected";?>>Microsoft SQL Server
 <option value="oci8" <?php if ($_SESSION['dbtype'] == 'oci8') echo "selected";?>>Oracle
-</select>[<a href="#" onClick="javascript:window.open('../help/base_setup_help.php#dbtype','helpscreen','width=300,height=300');">?</a>]</td</tr>
+</select>[<a href="../help/base_setup_help.php#dbtype" onClick="javascript:window.open('../help/base_setup_help.php#dbtype','helpscreen','width=300,height=300');">?</a>]</td</tr>
 <tr><td colspan=2 align="center">&nbsp;</td></tr>
 <tr><td class="setupKey">Database Name:</td><td class="setupValue"><input type="text" name="dbname" value="<?php echo $_SESSION['dbname'];?>"></td></tr>
 <tr><td class="setupKey">Database Host:</td><td class="setupValue"><input type="text" name="dbhost" value="<?php echo $_SESSION['dbhost'];?>"></td></tr>
@@ -126,7 +148,7 @@ if (@$_GET['action'] == "check")
 <tr><td class="setupKey">Database User Name:</td><td class="setupValue"><input type="text" name="dbusername" value="<?php echo $_SESSION['dbusername'];?>"></td></tr>
 <tr><td class="setupKey">Database Password:</td><td class="setupValue"><input type="text" name="dbpasswd" value="<?php echo $_SESSION['dbpasswd'];?>"></td></tr>
 <tr><td colspan=2 align="center">&nbsp;</td></tr>
-<tr><td colspan=2 align="center"><input type="checkbox" name="usearchive" <?php if ($_SESSION['usearchive'] == 1 ) echo "checked";?>>Use Archive Database[<a href="#" onClick="javascript:window.open('../help/base_setup_help.php#usearchive','helpscreen','width=300,height=300');">?</a>]</td></tr>
+<tr><td colspan=2 align="center"><input type="checkbox" name="usearchive" <?php if ($_SESSION['usearchive'] == 1 ) echo "checked";?>>Use Archive Database[<a href="../help/base_setup_help.php#usearchive" onClick="javascript:window.open('../help/base_setup_help.php#usearchive','helpscreen','width=300,height=300');">?</a>]</td></tr>
 <tr><td class="setupKey">Archive Database Name:</td><td class="setupValue"><input type="text" name="arcdbname" value="<?php echo $_SESSION['arcdbname'];?>"></td></tr>
 <tr><td class="setupKey">Archive Database Host:</td><td class="setupValue"><input type="text" name="arcdbhost" value="<?php echo $_SESSION['arcdbhost'];?>"></td></tr>
 <tr><td class="setupKey">Archive Database Port:<br>Leave blank for default!</td><td class="setupValue"><input type="text" name="arcdbport" value="<?php echo $_SESSION['arcdbport'];?>"></td></tr>

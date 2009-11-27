@@ -1,0 +1,88 @@
+
+Troubleshooting:
+
+1. Missing fonts:
+
+a) Problem:
+
+/var/www/html/base-php4/base_graph_display.php:350: WARNING: Verdana could not be resolved into a readable font file. Check "Image/Canvas/Fonts/fontmap.txt" in your PEAR directory. This directory can be found by pear 'config-show | grep "PEAR directory"'. Falling back to default font without the possibility to adjust any font sizes, referer: http://localhost/base-php4/base_graph_main.php
+
+b) Solution
+
+Make sure, the line starting with "Verdana" in fontmap.txt
+contains the path to a readable font file. 
+
+The file fontmap.txt can be found in the PEAR directory
+under Image/Canvas/Fonts/, e.g.:
+
+/usr/share/pear/Image/Canvas/Fonts/fontmap.txt
+
+One possibility on fedora 9 could be, for example:
+
+rpm -Uvh dejavu-lgc-fonts-2.24-3.fc9.noarch.rpm
+
+vim /usr/share/pear/Image/Canvas/Fonts/fontmap.txt
+
+Verdana,/usr/share/fonts/dejavu/DejaVuLGCSans.ttf
+Verdana Bold,/usr/share/fonts/dejavu/DejaVuLGCSans-Bold.ttf
+Verdana Bold Italic,/usr/share/fonts/dejavu/DejaVuLGCSans-BoldOblique.ttf
+Verdana Italic,/usr/share/fonts/dejavu/DejaVuSans-Oblique.ttf
+
+
+
+BTW: A different font name can be chosen in base_graph_display.php.
+
+
+
+
+2. Missing legends with pie-charts:
+
+a) Problem:
+
+All of the pie-charts lack the legends.  You do not know which colour
+stands for what.
+
+b) Solution:
+
+This is a bug in the PEAR::Image::Graph library.  A quick fix for this
+has been proposed as PEAR bug no. 8055:
+
+	http://pear.php.net/bugs/8055
+
+And here is the patch against pear/Image/Graph/Plot/Pie.php:
+
+
+
+--- Pie.php.orig	2007-03-14 00:26:21.000000000 +0100
++++ Pie.php	2008-06-09 14:08:17.000000000 +0200
+@@ -499,7 +499,7 @@ class Image_Graph_Plot_Pie extends Image
+         if (is_array($this->_dataset)) {
+             
+             $this->_canvas->startGroup(get_class($this) . '_' . $this->_title);
+-            $this->_clip(true);
++            //$this->_clip(true);
+             
+             $totals = $this->_getTotals();
+             $totals['CENTER_X'] = (int) (($this->_left + $this->_right) / 2);
+@@ -613,11 +613,11 @@ class Image_Graph_Plot_Pie extends Image
+                 }
+             }
+             unset($keys);
+-            $this->_clip(false);
++            //$this->_clip(false);
+             $this->_canvas->endGroup();
+         }
+     }
+ 
+ }
+ 
+-?>
+\ No newline at end of file
++?>
+
+
+
+
+
+
+

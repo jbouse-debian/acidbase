@@ -550,7 +550,7 @@ DEFINE('_QCERRFIELD','A field of');//#
 DEFINE('_QCERROPER','An operator of');//#
 DEFINE('_QCERRDATETIME','A date/time value of');//#
 DEFINE('_QCERRPAYLOAD','A payload value of');//#
-DEFINE('_QCERRIP','A IP osoite of');//#
+DEFINE('_QCERRIP','An IP osoite of');//#
 DEFINE('_QCERRIPTYPE','IP-osoite tyypilt‰‰n');
 DEFINE('_QCERRSPECFIELD',' annettiin protkolla-kentt‰‰ varten, mutta kyseist‰ kentt‰‰ ei m‰‰ritelty.');//#
 DEFINE('_QCERRSPECVALUE','was selected indicating that it should be a criteria, but no value was specified on which to match.');//#
@@ -611,7 +611,7 @@ DEFINE('_SCPORT','Portti');
 
 //base_stat_ipaddr.php
 DEFINE('_PSEVENTERR','PORTSCAN EVENT ERROR: ');//#
-DEFINE('_PSEVENTERRNOFILE','Yht‰‰n tiedostoa ei ole asetettu \$portscan_file muuttujaan.');
+DEFINE('_PSEVENTERRNOFILE','Yht‰‰n tiedostoa ei ole asetettu $portscan_file muuttujaan.');
 DEFINE('_PSEVENTERROPENFILE','Porttiskannaus-tapahtuma-tiedoston(portscan event file) avaaminen ei onnistu');
 DEFINE('_PSDATETIME','Pvm./Aika');
 DEFINE('_PSSRCIP','L‰hde IP');

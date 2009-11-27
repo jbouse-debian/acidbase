@@ -237,12 +237,8 @@ function UniqueIPCnt($db, $join = "", $where = "")
 
 function StartStopTime(&$start_time, &$stop_time, $db)
 {
-   /* mstone 20050309 special case postgres */
-   if ($db->DB_type != "postgres") {
-   	$result = $db->baseExecute("SELECT min(timestamp), max(timestamp) FROM acid_event");
-   } else {
-	$result = $db->baseExecute("SELECT (SELECT timestamp FROM acid_event ORDER BY timestamp ASC LIMIT 1), (SELECT timestamp FROM acid_event ORDER BY timestamp DESC LIMIT 1)");
-   }
+   $result = $db->baseExecute("SELECT (SELECT timestamp FROM acid_event ORDER BY timestamp ASC LIMIT 1), ".
+                              "(SELECT timestamp FROM acid_event ORDER BY timestamp DESC LIMIT 1)");
    $myrow = $result->baseFetchRow();
    $start_time = $myrow[0];
    $stop_time = $myrow[1];

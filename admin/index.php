@@ -39,7 +39,7 @@
     
   $page_title = _BASEADMIN;
     
-    PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+    PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), $refresh_all_pages);
   
     PrintBASEAdminMenuHeader();
   

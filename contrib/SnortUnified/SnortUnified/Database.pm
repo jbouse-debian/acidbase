@@ -57,17 +57,28 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
 use DBI;
 use POSIX qw(strftime); 
-use NetPacket::Ethernet qw(:ALL);
-use NetPacket::IP qw(:ALL);
-use NetPacket::TCP qw(:ALL);
-use NetPacket::UDP qw(:ALL);
-use NetPacket::ICMP qw(:ALL);
+use Net::Packet::Consts qw(:DEFAULT);
+use Net::Packet::ETH;
+use Net::Packet::IPv4;
+use Net::Packet::TCP;
+use Net::Packet::UDP;
+use Net::Packet::ICMPv4;
+use Socket;
+use Dumpvalue;
+
+# Cf. /usr/lib/perl5/vendor_perl/5.10.0/Net/Packet/Consts.pm
+# perldoc Net::Packet::Consts
+# perldoc -m Net::Packet::Consts
+our $ETH_TYPE_IP = Net::Packet::Consts::NP_ETH_TYPE_IPv4;
+our $IP_PROTO_TCP = Net::Packet::Consts::NP_DESC_IPPROTO_TCP;
+our $IP_PROTO_UDP = Net::Packet::Consts::NP_DESC_IPPROTO_UDP;
+our $IP_PROTO_ICMP = Net::Packet::Consts::NP_DESC_IPPROTO_ICMPv4;
 
 my $class_self;
 
 BEGIN {
    $class_self = __PACKAGE__;
-   $VERSION = "1.3devel";
+   $VERSION = "1.3devel-jl1";
 }
 my $DBLICENSE = "GNU GPL see http://www.gnu.org/licenses/gpl.txt for more information.";
 sub DBVersion() { "$class_self v$VERSION - Copyright (c) 2006 Jason Brvenik" };
@@ -134,6 +145,11 @@ my $UDPHDR_INS_H = undef;
 my $ICMPHDR_INS_FULL_H = undef;
 my $ICMPHDR_INS_H = undef;
 my $REFERENCE_INS_H = undef;
+my $PAYLOAD_INS_H = undef;
+my $PAYLOAD_WITH_FLOP_INS_H = undef;
+my $IP_OPTIONS_INS_H = undef;
+my $TCP_OPTIONS_INS_H = undef;
+
 
 sub setSnortConnParam($$) {
     my $parm = $_[0];
@@ -178,12 +194,12 @@ sub getSnortDBHandle() {
 
     my $schema = 0;
 
-    $DBH = DBI->connect($DB_INFO->{'connstr'}, $DB_INFO->{'user'}, $DB_INFO->{'password'}); 
-    
-    ($schema) = $DBH->selectrow_array("SELECT max(vseq) from schema");
+    $DBH = DBI->connect($DB_INFO->{'connstr'}, $DB_INFO->{'user'}, $DB_INFO->{'password'}) or die "ERROR: Connecting with the database has failed. Exiting."; 
+   
+    ($schema) = $DBH->selectrow_array("SELECT max(vseq) from `schema`");
     
     if ( $schema lt $REQUIRED_SCHEMA ) { 
-        print("Schema Version " . $schema . " too old\n"); 
+        print("Schema Version \"" . $schema . "\" too old\n"); 
         return 0;
     } else {
         return 1;
@@ -429,7 +445,55 @@ sub check_handles() {
                                  "icmphdr(sid, cid, icmp_type, icmp_code, icmp_csum) " . 
                                  "VALUES(?, ?, ?, ?, ?)");
     }
+
+    if ( !defined $PAYLOAD_INS_H ) {
+        $PAYLOAD_INS_H = $DBH->prepare("INSERT INTO " .
+                                       "data(sid, cid, data_payload)" .
+                                       "VALUES(?, ?, ?)");
+    }
+
+    if ( !defined $PAYLOAD_WITH_FLOP_INS_H) {
+        $PAYLOAD_WITH_FLOP_INS_H = $DBH->prepare("INSERT INTO " .
+                                                  "data(sid, cid, data_payload, data_header, pcap_header)" .
+                                                  "VALUES(?, ?, ?, ?, ?)");
+    }
+
+    if ( !defined $IP_OPTIONS_INS_H) {
+        $IP_OPTIONS_INS_H = $DBH->prepare("INSERT INTO " .
+                                          "opt (sid, cid, optid, opt_proto, opt_code, opt_len, opt_data) " .
+                                          "VALUES(?, ?, ?, ?, ?, ?, ?)"
+        );
+    }
+ 
+    if ( !defined $TCP_OPTIONS_INS_H) {
+        $TCP_OPTIONS_INS_H = $DBH->prepare("INSERT INTO " .
+                                           "opt (sid, cid, optid, opt_proto, opt_code, opt_len, opt_data) " . 
+                                           "VALUES(?, ?, ?, ?, ?, ?, ?)");
+    }
 };
+
+
+sub snort_hexify($)
+{
+  my $payload_orig = $_[0];
+  my $rv = "";
+
+  if ($payload_orig eq "") {return ""};
+
+
+  for (my $i = 0; $i < length($payload_orig); $i++)
+  {
+    my $char = substr($payload_orig, $i, 1);
+    my $ord_hex = sprintf("%02X", ord($char));
+    my $first_nibble = substr($ord_hex, 0, 1);
+    my $second_nibble = substr($ord_hex, 1, 1);
+    $rv = $rv . $first_nibble . $second_nibble;
+  }
+
+  return $rv;
+}
+
+
 
 sub insertSnortAlert($$$) {
     my $record = $_[0]; # hash with the actual data
@@ -437,7 +501,7 @@ sub insertSnortAlert($$$) {
     my $class = $_[2];  # Hash of classifications
     my $sigid;
     my $classid;
-    my $timestamp = strftime("%Y-%m-%d %H:%M:%S", gmtime($record->{'tv_sec'}));
+    my $timestamp = strftime("%Y-%m-%d %H:%M:%S", localtime($record->{'tv_sec'}));
     my $gensid = "$record->{'sig_gen'}:$record->{'sig_id'}";
     
     check_handles();
@@ -452,15 +516,15 @@ sub insertSnortAlert($$$) {
     $IPH_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
                  $record->{'sip'}, $record->{'dip'}, $record->{'protocol'});
 
-    if ( $record->{'protocol'} eq IP_PROTO_TCP ) {
+    if ( $record->{'protocol'} eq $IP_PROTO_TCP ) {
         $TCP_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
                  $record->{'sp'}, $record->{'dp'});
 
-    } elsif ( $record->{'protocol'} eq IP_PROTO_UDP ) {
+    } elsif ( $record->{'protocol'} eq $IP_PROTO_UDP ) {
         $UDP_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
                  $record->{'sp'}, $record->{'dp'});
 
-    } elsif ( $record->{'protocol'} eq IP_PROTO_ICMP ) {
+    } elsif ( $record->{'protocol'} eq $IP_PROTO_ICMP ) {
         $ICMP_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
                  $record->{'sp'}, $record->{'dp'});
     }
@@ -475,9 +539,10 @@ sub insertSnortLog($$$) {
     my $class = $_[2];  # Hash of classifications
     my $sigid;
     my $classid;
-    my $timestamp = strftime("%Y-%m-%d %H:%M:%S", gmtime($record->{'tv_sec'}));
+    my $timestamp = strftime("%Y-%m-%d %H:%M:%S", localtime($record->{'tv_sec'}));
     my $gensid = "$record->{'sig_gen'}:$record->{'sig_id'}"; 
-    my $eth_obj;
+    my $dump_obj;
+    my $l2_obj;
     my $ip_obj;
     my $tcp_obj;
     my $udp_obj;
@@ -491,51 +556,299 @@ sub insertSnortLog($$$) {
     $EVENT_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
                  $sigid, $timestamp);
 
-    $eth_obj = NetPacket::Ethernet->decode($record->{'pkt'});
-    if ( $eth_obj->{type} eq ETH_TYPE_IP ) {
-        $ip_obj = NetPacket::IP->decode($eth_obj->{data});
+    # old: man /media/sda3/usr/share/man/man3/NetPacket::Ethernet.3pm
+    # new: man Net::Packet::ETH ==
+    #      man /usr/share/man/man3/Net::Packet::ETH.3pm.gz
+    # new: man Net::Packet::Layer2 ==
+    #      man /usr/share/man/man3/Net::Packet::Layer2.3pm.gz
+    #      man Net::Packet::Frame
+    #      man Net::Packet::Dump
+    # http://search.cpan.org/CPAN/authors/id/G/GO/GOMOR/Net-Packet-3.26.tar.gz
+    # /usr/local/src/Net-Packet-3.26/examples
+
+    my $is_ipv4 = 0;
+    my $l2_encap = "";
+    my $l2_encap2 = "";
+    my $linklayer_type = $record->{'linklayer_type'};
+    if ($linklayer_type eq "eth")
+    {
+      #print "Linklayer type is ethernet.\n";
+      $l2_obj = new Net::Packet::ETH(raw => $record->{'pkt'});
+      if (($l2_obj->isTypeIpv4))
+      {
+        $is_ipv4 = 1;
+      }
+      else
+      {
+        $l2_encap = $l2_obj->type;
+        $l2_encap2 = $l2_obj->encapsulate;
+      }
+    }
+    elsif($linklayer_type eq "null")
+    {
+      #print "Linklayer type is \"null\".\n";
+      $l2_obj = new Net::Packet::NULL(raw => $record->{'pkt'});
+      if ($l2_obj->isTypeIpv4)
+      {
+        $is_ipv4 = 1;
+      }
+      else
+      {
+        $l2_encap = $l2_obj->type;
+        $l2_encap2 = $l2_obj->encapsulate;
+      }
+    }
+    elsif($linklayer_type eq "raw")
+    {
+      print "Linklayer type is raw.\n";
+      print "WARNING: I cannot deal with a RAW packet.\n";
+      die "Exiting.\n";
+    }
+    elsif($linklayer_type eq "sll")
+    {
+      #print "Linklayer type is sll.\n";
+      $l2_obj = new Net::Packet::SLL(raw => $record->{'pkt'});
+      if ($l2_obj->isProtocolIpv4)
+      {
+        $is_ipv4 = 1;
+      }
+      else
+      {
+        $l2_encap = $l2_obj->protocol;
+        $l2_encap2 = $l2_obj->encapsulate;
+      }
+    }
+    elsif($linklayer_type == "ppp")
+    {
+      #print "Linklayer type is ppp.\n";
+      $l2_obj = new Net::Packet::PPP(raw => $record->{'pkg'}); 
+      if ($l2_obj->isProtocolIpv4)
+      {
+        $is_ipv4 = 1;
+      }
+      else
+      {
+        $l2_encap = $l2_obj->protocol;
+        $l2_encap2 = $l2_obj->encapsulate;
+      }
+    }
+    else
+    {
+      print "WARNING: Unknown linklayer type! Simply trying DLT_EN10MB... and failing, presumably...\n";
+      $l2_obj = new Net::Packet::ETH(raw => $record->{'pkt'});
+      if (($l2_obj->isTypeIpv4))
+      {
+        $is_ipv4 = 1;
+      }
+      else
+      {
+        $l2_encap = $l2_obj->type;
+        $l2_encap2 = $l2_obj->encapsulate;
+      }
+    }
+
+
+    if ($is_ipv4 == 1)
+    {
+        #print "Layer 3 is IPv4.\n";
+        $ip_obj = new Net::Packet::IPv4(raw => $l2_obj->payload);
+        #print $ip_obj->src . " -> " . $ip_obj->dst . "\n";
+        #print "Id: "       . $ip_obj->id . "\n";
+        #print "Protocol: " . $ip_obj->protocol . "\n";
+        #print "hlen: "     . $ip_obj->hlen . "\n";
+        #print "tos: "      . $ip_obj->tos . "\n";
+        #print "length: "   . $ip_obj->length . "\n";
+        #print "id: "       . $ip_obj->id . "\n";
+        #print "flags: "    . $ip_obj->flags . "\n";
+        #print "offset: "   . $ip_obj->offset . "\n";
+        #print "ttl: "      . $ip_obj->ttl . "\n";
+        #print "checksum: ";
+        #printf("0x%02x", $ip_obj->checksum);
+        #print " = "        . $ip_obj->checksum . "\n";
+
+
         $IPHDR_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
-                              $ip_obj->{src_ip}, $ip_obj->{dest_ip},
-                              $ip_obj->{proto}, $ip_obj->{ver},
-                              $ip_obj->{hlen}, $ip_obj->{tos},
-                              $ip_obj->{len}, $ip_obj->{id},
-                              $ip_obj->{flags}, $ip_obj->{foffset},
-                              $ip_obj->{ttl}, $ip_obj->{cksum});
+                              unpack("N", inet_aton($ip_obj->src)), unpack("N", inet_aton($ip_obj->dst)),
+                              $ip_obj->protocol, $ip_obj->version,
+                              $ip_obj->hlen, $ip_obj->tos,
+                              $ip_obj->length, $ip_obj->id,
+                              $ip_obj->flags, $ip_obj->offset,
+                              $ip_obj->ttl, $ip_obj->checksum);
 
-        if ( $ip_obj->{proto} eq IP_PROTO_TCP ) {
-            $tcp_obj = NetPacket::TCP->decode($ip_obj->{data});
+        my $ip_options_length = $ip_obj->getOptionsLength;
+        if ($ip_options_length > 0)
+        {
+          #print "There are IP options. Length: " . $ip_options_length . " bytes.\n";
+          #print "Options: \"" . $ip_obj->options . "\"\n";
+          #my $d = Dumpvalue->new();
+          #$d->dumpValue($ip_obj->options);
+          #print "\n";
+
+          my $opt_id = 0;
+
+          for (my $i = 0; $i < $ip_options_length; $i++)
+          {
+            my $opt_len = 0;
+            my $opt_data = "";
+            my $opt_code = ord(substr($ip_obj->options, $i, 1));
+
+            if ($opt_code == 1)
+            {
+              # snort seems to consider the length of NOP to be 0 bytes.
+              $opt_len = 0;
+              $opt_data = ''; 
+            }
+            elsif ($opt_code > 1)
+            {
+              $opt_len = ord(substr($ip_obj->options, $i + 1, 1)) - 2;
+              $opt_data = snort_hexify(substr($ip_obj->options, $i + 2, $opt_len));
+              $i += $opt_len + 2; 
+              $IP_OPTIONS_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
+                                         $opt_id, Net::Packet::Consts::NP_DESC_IPPROTO_IP, $opt_code, $opt_len, $opt_data 
+              );
+
+              $opt_id += 1;
+            }
+          }
+        }
+
+
+
+        if ($ip_obj->isProtocolTcp) {
+            #print "Layer 4 is TCP.\n\n\n";
+            $tcp_obj = new Net::Packet::TCP(raw => $ip_obj->payload);
             $TCPHDR_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
-                                   $tcp_obj->{src_port}, $tcp_obj->{dest_port},
-                                   $tcp_obj->{seqnum}, $tcp_obj->{acknum},
-                                   (($tcp_obj->{reserved} & 0xf0) >> 4),
-                                   ($tcp_obj->{reserved} & 0x0f),
-                                   $tcp_obj->{flags}, $tcp_obj->{winsize},
-                                   $tcp_obj->{cksum}, $tcp_obj->{urg});
+                                   $tcp_obj->src, $tcp_obj->dst,
+                                   $tcp_obj->seq, $tcp_obj->ack,
+                                   (($tcp_obj->x2 & 0xf0) >> 4),
+                                   ($tcp_obj->x2 & 0x0f),
+                                   $tcp_obj->flags, $tcp_obj->win,
+                                   $tcp_obj->checksum, $tcp_obj->urp);
 
-        } elsif ( $ip_obj->{proto} eq IP_PROTO_UDP ) {
-            $udp_obj = NetPacket::UDP->decode($ip_obj->{data});
-            $UDPHDR_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
-                                   $udp_obj->{src_port}, $udp_obj->{dest_port},
-                                   $udp_obj->{len}, $udp_obj->{cksum});
+
+
+            my $tcp_options_length = $tcp_obj->getOptionsLength;
+            if ($tcp_options_length > 0)
+            {
+              #print "There are TCP options. Length: " . $tcp_options_length . " bytes.\n";
+              #print "Options: \"";
+              #my $d = Dumpvalue->new();
+              #$d->dumpValue($tcp_obj->options);
+              #print "\n";
               
-        } elsif ( $ip_obj->{proto} eq IP_PROTO_ICMP ) {
-            $icmp_obj = NetPacket::ICMP->decode($ip_obj->{data});
-            if ( $icmp_obj->{type} eq 0 || $icmp_obj->{type} eq 8 ||
-                 $icmp_obj->{type} eq 13 || $icmp_obj->{type} eq 14 ||
-                 $icmp_obj->{type} eq 15 || $icmp_obj->{type} eq 16 ) {
+              my $opt_id = 0;
+
+              for (my $i = 0; $i < $tcp_options_length; $i++)
+              {
+                my $opt_len = 0;
+                my $opt_data = "";
+                my $opt_code = ord(substr($tcp_obj->options, $i, 1));
+
+
+                if ($opt_code == 1)
+                {                  
+                  #print "$i: NOP";
+                  # snort seems to consider the length of NOP to be 0 bytes.
+                  $opt_len = 0;
+                  $opt_data = '';
+                }
+                elsif ($opt_code > 1)
+                {
+                  #print "$i: Type 2. ";
+
+                  #if ($opt_code == 8)
+                  #{
+                  #  print "TS";
+                  #}
+
+                  # snort seems to consider the length of TS to be 
+                  # all of the 10 bytes minus 1 byte $opt_code and
+                  # minus 1 byte for $opt_len, i.e. 8 bytes rather
+                  # than 10 bytes.
+                  $opt_len = ord(substr($tcp_obj->options, $i + 1, 1)) - 2;
+                  $opt_data = snort_hexify(substr($tcp_obj->options, $i + 2 , $opt_len));
+                  $i += $opt_len + 2;
+                }
+                #else
+                #{
+                #  print "$i: \"" . $opt_code . "\", ";
+                #}
+                $TCP_OPTIONS_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'}, 
+                                            $opt_id, Net::Packet::Consts::NP_DESC_IPPROTO_TCP, $opt_code, $opt_len, $opt_data
+                );
+                $opt_id += 1;
+                #print "\n";
+              }
+            }
+
+
+
+            if (defined($tcp_obj->payload) && $tcp_obj->payload ne "")
+            {
+              $PAYLOAD_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
+                                      snort_hexify($tcp_obj->payload));
+            }
+        } elsif ($ip_obj->isProtocolUdp) {
+            #print "Layer 4 is UDP.\n\n\n";
+            $udp_obj = new Net::Packet::UDP(raw => $ip_obj->payload);
+            $UDPHDR_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
+                                   $udp_obj->src, $udp_obj->dst,
+                                   $udp_obj->length, $udp_obj->checksum);
+
+            
+            if (defined($udp_obj->payload) && $udp_obj->payload ne "")
+            {
+              $PAYLOAD_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
+                                      snort_hexify($udp_obj->payload));
+            }
+              
+        } elsif ($ip_obj->isProtocolIcmpv4) {
+            #print "Layer 4 is ICMPv4.\n\n\n";
+            $icmp_obj = new Net::Packet::ICMPv4(raw => $ip_obj->payload);
+            if ( $icmp_obj->isTypeEchoReply || $icmp_obj->isTypeEchoRequest ||
+                 $icmp_obj->isTypeTimestampRequest || $icmp_obj->isTypeTimestampReply ||
+                 $icmp_obj->isTypeInformationRequest || $icmp_obj->isTypeInformationReply ) {
                  $ICMPHDR_INS_FULL_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
-                                   $icmp_obj->{type}, $icmp_obj->{code},
-                                   $icmp_obj->{cksum}, 
-                                   unpack('n', substr($icmp_obj->{data}, 0, 2)),
-                                   unpack('n', substr($icmp_obj->{data}, 2, 2)));
+                                   $icmp_obj->type, $icmp_obj->code,
+                                   $icmp_obj->checksum, 
+                                   unpack('n', substr($icmp_obj->data, 0, 2)),
+                                   unpack('n', substr($icmp_obj->data, 2, 2)));
             } else {
                  $ICMPHDR_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
-                                   $icmp_obj->{type}, $icmp_obj->{code},
-                                   $icmp_obj->{cksum});
+                                   $icmp_obj->type, $icmp_obj->code,
+                                   $icmp_obj->checksum);
+            }
+
+            if (defined($icmp_obj->payload) && $icmp_obj->payload ne "")
+            {
+              $PAYLOAD_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
+                                      snort_hexify($icmp_obj->payload));
             }
         } else {
-            # print("DEBUGME: Why am I here - insertSnortLog\n");
+            print("DEBUGME: Why am I here - insertSnortLog\n");
+            print("WARNING: Layer 4 protocol is neither TCP nor UDP nor ICMP! Treating everything from layer 4 up as payload.\n");
+            if (defined($ip_obj->payload) && $ip_obj->payload ne "")
+            {
+              $PAYLOAD_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
+                                snort_hexify($ip_obj->payload));
+            }
         }
+    }
+    else
+    {
+      print("WARNING: Not IPv4! ");
+      print("Type: " . $l2_encap . " (" . $l2_encap2 . ").\n");
+      if ($l2_encap == "17664")
+      {
+        print("Does this happen to be a file, that has been generated by snort_inline (snort in inline mode)? If so, you could convert it as follows, so that at least tcpdump and tshark could read it: \n");
+        print("editcap -T rawip  /tmp/snort_inline.raw.pcap /tmp/snort_inline.pcap");
+      }
+      print("Treating everything from layer 3 up as payload.\n");
+      if (defined($l2_obj->payload) && $l2_obj->payload ne "")
+      {
+        $PAYLOAD_INS_H->execute($DB_INFO->{'sensor_id'}, $DB_INFO->{'event_id'},
+                                snort_hexify($l2_obj->payload));
+      }
     }
 
     $DB_INFO->{'event_id'}++;

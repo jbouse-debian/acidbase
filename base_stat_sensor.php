@@ -44,11 +44,20 @@
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
     base_header("Location: ". $BASE_urlpath . "/index.php");
 
-  $submit = ImportHTTPVar("submit", VAR_LETTER | VAR_SPACE, array(_SELECTED, _ALLONSCREEN, _ENTIREQUERY));
+  $submit = ImportHTTPVar("submit", VAR_ALPHA | VAR_SPACE, array(_SELECTED, _ALLONSCREEN, _ENTIREQUERY));
+	$sort_order=ImportHTTPVar("sort_order", VAR_LETTER | VAR_USCORE);
+  $action = ImportHTTPVar("action", VAR_ALPHA);
   $qs->MoveView($submit);             /* increment the view if necessary */
 
   $page_title = SPSENSORLIST;
-  PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+	if ($action == "")
+	{
+  	PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+	}
+	else
+	{
+		PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), $refresh_all_pages);
+	}
   
   /* Connect to the Alert database */
   $db = NewBASEDBConnection($DBlib_path, $DBtype);
@@ -146,7 +155,8 @@
   }
 
   /* Print the current view number and # of rows */
-  $qs->PrintResultCnt('<FORM METHOD="post" NAME="PacketForm" ACTION="base_stat_sensor.php">');  
+  $qs->PrintResultCnt();
+  echo '<FORM METHOD="post" NAME="PacketForm" ACTION="base_stat_sensor.php">';
   $qro->PrintHeader();
 
   $i = 0;
@@ -191,7 +201,8 @@
   $qs->PrintBrowseButtons();
   $qs->PrintAlertActionButtons();
   $qs->SaveState();
-  
+	ExportHTTPVar("sort_order", $sort_order);
+  echo "\n</FORM>\n";
   
   PrintBASESubFooter();
 
