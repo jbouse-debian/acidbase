@@ -72,7 +72,7 @@ class baseCon {
 
      if ( $sql_trace_mode > 0 )
      {
-        $this->sql_trace = fopen($sql_trace_file,"w");
+        $this->sql_trace = fopen($sql_trace_file,"a");
         if ( !$this->sql_trace )
         {
            ErrorMessage(_ERRSQLTRACE." '".$sql_trace_file."'");
@@ -156,9 +156,10 @@ class baseCon {
      } 
 
      /* Set the database schema version number */
-     $sql = "SELECT vseq FROM `schema`"; 
+     $sql = "SELECT vseq FROM schema"; 
      if ($this->DB_type == "mssql") $sql = "SELECT vseq FROM [schema]";
-     if ($this->DB_type == "postgres") $sql = "SELECT vseq FROM schema";
+     if ($this->DB_type == "mysql") $sql = "SELECT vseq FROM `schema`";
+
      $result = $this->DB->Execute($sql);
      if ( $this->baseErrorMessage() != "" )
         $this->version = 0;
@@ -194,7 +195,20 @@ class baseCon {
 
      /* ** Begin DB specific SQL fix-up ** */
      if ($this->DB_type == "mssql")
+     {
         $sql = eregi_replace("''", "NULL", $sql);
+     }
+
+     if ($this->DB_type == "oci8")
+     {
+       if (!strpos($sql, 'TRIGGER'))
+       {
+         if (substr($sql, strlen($sql)-1, strlen($sql))==';')
+         {
+           $sql=substr($sql, 0, strlen($sql)-1);
+         }
+       }
+     }
 
      $this->lastSQL = $sql;
      $limit_str = "";
@@ -270,6 +284,8 @@ class baseCon {
 
   function baseTableExists($table)
   {
+     if ($this->DB_type == "oci8") $table=strtoupper($table);
+
      if ( in_array($table, $this->DB->MetaTables()) )
         return 1;
      else 
@@ -458,9 +474,28 @@ class baseRS {
 
   function baseFetchRow()
   {
+     /* Workaround for the problem, that the database may contain NULL
+      * whereas "NOT NULL" has been defined, when it was created */
+     if (!is_object($this->row))
+     {
+       if ($debug_mode > 1)
+       {
+         echo "<BR><BR>" . __FILE__ . ':' . __LINE__ . ": ERROR: \$this->row is not an object<BR><PRE>";
+         debug_print_backtrace();
+         echo "<BR><BR>";
+         echo "var_dump(\$this):<BR>";
+         var_dump($this);
+         echo "<BR><BR>";
+         echo "var_dump(\$this->row):<BR>";
+         var_dump($this->row);
+         echo "</PRE><BR><BR>";
+       }
+
+       return "";	  
+     }
      if ( !$this->row->EOF )
      {
-        $temp = $this->row->fields;
+        $temp = $this->row->fields;	
         $this->row->MoveNext();
         return $temp;
      }
@@ -475,7 +510,28 @@ class baseRS {
   }
 
   function baseRecordCount()
-  {   // Is This if statement necessary?  -- Kevin
+  {  
+    GLOBAL $debug_mode;
+
+    if (!is_object($this->row))
+    {
+      if ($debug_mode > 1)
+      {
+        echo '<BR><BR>';
+        echo __FILE__ . ':' . __LINE__ . ': ERROR: $this->row is not an object.';
+        echo '<BR><PRE>';
+        debug_print_backtrace();
+        echo '<BR><BR>var_dump($this):<BR>';
+        var_dump($this);
+        echo '<BR><BR>var_dump($this->row):<BR>';
+        var_dump($this->row);
+        echo '</PRE><BR><BR>';
+      }
+
+      return 0;
+    }
+ 
+     // Is This if statement necessary?  -- Kevin
      /* MS SQL Server 7, MySQL, Sybase, and Postgres natively support this function */ 
      if ( ($this->DB_type == "mysql") || ($this->DB_type == "mysqlt") || ($this->DB_type == "maxsql") ||
           ($this->DB_type == "mssql") || ($this->DB_type == "sybase") || ($this->DB_type == "postgres") || ($this->DB_type == "oci8"))
@@ -497,7 +553,31 @@ class baseRS {
 
   function baseFreeRows()
   {
-     $this->row->Close();
+    GLOBAL $debug_mode;
+
+    /* Workaround for the problem, that the database may contain NULL,
+     * although "NOT NULL" had been defined when it had been created. 
+     * In such a case there's nothing to free(). So we can ignore this
+     * row and don't have anything to do. */
+    if (!is_object($this->row))
+    {
+      if ($debug_mode > 1)
+      {
+        echo '<BR><BR>';
+        echo __FILE__ . ':' . __LINE__ . ': ERROR: $this->row is not an object.';
+        echo '<BR><PRE>';
+        debug_print_backtrace();
+        echo '<BR><BR>var_dump($this):<BR>';
+        var_dump($this);
+        echo '<BR><BR>var_dump($this->row):<BR>';
+        var_dump($this->row);
+        echo '</PRE><BR><BR>';
+      }
+    }
+    else
+    {
+      $this->row->Close();
+    }
   }
 }
 
@@ -610,5 +690,5 @@ function ClearDataTables($db)
   $db->baseExecute("DELETE FROM tcphdr");
   $db->baseExecute("DELETE FROM udphdr");
 } 
-
+// vim:tabstop=2:shiftwidth=2:expandtab
 ?>

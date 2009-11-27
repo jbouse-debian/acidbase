@@ -42,7 +42,7 @@
   $username = $userobj->returnUser();
   
   $page_title = _BASEUSERTITLE;
-  PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+  PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), $refresh_all_pages);
   if (isset($_GET['action']))
   {
     //This is where the processing of this page happens.

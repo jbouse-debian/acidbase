@@ -7,7 +7,6 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
-**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: executes and prints the query results
@@ -19,7 +18,7 @@
 ********************************************************************************
 */
 
-global $colored_alerts;
+global $colored_alerts, $debug_mode;
   /* **************** Run the Query ************************************************** */
 
   /* base_ag_main.php will include this file 
@@ -165,8 +164,18 @@ global $colored_alerts;
       $current_dip32 = $myrow[5];
       $current_dip = baseLong2IP($current_dip32); 
       $current_proto = $myrow[6];
+      if ($debug_mode > 1)
+      {
+        SQLTraceLog("\n\n");
+        SQLTraceLog(__FILE__ . ":" . __LINE__ . ":\n############## <calls to BuildSigByID> ##################");
+      }
       $current_sig = BuildSigByID($myrow[2], $db);
       $current_sig_txt = BuildSigByID($myrow[2], $db, 2);
+      if ($debug_mode > 1)
+      {
+        SQLTraceLog(__FILE__ . ":" . __LINE__ . ":\n################ </calls to BuildSigByID> ###############");
+        SQLTraceLog("\n\n");
+      }
       $current_sport = $current_dport = "";
 
       if ($portscan_payload_in_signature == 1) {
@@ -202,8 +211,8 @@ global $colored_alerts;
                    "-(".$myrow[0]."-".$myrow[1].")";
 
       qroPrintEntry('<INPUT TYPE="checkbox" NAME="action_chk_lst['.$i.']" VALUE="'.
-                    $tmp_rowid.'">');
-      echo '    <INPUT TYPE="hidden" NAME="action_lst['.$i.']" VALUE="'.$tmp_rowid.'">';
+                    htmlspecialchars($tmp_rowid).'">');
+      echo '    <INPUT TYPE="hidden" NAME="action_lst['.$i.']" VALUE="'.htmlspecialchars($tmp_rowid).'">';
 
 	/** Fix for bug #1116034 -- Input by Tim Rupp, original solution and code by Alejandro Flores **/
 	$temp = "<A HREF='base_qry_alert.php?submit=".rawurlencode($tmp_rowid)."&amp;sort_order=";

@@ -41,10 +41,10 @@ class CriteriaState
      $this->clear_url_params = $params;
 
      /* XXX-SEC */
-     GLOBAL $db;
+     GLOBAL $db, $debug_mode;
 
-	$tdb =& $db;
-	$obj =& $this;
+     $tdb =& $db;
+     $obj =& $this;
      $this->criteria['sig'] = new SignatureCriteria($tdb, $obj, "sig");
      $this->criteria['sig_class'] = new SignatureClassificationCriteria($tdb, $obj, "sig_class");
      $this->criteria['sig_priority'] = new SignaturePriorityCriteria($tdb, $obj, "sig_priority");
@@ -65,9 +65,14 @@ class CriteriaState
 
      /* 
       * For new criteria, add a call to the appropriate constructor here, and implement
-      * the appropriate class in base_stat_citems.inc.
+      * the appropriate class in base_state_citems.inc.php
       */
+
+
   }
+
+
+
 
   function InitState()
   {

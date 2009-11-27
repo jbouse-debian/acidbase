@@ -43,24 +43,48 @@ $record = {};
 $count = 0;
 $time = 0;
 
-setSnortConnParam('user', 'root');
-setSnortConnParam('password', '');
+setSnortConnParam('user', 'snort');
+setSnortConnParam('password', 'snort');
 setSnortConnParam('interface', 'eth1');
 setSnortConnParam('database', 'snorttest');
-setSnortConnParam('hostname', Sys::Hostname::hostname());
+#setSnortConnParam('hostname', Sys::Hostname::hostname());
+setSnortConnParam('hostname', 'localhost');
 setSnortConnParam('filter', '');
 
 die unless getSnortDBHandle();
 
 # die unless $UF_Data = openSnortUnified($file);
 $pcap = Net::Pcap::open_offline($file, \$err) or die "Can't read '$file': $err\n";
+my $linktype = Net::Pcap::datalink($pcap);
+if ($linktype == DLT_EN10MB)
+{
+  $linklayer_type = "eth";
+}
+elsif ($linktype == DLT_NULL)
+{
+  $linklayer_type = "null";
+}
+elsif ($linktype == DLT_RAW)
+{
+  $linklayer_type = "raw";
+}
+elsif ($linktype == DLT_LINUX_SLL)
+{
+  $linklayer_type = "sll";
+}
+elsif ($linktype == DLT_PPP)
+{
+  $linklayer_type = "ppp";
+}
+
+#print "linktype: \"$linklayer_type\"\n"; 
 
 $sensor_id = getSnortSensorID();
 
 printSnortConnParams();
 printSnortSigIdMap();
 
-Net::Pcap::loop($pcap, -1, \&process_packet, "");
+Net::Pcap::loop($pcap, -1, \&process_packet, $linklayer_type);
 
 # clean up
 closeSnortUnified();
@@ -92,6 +116,7 @@ sub process_packet {
         $record->{'caplen'} = $header->{'caplen'};
         $record->{'pktlen'} = $header->{'len'};
         $record->{'pkt'} = $packet;
+        $record->{'linklayer_type'} = $user_data;
 
         insertSnortLog($record,$sids,$class);
 }

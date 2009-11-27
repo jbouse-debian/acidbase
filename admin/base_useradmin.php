@@ -7,7 +7,6 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
-**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: page for the user functions (create, disable etc....)
@@ -152,18 +151,18 @@
         {
           //explode array rows and build table
           $tmpRow = explode("|", $row);
-          $enabled = ($tmpRow[4] == 1) ? "<a href='base_useradmin.php?action=disableuser&amp;userid=".$tmpRow[0]."'><img src='".$BASE_urlpath ."/images/greencheck.png' border='0' alt='button_greencheck'></a>" : "<a href='base_useradmin.php?action=enableuser&amp;userid=".$tmpRow[0]."'><img src='".$BASE_urlpath ."/images/button_exclamation.png' border='0' alt='button_exclamation'>";
+          $enabled = ($tmpRow[4] == 1) ? "<a href='base_useradmin.php?action=disableuser&amp;userid=".urlencode($tmpRow[0])."'><img src='".$BASE_urlpath ."/images/greencheck.png' border='0' alt='button_greencheck'></a>" : "<a href='base_useradmin.php?action=enableuser&amp;userid=".urlencode($tmpRow[0])."'><img src='".$BASE_urlpath ."/images/button_exclamation.png' border='0' alt='button_exclamation'>";
           $rolename = $user->roleName($tmpRow[2]);
-          $name = ($tmpRow[2] == 1) ? "<font color='#ff000'><b>".$tmpRow[1]."</b></font>" : $tmpRow[1];
+          $name = ($tmpRow[2] == 1) ? "<font color='#ff000'><b>".htmlspecialchars($tmpRow[1])."</b></font>" : htmlspecialchars($tmpRow[1]);
           
-          $tmpHTML = $tmpHTML . "<tr><td align='center'><a href='base_useradmin.php?action=edituser&amp;userid=".$tmpRow[0]."'>";
+          $tmpHTML = $tmpHTML . "<tr><td align='center'><a href='base_useradmin.php?action=edituser&amp;userid=".urlencode($tmpRow[0])."'>";
           $tmpHTML = $tmpHTML . "<img src='" . $BASE_urlpath ."/images/button_edit.png' border='0' alt='button_edit'></a></td>";
-          $tmpHTML = $tmpHTML . "<td align='center'><a href='base_useradmin.php?action=deleteuser&amp;userid=".$tmpRow[0]."'>";
+          $tmpHTML = $tmpHTML . "<td align='center'><a href='base_useradmin.php?action=deleteuser&amp;userid=".urlencode($tmpRow[0])."'>";
           $tmpHTML = $tmpHTML . "<img src='" . $BASE_urlpath ."/images/button_delete.png' border='0' alt='button_delete'></a></td>";
-          $tmpHTML = $tmpHTML . "<td align='center'>" . $tmpRow[0];
-          $tmpHTML = $tmpHTML . "</td><td align='center'>" . $name;
-          $tmpHTML = $tmpHTML . "</td><td align='center'>" . $rolename;
-          $tmpHTML = $tmpHTML . "</td><td align='center'>" . $tmpRow[3];
+          $tmpHTML = $tmpHTML . "<td align='center'>" . htmlspecialchars($tmpRow[0]);
+          $tmpHTML = $tmpHTML . "</td><td align='center'>" . htmlspecialchars($name);
+          $tmpHTML = $tmpHTML . "</td><td align='center'>" . htmlspecialchars($rolename);
+          $tmpHTML = $tmpHTML . "</td><td align='center'>" . htmlspecialchars($tmpRow[3]);
           $tmpHTML = $tmpHTML . "</td><td align='center'>" . $enabled . "</td></tr>";
         }
       }
@@ -175,7 +174,7 @@
   }
   
   // Start the output to the page.....
-  PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+  PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), $refresh_all_pages);
   PrintBASEAdminMenuHeader();
   echo($pagebody);
   PrintBASEAdminMenuFooter();

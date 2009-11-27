@@ -53,18 +53,22 @@ require Exporter;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 
 use Socket;
-use Fcntl qw(:flock);
-use NetPacket::Ethernet;
-use NetPacket::IP qw(:ALL);
-use NetPacket::TCP qw(:ALL);
-use NetPacket::UDP qw(:ALL);
-use NetPacket::ICMP qw(:ALL);
+use Fcntl qw(:DEFAULT :flock);
+use Net::Packet::Consts qw(:DEFAULT);
+use Net::Packet::ETH;
+use Net::Packet::IPv4;
+use Net::Packet::TCP;
+use Net::Packet::UDP;
+use Net::Packet::ICMPv4;
+use Dumpvalue;
+
+my $linklayer_type = "sll";
 
 my $class_self;
 
 BEGIN {
    $class_self = __PACKAGE__;
-   $VERSION = "1.4devel20060831";
+   $VERSION = "1.4devel20060831-jl1";
 }
 my $LICENSE = "GNU GPL see http://www.gnu.org/licenses/gpl.txt for more information.";
 sub Version() { "$class_self v$VERSION - Copyright (c) 2006 Jason Brvenik" };
@@ -230,6 +234,22 @@ our $PKT_FRAG_FLAG = 0x00000001;
 our $PKT_RB_FLAG   = 0x00000002;
 our $PKT_DF_FLAG   = 0x00000004;
 our $PKT_MF_FLAG   = 0x00000008;
+
+# Cf. /usr/lib/perl5/vendor_perl/5.10.0/Net/Packet/Consts.pm
+# perldoc Net::Packet::Consts
+# perldoc -m Net::Packet::Consts
+our $IP_PROTO_TCP = Net::Packet::Consts::NP_DESC_IPPROTO_TCP;
+our $IP_PROTO_UDP = Net::Packet::Consts::NP_DESC_IPPROTO_UDP;
+our $IP_PROTO_ICMP = Net::Packet::Consts::NP_DESC_IPPROTO_ICMPv4;
+our $CWR = Net::Packet::Consts::NP_TCP_FLAG_CWR;
+our $ECE = Net::Packet::Consts::NP_TCP_FLAG_ECE;
+our $URG = Net::Packet::Consts::NP_TCP_FLAG_URG;
+our $ACK = Net::Packet::Consts::NP_TCP_FLAG_ACK;
+our $PSH = Net::Packet::Consts::NP_TCP_FLAG_PSH;
+our $RST = Net::Packet::Consts::NP_TCP_FLAG_RST;
+our $SYN = Net::Packet::Consts::NP_TCP_FLAG_SYN;
+our $FIN = Net::Packet::Consts::NP_TCP_FLAG_FIN;
+
 
 our $IP_OPT_MAP = {
      0  =>  { 'name'   => 'End of options list',
@@ -559,7 +579,7 @@ sub openSnortUnified($) {
    # See if we can get an exclusive lock
    # The presumption being that if we can get an exclusive
    # then the file is not actively being written to
-   if ( flock(UFD, LOCK_EX & LOCK_NB) ) {
+   if ( flock(UFD, LOCK_EX | LOCK_NB) ) {
         debug("Got an exclusive lock\n");
        $UF->{'LOCKED'} = 1;
    } else {
@@ -573,7 +593,6 @@ sub openSnortUnified($) {
 
    read(UFD, $magic, 4);
    $magic = unpack('V', $magic);
-
   if ( $UF->{'64BIT'} ) {
      debug("Handling unified file with 64bit timevals");
      $log_fields = $log64_fields;
@@ -612,24 +631,28 @@ sub openSnortUnified($) {
      $log_fields = $log32_fields;
      $alert_fields = $alert32_fields;
      if ( $magic eq $LOGMAGICV ) {
+       debug("LOGMAGICV");
        $UF->{'TYPE'} = 'LOG';
        $UF->{'FIELDS'} = $log_fields;
        $UF->{'RECORDSIZE'} = 14 * 4;
        $UF->{'PACKSTR'} = 'V14';
 
      } elsif ( $magic eq $LOGMAGICN ) {
+       debug("LOGMAGICN");
        $UF->{'TYPE'} = 'LOG';
        $UF->{'FIELDS'} = $log_fields;
        $UF->{'RECORDSIZE'} = 14 * 4;
        $UF->{'PACKSTR'} = 'N14';
 
      } elsif ( $magic eq $ALERTMAGICV ) {
+       debug("ALERTMAGICV");
        $UF->{'TYPE'} = 'ALERT';
        $UF->{'FIELDS'} = $alert_fields;
        $UF->{'RECORDSIZE'} = (15 * 4) + (2 * 2);
        $UF->{'PACKSTR'} = 'V13v2V2';
 
      } elsif ( $magic eq $ALERTMAGICN ) {
+       debug("ALERTMAGICN");
        $UF->{'TYPE'} = 'ALERT';
        $UF->{'FIELDS'} = $alert_fields;
        $UF->{'RECORDSIZE'} = (15 * 4) + (2 * 2);
@@ -678,13 +701,13 @@ sub readSnortUnifiedRecord() {
             # the file is not modified or changed in size and we are at the end
             # so presumably is time to bail
             debug("Checking for end of file in read record\n");
-            if ( ! flock(UFD, LOCK_EX & LOCK_NB) && ! $UF->{'LOCKED'} ) {
+            if ( ! flock(UFD, LOCK_EX | LOCK_NB) && ! $UF->{'LOCKED'} ) {
                 # Cannot get an exclusive. Must still be open
                 sleep $UF->{'PATIENCE'};
                 $UF->{'FILEMTIME'} = $mtime;
                 $UF->{'FILESIZE'} = $fsize;
                 if ( $UF->{'FILEPOS'} gt $UF->{'FILESIZE'} ) { $UF->{'FILESIZE'} = $UF->{'FILEPOS'}; }
-                debug("Couldn't get an exclusive in readrecord\n");
+                debug("Couldn't get an exclusive flock in readrecord\n");
                 next;
             }
             $UF->{'LOCKED'} = 1;
@@ -832,6 +855,18 @@ sub get_snort_sids($$) {
     my $sids; 
     my @generator;
 
+    if (! -r $sidfile)
+    {
+      print "WARNING: \"$sidfile\" does not exist or is not readable. Ignoring. \n";
+    }
+
+    if (! -r $genfile)
+    {
+      print "WARNING: \"$genfile\" does not exist or is not readable. Ignoring. \n";
+    }
+
+
+
     return undef unless open(FD, "<", $sidfile);
     while (<FD>) {
         s/#.*//;
@@ -884,6 +919,11 @@ sub get_snort_classifications ($) {
     my @classification;
     my $class;
     my $classid = 0;
+
+    if (! -r $file)
+    {
+      print "WARNING: \"$file\" does not exist or is not readable. Ignoring. \n";
+    }
 
     return undef unless open(FD, "<", $file);
     while (<FD>) {
@@ -940,8 +980,14 @@ sub format_alert($$$) {
     my $sids = $_[1];
     my $class = $_[2];
     my $ret = "";
+    my $d = Dumpvalue->new();
 
-    my $time = gmtime($rec->{'tv_sec'});
+    my $time = localtime($rec->{'tv_sec'});
+
+    #print "source ip = $rec->{'sip'}\n";
+    #$d->dumpValue($rec->{'sip'});
+    #die "\n";
+
     $ret = sprintf("%s {%s} %s:%d -> %s:%d\n" .
             "[**] [%d:%d:%d] %s [**]\n" .
             "[Classification: %s] [Priority: %d]\n", $time,
@@ -974,11 +1020,12 @@ sub format_log($$$) {
     my $sids = $_[1];
     my $class = $_[2];
     my $eth_obj;
+    my $l2_obj;
     my $ip_obj;
     my $tcp_obj;
     my $udp_obj;
     my $icmp_obj;
-    my $time = gmtime($rec->{'pkt_sec'});
+    my $time = localtime($rec->{'pkt_sec'});
     my $ret = "";
 
     $ret = sprintf("[**] [%d:%d:%d] %s [**]\n[Classification: %s] [Priority: %d]\n",
@@ -998,109 +1045,137 @@ sub format_log($$$) {
     $ret = $ret . sprintf("Event ID: %lu     Event Reference: %lu\n",
             $rec->{'event_id'}, $rec->{'reference'});
 
-    $eth_obj = NetPacket::Ethernet->decode($rec->{'pkt'});
-    if ( $eth_obj->{type} eq $ETHERNET_TYPE_IP ) {
-        $ip_obj = NetPacket::IP->decode($eth_obj->{data});
-        if ( $ip_obj->{proto} ne IP_PROTO_TCP && $ip_obj->{proto} ne IP_PROTO_UDP ) {
-            $ret = $ret . sprintf("%s %s -> %s", $time, $ip_obj->{src_ip}, $ip_obj->{dest_ip});
+    ## xxx jl
+    my $is_ipv4 = 0;
+    if ($linklayer_type eq "eth")
+    {
+       print "Linklayer type is ethernet.\n";
+       $l2_obj = new Net::Packet::ETH(raw => $rec->{'pkt'});
+       if (($l2_obj->isTypeIpv4))
+       {
+         $is_ipv4 = 1;
+       }
+    }
+    elsif($linklayer_type eq "sll")
+    {
+      print "Linklayer type is sll.\n";
+      $l2_obj = new Net::Packet::SLL(raw => $rec->{'pkt'});
+      if ($l2_obj->isProtocolIpv4)
+      {
+        $is_ipv4 = 1;
+      }
+    }
+
+
+    if ($is_ipv4 == 1)
+    {
+        print "Yes, IPv4.\n";
+        $ip_obj = new Net::Packet::IPv4(raw => $l2_obj->payload);
+        
+        if (! $ip_obj->isProtocolTcp && ! $ip_obj->isProtocolUdp) {
+            $ret = $ret . sprintf("%s %s -> %s", $time, $ip_obj->src, $ip_obj->dst);
         } else {
-            if ( $ip_obj->{proto} eq IP_PROTO_TCP ) {
-                $tcp_obj = NetPacket::TCP->decode($ip_obj->{data});
+            if ($ip_obj->isProtocolTcp) {
+                $tcp_obj = new Net::Packet::TCP(raw => $ip_obj->payload);
                 $ret = $ret . sprintf("%s %s:%d -> %s:%d\n", 
                     $time, 
-                    $ip_obj->{src_ip}, 
-                    $tcp_obj->{src_port},
-                    $ip_obj->{dest_ip},
-                    $tcp_obj->{dest_port});
-            } elsif ( $ip_obj->{proto} eq IP_PROTO_UDP ) {
-                $udp_obj = NetPacket::UDP->decode($ip_obj->{data});
+                    $ip_obj->src,
+                    $tcp_obj->src,
+                    $ip_obj->dst,
+                    $tcp_obj->dst);
+            } elsif ($ip_obj->isProtocolUdp) {
+                $udp_obj = new Net::Packet::UDP(raw => $ip_obj->payload);
                 $ret = $ret . sprintf("%s %s:%d -> %s:%d\n",
                 $time,
-                $ip_obj->{src_ip},
-                $udp_obj->{src_port},
-                $ip_obj->{dest_ip},
-                $udp_obj->{dest_port});
+                $ip_obj->src,
+                $udp_obj->src,
+                $ip_obj->dst,
+                $udp_obj->dst);
             } else {
                 # Should never get here
                 print("DEBUGME: Why am I here - IP Header Print\n");
             } 
         }
         $ret = $ret . sprintf("%s TTL:%d TOS:0x%X ID:%d IpLen:%d DgmLen:%d",
-                $IP_PROTO_NAMES->{$ip_obj->{proto}},
-                $ip_obj->{ttl},
-                $ip_obj->{tos},
-                $ip_obj->{id},
-                $ip_obj->{len} - $ip_obj->{hlen},
-                $ip_obj->{len});
+                $IP_PROTO_NAMES->{$ip_obj->protocol},
+                $ip_obj->ttl,
+                $ip_obj->tos,
+                $ip_obj->id,
+                $ip_obj->length - $ip_obj->hlen,
+                $ip_obj->length);
         
-        if ( $ip_obj->{flags} & $PKT_RB_FLAG ) {
+        if ( $ip_obj->flags & $PKT_RB_FLAG ) {
             $ret = $ret . sprintf(" RB");
         }
 
-        if ( $ip_obj->{flags} & $PKT_DF_FLAG ) {
+        if ($ip_obj->haveFlagDf) {
             $ret = $ret . sprintf(" DF");
         }
 
-        if ( $ip_obj->{flags} & $PKT_MF_FLAG ) {
+        if ($ip_obj->haveFlagMf) {
             $ret = $ret . sprintf(" MF");
         }
 
         $ret = $ret . sprintf("\n");
         
-        if ( length($ip_obj->{options}) gt 0 ) {
-            my $IPOptions = decodeIPOptions($ip_obj->{options});
+        if ($ip_obj->getOptionsLength gt 0) {
+            my $IPOptions = decodeIPOptions($ip_obj->options);
             foreach my $ipoptkey ( keys %{$IPOptions} ) {
                 $ret = $ret . sprintf("IP Option %d : %s\n", $ipoptkey, $IPOptions->{'name'});
                 $ret = $ret . format_packet_data($IPOptions->{'data'});
             }
         }
 
-        if ( $ip_obj->{flags} & 0x00000001 ) {
+        if ( $ip_obj->flags & 0x00000001 ) {
             $ret = $ret . sprintf("Frag Offset: 0x%X   Frag Size: 0x%X",
-                   $ip_obj->{foffset} & 0xFFFF, $ip_obj->{len});
+                   $ip_obj->offset & 0xFFFF, 
+                   $ip_obj->length);
         }
 
-        if ( $ip_obj->{proto} eq IP_PROTO_TCP ) {
+        if ($ip_obj->isProtocolTcp) {
             $ret = $ret . sprintf("%s%s%s%s%s%s%s%s", 
-            $tcp_obj->{flags} & CWR?"1":"*",
-            $tcp_obj->{flags} & ECE?"2":"*",
-            $tcp_obj->{flags} & URG?"U":"*",
-            $tcp_obj->{flags} & ACK?"A":"*",
-            $tcp_obj->{flags} & PSH?"P":"*",
-            $tcp_obj->{flags} & RST?"R":"*",
-            $tcp_obj->{flags} & SYN?"S":"*",
-            $tcp_obj->{flags} & FIN?"F":"*");
+            $tcp_obj->haveFlagCwr ? "1" : "*",
+            $tcp_obj->haveFlagEce ? "2" : "*",
+            $tcp_obj->haveFlagUrg ? "U" : "*",
+            $tcp_obj->haveFlagAck ? "A" : "*",
+            $tcp_obj->haveFlagPsh ? "P" : "*",
+            $tcp_obj->haveFlagRst ? "R" : "*",
+            $tcp_obj->haveFlagSyn ? "S" : "*",
+            $tcp_obj->haveFlagFin ? "F" : "*");
             $ret = $ret . sprintf(" Seq: 0x%lX  Ack: 0x%lX  Win: 0x%X  TcpLen: %d",
-                   $tcp_obj->{seqnum},
-                   $tcp_obj->{acknum},
-                   $tcp_obj->{winsize},
-                   length($tcp_obj->{data}));
-            if ( defined $tcp_obj->{urg} && $tcp_obj->{urg} gt 0 ) {
-                $ret = $ret . sprintf("  UrgPtr: 0x%X", $tcp_obj->{urg});
+                   $tcp_obj->seq,
+                   $tcp_obj->ack,
+                   $tcp_obj->win,
+                   $tcp_obj->length);
+
+            if ($tcp_obj->haveFlagUrg gt 0)
+            {
+                $ret = $ret . sprintf("  UrgPtr: 0x%X", $tcp_obj->urp);
             }
             $ret = $ret . sprintf("\n");
             
-            if ( length($tcp_obj->{options}) gt 0) {
-                my $TCPOptions = decodeTCPOptions($tcp_obj->{options});
+            if ($tcp_obj->getOptionsLength gt 0)
+            {
+                my $TCPOptions = decodeTCPOptions($tcp_obj->options);
                 foreach my $tcpoptkey ( keys %{$TCPOptions} ) {
                     $ret = $ret . sprintf("TCP Option %d : %s\n", $tcpoptkey, $TCPOptions->{$tcpoptkey}->{'name'});
                     $ret = $ret . format_packet_data($TCPOptions->{$tcpoptkey}->{'data'});
                 }
             }
-        } elsif ( $ip_obj->{proto} eq IP_PROTO_UDP ) {
-            $udp_obj = NetPacket::UDP->decode($ip_obj->{data});
-            $ret = $ret . sprintf("Len: %d\n", $udp_obj->{len}); 
-        } elsif ( $ip_obj->{proto} eq IP_PROTO_ICMP ) {
-            $icmp_obj = NetPacket::ICMP->decode($ip_obj->{data});
-            $ret = $ret . sprintf("Type:%d  Code:%d  %s\n", $icmp_obj->{type}, $icmp_obj->{code}, $ICMP_TYPES->{$icmp_obj->{type}});
+        } elsif ($ip_obj->isProtocolUdp) {
+            $udp_obj = new Net::Packet::UDP(raw => $ip_obj->payload);
+            $ret = $ret . sprintf("Len: %d\n", $udp_obj->length); 
+        } elsif ($ip_obj->isProtocolIcmpv4) {
+            $icmp_obj = new Net::Packet::ICMPv4(raw => $ip_obj->payload);
+            $ret = $ret . sprintf("Type:%d  Code:%d  %s\n", $icmp_obj->type, $icmp_obj->code, $ICMP_TYPES->{$icmp_obj->type});
         } else {
             # Should never get here
             print("DEBUGME: Why am I here - TCP/UDP/ICMP Header print\n");
         }
     } else {
-        $ret = $ret . sprintf("Linktype %i not decoded.  Raw packet dumped\n",
-                $eth_obj->{type});
-        $ret = $ret . format_packet_data($eth_obj->{data});
+        $ret = $ret . sprintf("Layer 3 protocol type %i not decoded.  Raw packet dumped\n",
+                $eth_obj->type);
+        $ret = $ret . format_packet_data($eth_obj->payload);
     }
 
     return $ret;

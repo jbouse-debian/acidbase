@@ -609,7 +609,7 @@ DEFINE('_SCPORT','Port');
 
 //base_stat_ipaddr.php
 DEFINE('_PSEVENTERR','PORTSCAN OLAY HATASI: ');
-DEFINE('_PSEVENTERRNOFILE','\$portscan_file deðiþkeninde hiçbir dosya belirtilmemiþ');
+DEFINE('_PSEVENTERRNOFILE','$portscan_file deðiþkeninde hiçbir dosya belirtilmemiþ');
 DEFINE('_PSEVENTERROPENFILE','Portscan olay dosyasýný açmak olanaksýz');
 DEFINE('_PSDATETIME','Tarih/Zaman');
 DEFINE('_PSSRCIP','Kaynak IP');

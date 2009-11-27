@@ -53,8 +53,13 @@ session_start();
         {
             $errorMsg = "Can't write base_conf.php file! <br>Please copy the below info into your base_conf.php file";
             $error = 1;
-        }
-    } else
+	}
+	else
+	{
+            $error = 0;
+	}
+    } 
+    else
     {
         $confcontents = returnContents();
         $error = 1;

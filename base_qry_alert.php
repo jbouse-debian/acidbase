@@ -7,7 +7,6 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
-**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: displays a single alert   
@@ -43,6 +42,11 @@
       1 == $_GET['asciiclean'] ? setcookie('asciiclean', 'clean') : setcookie('asciiclean', 'normal');   
   }  
 
+	$sf_portscan_flag = 0;
+
+
+
+
 function PrintCleanURL()
 {
   // This function creates the url to display the cleaned up payload -- Kevin
@@ -52,15 +56,15 @@ function PrintCleanURL()
   if ( (isset($_GET['asciiclean']) && $_GET['asciiclean'] == 1) || ( isset($_COOKIE['asciiclean']) && ($_COOKIE['asciiclean'] == "clean") && (!isset($_GET['asciiclean'])) ) )
   {
     //create link to non-cleaned payload display
-    $url = '<center><a href="base_qry_alert.php?'.$query;
-    $url.= '&amp;sort_order='.$sort_order.'&amp;asciiclean=0">'._QANORMALD.'</a></center>';
+    $url = '<center><a href="base_qry_alert.php?'.urlencode($query);
+    $url.= '&amp;sort_order='.urlencode($sort_order).'&amp;asciiclean=0">'._QANORMALD.'</a></center>';
     return $url;
   }
   else
   {
     //create link to cleaned payload display
-    $url = '<center><a href="base_qry_alert.php?'.$query;
-    $url.= '&amp;sort_order='.$sort_order.'&amp;asciiclean=1">'._QAPLAIND.'</a></center>';
+    $url = '<center><a href="base_qry_alert.php?'.urlencode($query);
+    $url.= '&amp;sort_order='.urlencode($sort_order).'&amp;asciiclean=1">'._QAPLAIND.'</a></center>';
     return $url;
   }
   
@@ -70,11 +74,11 @@ function PrintBinDownload($db, $cid, $sid){
 // Offering a URL to a download possibility:
     	$query = CleanVariable($_SERVER["QUERY_STRING"], VAR_PERIOD | VAR_DIGIT | VAR_PUNC | VAR_LETTER);
 	if ( isset($_GET['asciiclean']) && ($_GET['asciiclean'] == 1) || ( (isset($_COOKIE['asciiclean']) && $_COOKIE['asciiclean'] == "clean") && (!isset($_GET['asciiclean'])) ) ){
-		$url = '<center><a href="base_payload.php?'.$query;
-		$url.= '&amp;download=1&amp;cid='.$cid.'&amp;sid='.$sid.'&amp;asciiclean=1">Download of Payload</a></center>';
+		$url = '<center><a href="base_payload.php?'.urlencode($query);
+		$url.= '&amp;download=1&amp;cid='.urlencode($cid).'&amp;sid='.urlencode($sid).'&amp;asciiclean=1">Download of Payload</a></center>';
 	} else {
-		$url = '<center><a href="base_payload.php?'.$query;
-		$url.= '&amp;download=1&amp;cid='.$cid.'&amp;sid='.$sid.'&amp;asciiclean=0">Download of Payload</a></center>';
+		$url = '<center><a href="base_payload.php?'.urlencode($query);
+		$url.= '&amp;download=1&amp;cid='.urlencode($cid).'&amp;sid='.urlencode($sid).'&amp;asciiclean=0">Download of Payload</a></center>';
 	}
 	return $url;
 }
@@ -90,17 +94,20 @@ function PrintPcapDownload($db, $cid, $sid){
 
    $query = CleanVariable($_SERVER["QUERY_STRING"], VAR_PERIOD | VAR_DIGIT | VAR_PUNC | VAR_LETTER);
 	if ( (isset($_GET['asciiclean']) && $_GET['asciiclean'] == 1) || ( isset($_COOKIE['asciiclean']) && ($_COOKIE["asciiclean"] == "clean") && (!isset($_GET['asciiclean'])) ) ){
-		$url = '<center><a href="base_payload.php?'.$query;
-		$url.= '&amp;download='.$type.'&amp;cid='.$cid.'&amp;sid='.$sid.'&amp;asciiclean=1">Download in pcap format</a></center>';
+		$url = '<center><a href="base_payload.php?'.urlencode($query);
+		$url.= '&amp;download='.urlencode($type).'&amp;cid='.urlencode($cid).'&amp;sid='.urlencode($sid).'&amp;asciiclean=1">Download in pcap format</a></center>';
 	} else {
-		$url = '<center><a href="base_payload.php?'.$query;
-		$url.= '&amp;download='.$type.'&amp;cid='.$cid.'&amp;sid='.$sid.'&amp;asciiclean=0">Download in pcap format</a></center>';
+		$url = '<center><a href="base_payload.php?'.urlencode($query);
+		$url.= '&amp;download='.urlencode($type).'&amp;cid='.urlencode($cid).'&amp;sid='.urlencode($sid).'&amp;asciiclean=0">Download in pcap format</a></center>';
 	}
 	return $url;
 }
 
 function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button, &$next_button)
 {
+  $sf_portscan_flag = 0;
+
+
   echo "\n\n<!-- Single Alert Browsing Buttons -->\n";
 
   $result2 = $db->baseExecute($save_sql);
@@ -147,7 +154,7 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
   $qs = new QueryState();
 
   $page_title = _ALERT;
-  PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+  PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), $refresh_all_pages);
 
   /* Connect to the Alert database */
   $db = NewBASEDBConnection($DBlib_path, $DBtype);
@@ -240,7 +247,7 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
   echo "\n<INPUT TYPE=\"hidden\" NAME=\"action_chk_lst[0]\" VALUE=\"$submit\">\n";
 
   /* Event */
-  $sql2 = "SELECT signature, timestamp FROM acid_event WHERE sid='".$sid."' AND cid='".$cid."'";
+  $sql2 = "SELECT signature, timestamp FROM acid_event WHERE sid='".filterSql($sid)."' AND cid='".filterSql($cid)."'";
   $result2 = $db->baseExecute($sql2);
   $myrow2 = $result2->baseFetchRow();
 
@@ -252,7 +259,7 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
   }
 
   /* Get sensor parameters: */
-  $sql4 = "SELECT hostname, interface, filter, encoding, detail FROM sensor  WHERE sid='".$sid."'";
+  $sql4 = "SELECT hostname, interface, filter, encoding, detail FROM sensor  WHERE sid='".filterSql($sid)."'";
   $result4 = $db->baseExecute($sql4);
   $myrow4 = $result4->baseFetchRow();
   $result4->baseFreeRows();
@@ -269,8 +276,8 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
                         <TD CLASS="plfieldhdr">'._CHRTTIME.'</TD>
                         <TD CLASS="plfieldhdr">'._QATRIGGERSIG.'</TD></TR>
                     <TR><TD CLASS="plfield">'.($sid." - ".$cid).'</TD>
-                        <TD CLASS="plfield">'.$myrow2[1].'</TD>
-                        <TD CLASS="plfield">'.GetTagTriger(BuildSigByID($myrow2[0], $db), $db, $sid, $cid).'</TD></TR>      
+                        <TD CLASS="plfield">'.htmlspecialchars($myrow2[1]).'</TD>
+                        <TD CLASS="plfield">'.(GetTagTriger(BuildSigByID($myrow2[0], $db), $db, $sid, $cid)).'</TD></TR>      
                   </TABLE>
               </TD>
            </TR>';
@@ -283,7 +290,7 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
                        <TD class="plfieldhdr">'._INTERFACE.'</TD>
                        <TD class="plfieldhdr">'._FILTER.'</TD>
                   </TR>
-                  <TR><TD class="plfield">'.$myrow4[0].'</TD>
+                  <TR><TD class="plfield">'.htmlspecialchars($myrow4[0]).'</TD>
                       <TD class="plfield">'.
 		      ( ($myrow4[1] == "") ? "&nbsp;<I>"._NONE."</I>&nbsp;" : $myrow4[1] ).'</TD>
                       <TD class="plfield">'.
@@ -300,9 +307,18 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
                   <TR><TD CLASS="iptitle" ALIGN=CENTER ROWSPAN=2>FQDN</TD>
                        <TD class="plfieldhdr">'._SENSOR.' '._NAME.'</TD>
                   </TR>
-                  <TR><TD class="plfield">'.
-                      (baseGetHostByAddr($myrow4[0],
-                                        $db, $dns_cache_lifetime)).'</TD>
+                  <TR><TD class="plfield">';
+     # Is this a dotted IPv4 address?
+     $pattern = '/(\d{1,3}\.){3}\d{1,3}/';
+     if (preg_match($pattern, $myrow4[0]))
+     {
+       echo baseGetHostByAddr($myrow4[0], $db, $dns_cache_lifetime);
+     }
+     else
+     {
+       echo $myrow4[0];
+     }
+     echo '           </TD>
                   </TR>
                  </TABLE>     
             </TR>';
@@ -332,9 +348,9 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
   {
      $myrow4 = $result4->baseFetchRow();
 
-     echo '    <TR><TD class="plfield">'.$myrow4[0].'</TD>
-                   <TD class="plfield">'.$myrow4[1].'</TD>
-                   <TD class="plfield">'.$myrow4[2].'</TD>
+     echo '    <TR><TD class="plfield">'.htmlspecialchars($myrow4[0]).'</TD>
+                   <TD class="plfield">'.htmlspecialchars($myrow4[1]).'</TD>
+                   <TD class="plfield">'.htmlspecialchars($myrow4[2]).'</TD>
                </TR>';
   }
   echo '      </TABLE>';
@@ -381,11 +397,11 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
   echo '                 <TD class="plfield">
                          <A HREF="base_stat_ipaddr.php?ip='.baseLong2IP($myrow2[1]).'&amp;netmask=32">'.
                             baseLong2IP($myrow2[1]).'</A></TD>';
-  echo '                 <TD class="plfield">'.$myrow2[2].'</TD>';
+  echo '                 <TD class="plfield">'.htmlspecialchars($myrow2[2]).'</TD>';
   echo '                 <TD class="plfield">'.($myrow2[3] << 2).'</TD>';    /* ihl is in 32 bit words, must be multiplied by 4 to show in bytes */
-  echo '                 <TD class="plfield">'.$myrow2[4].'</TD>';
-  echo '                 <TD class="plfield">'.$myrow2[5].'</TD>';
-  echo '                 <TD class="plfield">'.$myrow2[6].'</TD>';
+  echo '                 <TD class="plfield">'.htmlspecialchars($myrow2[4]).'</TD>';
+  echo '                 <TD class="plfield">'.htmlspecialchars($myrow2[5]).'</TD>';
+  echo '                 <TD class="plfield">'.htmlspecialchars($myrow2[6]).'</TD>';
   echo '                 <TD class="plfield">';
   if ($myrow2[7] == 1)
 	echo 'yes';
@@ -394,8 +410,8 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
   echo 							  '</TD>';
   list( , $my_offset, ) = unpack("n", pack("S", $myrow2[8]));
   echo '                 <TD class="plfield">'. ($my_offset * 8) .'</TD>';
-  echo '                 <TD class="plfield">'.$myrow2[9].'</TD>';
-  echo '                 <TD class="plfield">'.$myrow2[10].'<BR>= 0x'.dechex($myrow2[10]).'</TD></TR>';
+  echo '                 <TD class="plfield">'.htmlspecialchars($myrow2[9]).'</TD>';
+  echo '                 <TD class="plfield">'.htmlspecialchars($myrow2[10]).'<BR>= 0x'.dechex($myrow2[10]).'</TD></TR>';
   echo '         </TABLE>';
 
   if ( $resolve_IP == 1 )
@@ -437,7 +453,7 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
          $myrow3 = $result3->baseFetchRow();
          echo '    <TR><TD>#'.($i+1).'</TD>';
          echo '        <TD class="plfield">'.IPOption2str($myrow3[4]).'</TD>';
-         echo '        <TD class="plfield">'.$myrow3[5].'</TD>';
+         echo '        <TD class="plfield">'.htmlspecialchars($myrow3[5]).'</TD>';
          echo '        <TD class="plfield">';
          if ($myrow3[6] != "" )
            echo $myrow3[6];
@@ -470,36 +486,39 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
      $myrow5 = $result5->baseFetchRow();
      $result5->baseFreeRows();
 
-     if ( $debug_mode > 0 ) {
-	echo "&lt;debug&gt;<BR>";
-	echo "Encoding: $encoding<BR>";
-	echo "Data header: &lt;$myrow5[0]&gt;<BR>";
-	echo "strlen: " . strlen($myrow5[0]);
-	echo "<br>Base64 decoded: &lt;" . base64_decode($myrow5[0]) . "&gt;<BR>";
-	echo "strlen: " . strlen(base64_decode($myrow5[0]));
-	echo "<br>bin2hex: &lt;" . bin2hex(base64_decode($myrow5[0])) . "&gt;<BR>";
-	echo "strlen: " . strlen(bin2hex(base64_decode($myrow5[0])));
-	echo "<BR>&lt;/debug&gt;<BR>";
-     }
+    if (is_array($myrow5))
+    {
+      if ( $debug_mode > 0 ) {
+        echo "&lt;debug&gt;<BR>";
+        echo "Encoding: $encoding<BR>";
+        echo "Data header: &lt;$myrow5[0]&gt;<BR>";
+        echo "strlen: " . strlen($myrow5[0]);
+        echo "<br>Base64 decoded: &lt;" . base64_decode($myrow5[0]) . "&gt;<BR>";
+        echo "strlen: " . strlen(base64_decode($myrow5[0]));
+        echo "<br>bin2hex: &lt;" . bin2hex(base64_decode($myrow5[0])) . "&gt;<BR>";
+        echo "strlen: " . strlen(bin2hex(base64_decode($myrow5[0])));
+        echo "<BR>&lt;/debug&gt;<BR>";
+      }
 
-     /* 0 == hex, 1 == base64, 2 == ascii; cf. snort-2.4.4/src/plugbase.h */
-     if ($encoding == 0) {
+      /* 0 == hex, 1 == base64, 2 == ascii; cf. snort-2.4.4/src/plugbase.h */
+      if ($encoding == 0) {
        	$t = $myrow5[0];
-     } elseif ($encoding == 1) {
+      } elseif ($encoding == 1) {
        	$t = bin2hex(base64_decode($myrow5[0]));
-     } else {
+      } else {
         echo "<BR><BR>This type of encoding is not supported. Please use either hex oder ";
         echo "base64 encoding. Do not use ascii, because ascii encoding loses data.<BR><BR>";
-     }
+      }
 
-     /* from here on $t is in hex format, even if original encoding was base64 */
+      /* from here on $t is in hex format, even if original encoding was base64 */
 
-     /* "MACDAD" (ascii code in hex: 4d 41 43 44 41 44) is a key word used by
-      * sfPortscan, rather than a real MAC address; cf. 
-      * snort-2.6.0/doc/README.sfportscan
-      * snort-2.6.0/src/preprocessors/spp_sfportscan.c
-      * snort-2.6.0/src/preprocessors/flow/portscan/flowps_snort.c */
-     if ( strlen($t) >= 24 && strncmp($t, '4d41434441444d4143444144', 24) != 0) {
+      /* "MACDAD" (ascii code in hex: 4d 41 43 44 41 44) is a key word used by
+       * sfPortscan, rather than a real MAC address; cf. 
+       * snort-2.6.0/doc/README.sfportscan
+       * snort-2.6.0/src/preprocessors/spp_sfportscan.c
+       * snort-2.6.0/src/preprocessors/flow/portscan/flowps_snort.c */
+      if ( strlen($t) >= 24 && strncmp($t, '4d41434441444d4143444144', 24) != 0) 
+      {
         $dst_mac = $t[0].$t[1].':'.$t[2].$t[3].':'.$t[4].$t[5].':'.$t[6].$t[7].':'.$t[8].$t[9].':'.$t[10].$t[11];
         $src_mac = $t[12].$t[13].':'.$t[14].$t[15].':'.$t[16].$t[17].':'.$t[18].$t[19].':'.$t[20].$t[21].':'.$t[22].$t[23];
 
@@ -516,7 +535,15 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
                               <TD>'. GetVendor($dst_mac) .'</TD></TR>';
         echo '         </TABLE>';
         echo '</TABLE></TD></TR>';
-     }
+      }
+      else
+      {
+        /* "MACDAD" indicates that this is an sfportscan packet.  This means
+           the database does NOT contain a real packet.  Therefore 
+           building a pcap file won't be possible. */
+        $sf_portscan_flag = 1;
+      }
+    }
   }
 
 
@@ -632,18 +659,71 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
                            <TD class="plfieldhdr">'._LENGTH.'</TD>
                            <TD class="plfieldhdr">'._DATA.'</TD>';
 
+	 /* Check which kind of encoding is used: */
+	 $sql4 = 'SELECT encoding FROM sensor WHERE sid='.$sid;
+	 $result4 = $db->baseExecute($sql4);
+	 $myrow4 = $result4->baseFetchRow();
+	 $result4->baseFreeRows();
+
          for ( $i = 0; $i < $num_opt; $i++)
          {
              $myrow3 = $result3->baseFetchRow();
              echo '    <TR><TD class="plfield">#'.($i+1).'</TD>';
              echo '        <TD class="plfield">'.TCPOption2str($myrow3[4]).'</TD>';
              echo '        <TD class="plfield">'.$myrow3[5].'</TD>';
-             echo '        <TD class="plfield">';
-             if ($myrow3[6] != "" )
-               echo $myrow3[6];
-             else
-               echo '&nbsp;';
-             echo '</TD></TR>';
+	     echo '        <TD class="plfield">';
+
+	     if ($myrow4[0] == 1) 
+             /* base64 encoding */
+	     {
+	       if ($myrow3[5] > 0)
+	       {
+		 $mystr = bin2hex(base64_decode($myrow3[6]));
+		 for ($j = 0; $j < $myrow3[5] * 2; $j = $j + 2)
+		 {
+	           echo $mystr[$j];
+		   echo $mystr[$j + 1];
+		   echo '&nbsp;';
+		 }
+		 echo '<BR>';
+		 if (TCPOption2str($myrow3[4]) == "(8) TS")
+		 /* timestamp: cf. RFC 1323, 3.2 */
+		 {
+			 /* TSval */
+			 $tmpstr = "";
+			 for ($j = 0; $j < 8; $j++)
+			 {
+				 $tmpstr = $tmpstr . $mystr[$j];
+			 }
+			 $TSval = hexdec($tmpstr);
+			 echo '        TSval: ' . $TSval . '<BR>';
+
+			 /* TSecr */
+			 $tmpstr = "";
+			 for ($j = 8; $j < 16; $j++)
+			 {
+		           $tmpstr = $tmpstr . $mystr[$j];
+			 }
+			 $TSecr = hexdec($tmpstr);
+			 echo '        TSecr: ' . $TSecr . '<BR>';
+		 }
+		 
+		 echo '        </TD></TR>';
+	       }
+	       else
+	       {
+	         echo '{No data}</TD></TR>';
+	       }
+	     }
+	     else
+	     {
+	       /* hexadecimal encoding (and ASCII) */
+               if ($myrow3[6] != "" )
+                 echo $myrow3[6];
+               else
+                 echo '&nbsp;';
+	       echo '</TD></TR>';
+	     }
          }
       }
       else
@@ -701,6 +781,9 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
              "WHERE sid='".$sid."' AND cid='".$cid."'";
      $result2 = $db->baseExecute($sql2);
      $myrow2 = $result2->baseFetchRow();
+     $ICMPitype = $myrow2[0];
+     $ICMPicode = $myrow2[1];
+
 
      echo '
            <TABLE BORDER=1 WIDTH="90%">
@@ -709,19 +792,36 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
      echo '         <TABLE BORDER=1 CELLPADDING=2>';
      echo '            <TR><TD class="plfieldhdr">'._TYPE.'</TD>
                            <TD class="plfieldhdr">'._CODE.'</TD>
-                           <TD class="plfieldhdr">checksum</TD>
-                           <TD class="plfieldhdr">'._ID.'</TD>
-                           <TD class="plfieldhdr">seq #</TR>';
+                           <TD class="plfieldhdr">checksum</TD>';
+		if ($ICMPitype == "5") {
+		 echo '                <TD class="plfieldhdr">gateway address</TD>';
+     echo '                <TD class="plfieldhdr">gateway hostname</TD>';
+		} else {
+     echo '                <TD class="plfieldhdr">'._ID.'</TD>
+                           <TD class="plfieldhdr">seq #</TD>';
+		}
+
+		 echo '            </TR>';
      echo '            <TR><TD class="plfield">('.$myrow2[0].') '.ICMPType2str($myrow2[0]).'</TD>';
      echo '                <TD class="plfield">('.$myrow2[1].') '.ICMPCode2str($myrow2[0],$myrow2[1]).'</TD>';
      echo '                <TD class="plfield">'.$myrow2[2].'<BR>=<BR>0x'. dechex($myrow2[2])  .'</TD>';
+
+		if ($ICMPitype == "5") {
+		 $gateway_numeric_ip = (integer)($myrow2[3] / 256) . "." . ($myrow2[3] % 256) . ".". (integer)($myrow2[4] / 256) . "." . ($myrow2[4] % 256);
+		 $gateway_hostname = basegetHostByAddr($gateway_numeric_ip, $db, $dns_cache_lifetime); 
+
+     echo '                <TD class="plfield"><A HREF="base_stat_ipaddr.php?ip=' . $gateway_numeric_ip . '&amp;netmask=32" TARGET="_PL_SIP">' . $gateway_numeric_ip . '</A></TD>';
+		 echo '                <TD class="plfield">' . $gateway_hostname   . '</TD>';
+		} else {
      echo '                <TD class="plfield">'.$myrow2[3].'</TD>';
-     echo '                <TD class="plfield">'.$myrow2[4].'</TD></TR>';
+     echo '                <TD class="plfield">'.$myrow2[4].'</TD>';
+		}
+
+     echo '            </TR>';
      echo '         </TABLE>';
      echo '</TABLE>';
 
-     $ICMPitype = $myrow2[0];
-     $ICMPicode = $myrow2[1];
+     
 
      $result2->baseFreeRows();
   }
@@ -738,7 +838,14 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
            <TR><TD class="payloadtitle" WIDTH=50 ROWSPAN=2 ALIGN=CENTER>Payload';
            echo("<br><br>".PrintCleanURL());
            echo("<br>".PrintBinDownload($db, $cid, $sid));
-           echo("<br>".PrintPcapDownload($db, $cid, $sid));
+           if ($sf_portscan_flag != 1)
+           {
+             echo("<br>".PrintPcapDownload($db, $cid, $sid));
+           }
+           else
+           {
+             echo "<br>(Download in pcap format is NOT possible with portscan data)";
+           }
   echo '       <TD>';
 
   if ( $payload )
@@ -770,24 +877,32 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
                  $work = str_replace("\n","",$payload);
               }
 
+
+
+
+
+
               /* 
                *  - depending on how the packet logged, 32-bits of NULL padding after
                *    the checksum may still be present.
                */
-              if ( substr($work, 0, 8) == "00000000" )
+              if ( substr($work, 0, 8) == "00000000" ) {
                  $offset = 8;
+							}
               /* for dest. unreachable, frag needed and DF bit set indent the padding
                * of MTU of next hop
                */
-              else if ( ($ICMPitype == "3") && ($ICMPicode == "4") )
+              else if ( ($ICMPitype == "3") && ($ICMPicode == "4") ) {
                  $offset += 8;
-              
-              if ($ICMPitype == "5") {
-                 $gateway = hexdec($work[16+$offset].$work[17+$offset]).".".
-                            hexdec($work[18+$offset].$work[19+$offset]).".".
-                            hexdec($work[20+$offset].$work[20+$offset]).".".
-                            hexdec($work[22+$offset].$work[23+$offset]);
               }
+            
+
+              $icmp_proto = hexdec($work[18+$offset].$work[19+$offset]);
+
+              $payload_ip_checksum = "0x" . 
+                          ($work[20 + $offset] . $work[21 + $offset]) .
+                          ($work[22 + $offset] . $work[23 + $offset]); 
+
               $icmp_src = hexdec($work[24+$offset].$work[25+$offset]).".".
                           hexdec($work[26+$offset].$work[27+$offset]).".".
                           hexdec($work[28+$offset].$work[29+$offset]).".".
@@ -796,45 +911,76 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
                           hexdec($work[34+$offset].$work[35+$offset]).".".
                           hexdec($work[36+$offset].$work[37+$offset]).".".
                           hexdec($work[38+$offset].$work[39+$offset]);
-              $icmp_proto = hexdec($work[18+$offset].$work[19+$offset]);
+              
+              
+
+
 
               $hdr_offset = ($work[$offset+1]) * 8 + $offset;
               $icmp_src_port = hexdec($work[$hdr_offset].$work[$hdr_offset+1].$work[$hdr_offset+2].$work[$hdr_offset+3]);
               $icmp_dst_port = hexdec($work[$hdr_offset+4].$work[$hdr_offset+5].$work[$hdr_offset+6].$work[$hdr_offset+7]);
 
+
+              if ($ICMPitype == "5") {
+                 $seq_no_hex = ($work[ 8 + $hdr_offset]) . ($work[ 9 + $hdr_offset]) .
+                               ($work[10 + $hdr_offset]) . ($work[11 + $hdr_offset]) .
+                               ($work[12 + $hdr_offset]) . ($work[13 + $hdr_offset]) .
+                               ($work[14 + $hdr_offset]) . ($work[15 + $hdr_offset]);
+                 $seq_no = hexdec($seq_no_hex);
+              }
+
+
+ 
               echo '<TABLE BORDER=1>';
               echo '<TR>';
-              if ( $ICMPitype == "5" ) {
-                 echo '<TD class="plfieldhdr">Gateway IP</TD>';
-                 echo '<TD class="plfieldhdr">Gateway Name</TD>';
-              }
+              
               echo '<TD class="plfieldhdr">Protocol</TD>';
               echo '<TD class="plfieldhdr">Org.Source<BR>IP</TD>';
               echo '<TD class="plfieldhdr">Org.Source<BR>Name</TD>';
-              if ( $icmp_proto == "6" || $icmp_proto == "17" )
+
+              if ( $icmp_proto == "6" || $icmp_proto == "17" ) {
                  echo '<TD class="plfieldhdr">Org.Source<BR>Port</TD>';
+              }
+
               echo '<TD class="plfieldhdr">Org.Destination<BR>IP</TD>';
               echo '<TD class="plfieldhdr">Org.Destination<BR>Name</TD>';
-              if ( $icmp_proto == "6" || $icmp_proto == "17" )
+
+              if ( $icmp_proto == "6" || $icmp_proto == "17" ) {
                  echo '<TD class="plfieldhdr">Org.Destination<BR>Port</TD>';
+              }
+
+              if ( $ICMPitype == "5" ) {
+                 echo '<TD class="plfieldhdr">IP Hdr Checksum</TD>';
+                 echo '<TD class="plfieldhdr">Sequence Number</TD>';
+              }
+
               echo '</TR>';
               echo '<TR>';
-              if ( $ICMPitype == "5" ) {
-                 echo '<TD class="plfield">';
-                 echo '<A HREF="base_stat_ipaddr.php?ip='.$gateway.'&amp;netmask=32" TARGET="_PL_SIP">'.$gateway.'</A></TD>';
-                 echo '<TD class="plfield">'.baseGetHostByAddr($gateway, $db, $dns_cache_lifetime).'</TD>';
-              }
+
+              
+              
               echo '<TD class="plfield">'.IPProto2Str($icmp_proto).'</TD>';
               echo '<TD class="plfield">';
               echo '<A HREF="base_stat_ipaddr.php?ip='.$icmp_src.'&amp;netmask=32" TARGET="_PL_SIP">'.$icmp_src.'</A></TD>';
               echo '<TD class="plfield">'.baseGetHostByAddr($icmp_src, $db, $dns_cache_lifetime).'</TD>';
-              if ( $icmp_proto == "6" || $icmp_proto == "17" )
+
+              if ( $icmp_proto == "6" || $icmp_proto == "17" ) {
                  echo '<TD class="plfield">'.$icmp_src_port.'</TD>';
+              }
+
               echo '<TD class="plfield">';
               echo '<A HREF="base_stat_ipaddr.php?ip='.$icmp_dst.'&amp;netmask=32" TARGET="_PL_DIP">'.$icmp_dst.'</A></TD>';
               echo '<TD class="plfield">'.baseGetHostByAddr($icmp_dst, $db, $dns_cache_lifetime).'</TD>';
-              if ( $icmp_proto == "6" || $icmp_proto == "17" )
+
+              if ( $icmp_proto == "6" || $icmp_proto == "17" ) {
                  echo '<TD class="plfield">'.$icmp_dst_port.'</TD>';
+              }
+
+              if ($ICMPitype == "5") {
+                echo '<TD class="plfield">' . $payload_ip_checksum . '</TD>';
+                echo '<TD class="plfield">' . $seq_no . '</TD>';
+              }
+
               echo '</TR>';
               echo '</TABLE>';
          }

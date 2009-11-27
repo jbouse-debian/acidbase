@@ -370,9 +370,9 @@ DEFINE('_PHPERRORCSESSION','PHP 错误：检测到一个用户PHP会话.
 DEFINE('_PHPERRORCSESSIONCODE','PHP 错误: 配置了一个用户定制的 
 PHP 
 会话，但是<CODE>user_session_path</CODE>里提供的供应处理器代码不可用。');
-DEFINE('_PHPERRORCSESSIONVAR','PHP 错误: 配置了一个用户定制的 
-DEFINE('_DISPACTION','{ action }'); //NEW
-PHP 会话，但是在 BASE 
+DEFINE('_PHPERRORCSESSIONVAR','PHP 错误: 配置了一个用户定制的 ');
+// NEW
+DEFINE('_DISPACTION','PHP 会话，但是在 BASE 
 里没有制定这个处理器的工具。如果需要一个定制会话处理器，在<CODE>base_conf.php</CODE>里设置<CODE>user_session_path</CODE> 
 变量.');
 DEFINE('_PHPSESSREG','会话已注册');
@@ -656,7 +656,7 @@ DEFINE('_SCPORT','端口');
 
 //base_stat_ipaddr.php
 DEFINE('_PSEVENTERR','端口扫描事件错误: ');
-DEFINE('_PSEVENTERRNOFILE','没有在 \$portscan_file 
+DEFINE('_PSEVENTERRNOFILE','没有在 $portscan_file 
 变量里指定文件.');
 DEFINE('_PSEVENTERROPENFILE','无法打开端口扫描事件文件');
 DEFINE('_PSDATETIME','日期/时间');

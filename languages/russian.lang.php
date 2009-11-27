@@ -611,7 +611,7 @@ DEFINE('_SCPORT','Порт');
 
 //base_stat_ipaddr.php
 DEFINE('_PSEVENTERR','ОШИБКА СОБЫТИЯ СКАНИРОВАНИЯ ПОРТОВ: ');
-DEFINE('_PSEVENTERRNOFILE','Ни один файл не указан в переменной \$portscan_file.');
+DEFINE('_PSEVENTERRNOFILE','Ни один файл не указан в переменной $portscan_file.');
 DEFINE('_PSEVENTERROPENFILE','Не удалось открыть файл событий сканирования портов');
 DEFINE('_PSDATETIME','Дата/Время');
 DEFINE('_PSSRCIP','IP-источник');

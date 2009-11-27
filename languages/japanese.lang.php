@@ -548,7 +548,7 @@ DEFINE('_QCERRFIELD','A field of');
 DEFINE('_QCERROPER','An operator of');
 DEFINE('_QCERRDATETIME','A date/time value of');
 DEFINE('_QCERRPAYLOAD','A payload value of');
-DEFINE('_QCERRIP','A IP address of');
+DEFINE('_QCERRIP','An IP address of');
 DEFINE('_QCERRIPTYPE','An IP address of type');
 DEFINE('_QCERRSPECFIELD',' was entered for a protocol field, but the particular field was not specified.');
 DEFINE('_QCERRSPECVALUE','was selected indicating that it should be a criteria, but no value was specified on which to match.');
@@ -609,7 +609,7 @@ DEFINE('_SCPORT','ポート');
 
 //base_stat_ipaddr.php
 DEFINE('_PSEVENTERR','ポートスキャンイベントエラー: ');
-DEFINE('_PSEVENTERRNOFILE','No file was specified in the \$portscan_file variable.');
+DEFINE('_PSEVENTERRNOFILE','No file was specified in the $portscan_file variable.');
 DEFINE('_PSEVENTERROPENFILE','ポートスキャンイベントファイルが開けません');
 DEFINE('_PSDATETIME','日付/時刻');
 DEFINE('_PSSRCIP','発信元 IP');

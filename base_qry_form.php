@@ -7,7 +7,6 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
-**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: renders the HTML form to gather search criteria
@@ -22,9 +21,9 @@
 if ( $submit == "TCP" )        {  $cs->criteria['layer4']->Set("TCP");   }
 if ( $submit == "UDP" )        {  $cs->criteria['layer4']->Set("UDP");   }
 if ( $submit == "ICMP" )       {  $cs->criteria['layer4']->Set("ICMP");  }
-if ( $submit == _NOLAYER4 )  {  $cs->criteria['layer4']->Set("");      }
+if ( $submit == _NOLAYER4 )    {  $cs->criteria['layer4']->Set("");      }
 
-if ( $submit == _ADDTIME && $cs->criteria['time']->GetFormItemCnt() < $MAX_ROWS)         
+if ( $submit == _ADDTIME && $cs->criteria['time']->GetFormItemCnt() < $MAX_ROWS)        
    $cs->criteria['time']->AddFormItem($submit, $cs->criteria['layer4']->Get());
 if ( $submit == _ADDADDRESS && $cs->criteria['ip_addr']->GetFormItemCnt() < $MAX_ROWS)     
    $cs->criteria['ip_addr']->AddFormItem($submit, $cs->criteria['layer4']->Get());

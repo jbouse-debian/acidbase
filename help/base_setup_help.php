@@ -18,17 +18,41 @@
 **
 ********************************************************************************
 */
+
+if (file_exists('base_conf.php'))
+{
+  include("base_conf.php");
+}
+elseif (file_exists('../base_conf.php'))
+{
+  include("../base_conf.php");
+}
+elseif (file_exists("$BASE_path/base_conf.php"))
+{
+  include("$BASE_path/base_conf.php");
+}
+else
+{
+  include ("../base_conf.php.dist");
+}
+
+
+
+
+echo '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">' . "\n\n" .
+     '<!-- Basic Analysis and Security Engine (BASE) ' . $BASE_VERSION . ' -->' . "\n" . 
+     '<!-- BASE_path = ' . $BASE_path . "\n" .
+     '     BASE_urlpath = ' . $BASE_urlpath .  "\n" .
+     '     BASE_VERSION = ' . $BASE_VERSION .  "\n" .
+     '-->' . "\n" .
+     '<HTML> ' . "\n" .
+     '  <HEAD> ' . "\n" .
+     '  <META name="Author" content="Kevin Johnson"> ' . "\n" .
+     '    <TITLE>BASE: ' . $BASE_VERSION . '</TITLE> ' . "\n" .
+     '    <LINK rel="stylesheet" type="text/css" HREF="../styles/base_style.css">' . "\n" ;
+echo '  </HEAD> ' ;
+
 ?>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<!-- Basic Analysis and Security Engine (BASE) <?php echo $BASE_VERSION; ?> -->
-<HTML>
-  <HEAD>
-    <META name="Author" content="Kevin Johnson">
-    <TITLE>BASE: </TITLE>
-  <LINK rel="stylesheet" type="text/css" HREF="styles/base_style.css">
-
-</HEAD>
 
 <BODY>
 <a name="language"><b>Language Selection:</b><br>

@@ -7,7 +7,6 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
-**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: support routines for processing criteria
@@ -33,7 +32,7 @@ function PrintCriteriaState()
            "<B>AG:</B> ".$_SESSION['ag']."<BR>\n".
            "<B>"._QCSIG."</B>\n";
       print_r($_SESSION['sig']);
-      echo "<BR><B>"._TIME." (".$_SESSION['time_cnt']."):</B><BR>";
+      echo "<BR><B>time struct (".$_SESSION['time_cnt']."):</B><BR>";
       print_r($_SESSION['time']);
       echo "<BR><B>"._QCIPADDR." (".$_SESSION['ip_addr_cnt']."):</B><BR>";
       print_r($_SESSION['ip_addr']);
@@ -51,7 +50,7 @@ function PrintCriteriaState()
       print_r($_SESSION['udp_field']);
       echo "<BR><B>"._QCICMPFIELDS." (".$_SESSION['icmp_field_cnt']."):</B><BR>";
       print_r($_SESSION['icmp_field']);
-      echo "<BR><B>RawIP field (".$_SESSION['Rawip_field_cnt']."):</B><BR>";
+      echo "<BR><B>RawIP field (".$_SESSION['rawip_field_cnt']."):</B><BR>";
       print_r($_SESSION['rawip_field']);
       echo "<BR><B>"._QCDATA." (".$_SESSION['data_cnt']."):</B><BR>";
       print_r($_SESSION['data']);
@@ -125,7 +124,10 @@ function DateTimeRows2sql($field, $cnt, &$s_sql)
   GLOBAL $db;
   $tmp2 = "";
   $allempty = FALSE;
-  $time_field = array("mysql" => ":", "mssql" => ":");
+  $time_field = array("mysql"    => ":", 
+                      "mssql"    => ":",
+                      "postgres" => ":"
+                );
   $minsec = array( ">=" => "00", "<=" => "59");
 
   for ( $i = 0; $i < $cnt; $i++ )
@@ -196,20 +198,22 @@ function DateTimeRows2sql($field, $cnt, &$s_sql)
                } else {
 			if (count($field) > 1) {
 			// Better fix for bug #1199128
-				// Number of values in each criteria line
-				$count=array_count_values($field[$i]);
-
 				// Number of empty values
-				$empty = $count[""];
+				$empty_count=0;
+				reset($field[$i]);
+				while (list($key, $val) = each($field[$i])) {
+					if (empty($val)) {
+						$empty_count += 1;
+					}
+				}
 
 				// Total number of values in the criteria line (empty or filled)
-				$array_count = count($count);
+				$array_count = count($field[1]);
 
 				// Check to see if any fields were left empty
-				if(isset($count[""]))
-					// If the number of empty fields is greater than (impossible) or equal to (possible) the number of values in the array, then they must all be empty
-					if ($empty >= $array_count)
-						$allempty = TRUE;
+				// If the number of empty fields is greater than (impossible) or equal to (possible) the number of values in the array, then they must all be empty
+				if ($empty_count >= $array_count)
+					$allempty = TRUE;
 
 				// Trim off white space
 				$field[$i][9] = trim($field[$i][9]);
@@ -220,12 +224,12 @@ function DateTimeRows2sql($field, $cnt, &$s_sql)
 					continue;
 				else {
 					// Otherwise process it
-					$tmp = $field[$i][0]." timestamp ".$op."'$t'".$field[$i][8].' '.$field[$i][9]; 
+					$tmp = $field[$i][0]." timestamp ".$op."'$t'".$field[$i][8].' '.CleanVariable($field[$i][9], VAR_ALPHA); 
 					  
 				}
                  	} else {
 				// If we just have one criteria line, then do with it what we must
-				$tmp = $field[$i][0]." timestamp ".$op."'$t'".$field[$i][8].' '.$field[$i][9]; 
+				$tmp = $field[$i][0]." timestamp ".$op."'$t'".$field[$i][8].' '.CleanVariable($field[$i][9], VAR_ALPHA); 
 			}
 		}
              }
@@ -261,7 +265,7 @@ function DateTimeRows2sql($field, $cnt, &$s_sql)
                ErrorMessage("<B>"._QCERRCRITWARN."</B> "._QCERROPER." '".$field[$i][1].
                             "' "._QCERRDATECRIT);
             else
-               $tmp = $field[$i][0].$tmp.')'.$field[$i][8].$field[$i][9];
+               $tmp = $field[$i][0].$tmp.')'.$field[$i][8].CleanVariable($field[$i][9], VAR_ALPHA);
          }
       }
       else
@@ -278,6 +282,7 @@ function DateTimeRows2sql($field, $cnt, &$s_sql)
 
       if ( $i > 0 && $field[$i-1][9] == ' ' && $field[$i-1][4] != " ")
          ErrorMessage("<B>"._QCERRCRITWARN."</B> "._QCERRDATEBOOL);
+
       $tmp2 = $tmp2.$tmp;
   }
 
@@ -584,6 +589,7 @@ function ProcessCriteria()
   $data_cnt = $cs->criteria['data']->GetFormItemCnt();
   $data_encode = $cs->criteria['data']->data_encode;
 
+  
   $tmp_meta = "";
   /* Sensor */
   if ( $sensor != "" && $sensor != " " )
@@ -601,7 +607,26 @@ function ProcessCriteria()
      $cs->criteria['ag']->Set("");
 
   /* Signature */
-  if ( (isset($sig[0]) && $sig[0] != " " && $sig[0] != "") && (isset($sig[1]) && $sig[1] != "") )
+  /* xxx jl */
+  if ($debug_mode > 0)
+  { 
+    print "<BR>\n\$_SESSION['sig'] = <PRE>\n";
+    print_r($_SESSION['sig']);
+    print "</PRE>\n";
+    print "\$sig[0] = \"" . $sig[0] . "\"<BR>\n";
+    print "\$sig[1] = \"" . $sig[1] . "\"<BR>\n";
+    print "\$sig[2] = \"" . $sig[2] . "\"<BR>\n";
+    print "\$sig[3] = \"" . $sig[3] . "\"<BR>\n";
+    print "<BR>\n";
+  }
+
+  if ( 
+       (isset($sig[0]) && $sig[0] != " " && $sig[0] != "") && 
+       (
+         (isset($sig[1]) && $sig[1] != "" && $sig[1] != NULL) ||
+         (isset($sig[3]) && $sig[3] != "" && $sig[3] != NULL)
+       )
+     )
   {
      $sig_neg = "";
      if ( $sig[2] == "!=" )
@@ -616,21 +641,46 @@ function ProcessCriteria()
         }
         else
         {
+           if (isset($sig[3]) && !empty($sig[3]) && $sig[3] != "" &&  $sig[3] != " " && $sig[3] != "NULL" && $sig[3] != "null" && $sig[3] != NULL)
+           {
+             $sig_name = $sig[3];
+           }
+           else
+           {
+             $sig_name = $sig[1];
+           }
+
+           // xxx jl
+           if ($debug_mode > 0)
+           {
+             print "\$sig[1]   = \"$sig[1]\"<BR>\n";
+             print "\$sig[3]   = \"$sig[3]\"<BR>\n";
+             print "\$sig_name = \"$sig_name\"<BR><BR>\n\n";
+           }
+
            if ( $sig[0] == "=" )
+           {
               if ($db->DB_type != "mssql")
-                $tmp_meta = $tmp_meta." AND ".$sig_neg." (sig_name='".$sig[1]."') ";
+              {
+                $tmp_meta = $tmp_meta." AND ".$sig_neg." (sig_name='". $sig_name . "') ";
+              }
               else 
-                $tmp_meta = $tmp_meta." AND ".$sig_neg." (sig_name LIKE '".MssqlKludgeValue($sig[1])."') ";
+              {
+                $tmp_meta = $tmp_meta." AND ".$sig_neg." (sig_name LIKE '".MssqlKludgeValue($sig_name) . "') ";
+              }
+           }
            else if ($sig[0] == "LIKE" )
-              $tmp_meta = $tmp_meta." AND ".$sig_neg." (sig_name LIKE '%".$sig[1]."%') ";
+           {
+              $tmp_meta = $tmp_meta." AND ".$sig_neg." (sig_name LIKE '%" . $sig_name . "%') ";
+           }
         }
      }
      else
      {
        if ( $sig[0] == "=" )
-         $tmp_meta = $tmp_meta." AND ".$sig_neg." (signature='".$sig[1]."') ";
+         $tmp_meta = $tmp_meta." AND ".$sig_neg." (signature='" . $sig_name . "') ";
        else if ($sig[0] == "LIKE" )
-         $tmp_meta = $tmp_meta." AND ".$sig_neg." (signature LIKE '%".$sig[1]."%') ";
+         $tmp_meta = $tmp_meta." AND ".$sig_neg." (signature LIKE '%" . $sig_name . "%') ";
      }
   }
   else
@@ -651,7 +701,14 @@ function ProcessCriteria()
   /* Signature Priority */
   if ( $sig_priority[1] != " " && $sig_priority[1] != "" && $sig_priority[1] != "0")
   {
-     $tmp_meta = $tmp_meta." AND sig_priority ".$sig_priority[0]." '".$sig_priority[1]."'";
+     if ($sig_priority[0] != "" && $sig_priority[0] != " ")
+     {
+       $tmp_meta = $tmp_meta." AND sig_priority ".$sig_priority[0]." '".$sig_priority[1]."'";
+     }
+     else
+     {
+       $tmp_meta = $tmp_meta." AND sig_priority = '".$sig_priority[1]."'";
+     }
   }
   else if ($sig_priority[1] == "0")
   {

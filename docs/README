@@ -1,4 +1,4 @@
-Basic Analysis and Security Engine (BASE) v1.3.9 (anne)
+Basic Analysis and Security Engine (BASE) v1.4.4 (dawn)
   
 By Kevin Johnson <kjohnson@secureideas.net , http://www.secureideas.net>
     and the BASE Development Team
@@ -288,9 +288,12 @@ The following is a step-by-step list of installing BASE.
     The following SQL statement is an example of assigning permissions to
     database entities (tables).
 
-    [MySQL and PostgreSQL] : GRANT select ON schema TO base_user 
+    [PostgreSQL] : GRANT select ON schema TO base_user 
+    [MySQL]:       GRANT select ON `schema` TO base_user
 
-    (Gives the SELECT privilege to the 'schema' table to user 'base_user') 
+    (Gives the SELECT privilege to the 'schema' table to user 'base_user')
+    (With MySQL "schema" has become a reserved word. 
+     Therefore the backticks.) 
 
 3.  Install Apache, PHP (and GD).  There are many configuration options whose 
     specifics are best addressed by the appropriate package's documentation.  
@@ -378,6 +381,8 @@ The following is a step-by-step list of installing BASE.
       $ pear install Numbers_Roman
       $ pear install Numbers_Words
       $ pear install http://download.pear.php.net/package/Image_Graph-0.7.2.tgz
+      $ pear install Mail_Mime
+
 
 8.  Verify that cookie support in the browser is enabled.  
 

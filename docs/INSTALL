@@ -1,4 +1,4 @@
-﻿BASE Basic Installation
+BASE Basic Installation
 
    These are generic installation instructions.
 Prerequisite configurations/software installations
@@ -60,7 +60,9 @@ These requirements are on the BASE system
       Homepage:     http://www.microsoft.com/
 
 **Instructions for these webservers is contained lower in this INSTALL guide
-***BASE 1.x may work with other webservers that support PHP but have not been tested so not authoritative help can be provided for either the install or problems
+***BASE 1.x may work with other webservers that support PHP but have not been tested so no authoritative help can be provided for either the install or problems
+
+
 4. PHP
     Version:      4.0.4+ (5.0+ recommended)
     Description:  Web scripting language
@@ -94,8 +96,36 @@ These requirements are on the BASE system
     Description:  Provides methods for converting to and from Roman Numerals
     Reason:       provides static methods for converting to and from Roman numerals
     Homepage:     http://pear.php.net/package/Numbers_Roman
+   Mail_Mime
+    Version:      1.5.2
+    Description:  Mail_Mime provides classes to deal with the creation and manipulation of mime messages.
+    Reason:       BASE has a send-an-email-feature.
+    Homepage:     http://pear.php.net/package/Mail_Mime
 *These packages are all installed using pear
 ex: pear install Image_Graph-alpha Image_Canvas-alpha Image_Color Numbers_Roman 
+
+
+** Optional Installation - For the worldmap graphic to be usable within BASE the following two files must be placed into a specific PEAR subdirectory.
+
+world_map6.png
+world_map6.txt
+
+The files need to be placed in the ../pear/Image/Graph/Images/Maps/ directory or whereever the PEAR::Image_Graph-0.7.2 library is installed.
+And this can be found out by means of 
+
+	pear config-show  | grep "PEAR directory"
+
+Let's say this returns
+
+	PEAR directory                 php_dir          /usr/local/share/pear
+
+then the appropriate directory would be
+
+/usr/local/share/pear/Image/Graph/Images/Maps/
+
+The exact location of these two files is unfortunately hardcoded.
+So it cannot be configured by BASE and set to something under the
+BASE directory. 
 
 6. ADODB
     Version:      480+
@@ -151,7 +181,12 @@ BASE 1.x Installation:
 
 Apache
 
+The default designated html directory for Apache is
+
+/var/www/html
+
 
 IIS
+
 
 

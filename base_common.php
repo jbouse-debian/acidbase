@@ -1078,3 +1078,9 @@ function base_header($url) {
     exit;
 }
 
+
+function base_microtime()
+{
+  list($usec, $sec) = explode(" ", microtime());
+  return ((float)$usec + (float)$sec);
+}

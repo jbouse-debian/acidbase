@@ -609,7 +609,7 @@ DEFINE('_SCPORT','Port');
 
 //base_stat_ipaddr.php
 DEFINE('_PSEVENTERR','ERROR PADA PERISTIWA PORTSCAN: ');
-DEFINE('_PSEVENTERRNOFILE','File pada variabel \$portscan_file belum ditetapkan.');
+DEFINE('_PSEVENTERRNOFILE','File pada variabel $portscan_file belum ditetapkan.');
 DEFINE('_PSEVENTERROPENFILE','Gagal membuka file tentang peristiwa Portscan');
 DEFINE('_PSDATETIME','Tanggal/Waktu');
 DEFINE('_PSSRCIP','IP Sumber');

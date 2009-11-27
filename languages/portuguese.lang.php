@@ -617,7 +617,7 @@ DEFINE('_SCPORT','Porta');
 
 //base_stat_ipaddr.php
 DEFINE('_PSEVENTERR','ERRO DE EVENTO PORTSCAN: ');
-DEFINE('_PSEVENTERRNOFILE','Nenhum arquivo foi especificado na variável \$portscan_file.');
+DEFINE('_PSEVENTERRNOFILE','Nenhum arquivo foi especificado na variável $portscan_file.');
 DEFINE('_PSEVENTERROPENFILE','Não foi possível abrir o arquivo de eventos Portscan');
 DEFINE('_PSDATETIME','Data/Hora');
 DEFINE('_PSSRCIP','IP de Origem');

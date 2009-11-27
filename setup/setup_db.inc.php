@@ -34,7 +34,8 @@ function CreateBASEAG($db) {
      $tblBaseUsers_present = $db->baseTableExists("base_users");
 
      if ( $debug_mode > 0 ) {
-        echo "\$submit = $submit <BR>
+       echo "\$submit = $submit <BR>
+              database: $db->DB_name <BR>
               table acid_ag present? $tblBaseAG_present <BR>  
               table acid_ag_alert present? $tblBaseAGAlert_present <BR>
               table acid_ip_cache present? $tblBaseIPCache_present <BR>

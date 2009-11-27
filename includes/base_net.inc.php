@@ -38,7 +38,33 @@ defined( '_BASE_INC' ) or die( 'Accessing this file directly is not allowed.' );
  ***************************************************************************/
 function baseIP2long($IP_str)
 {
+   if (!is_string($IP_str))
+   {
+      error_log("baseIP2long(): WARNING: \$IP_str is a " . gettype($IP_str) . " Returning 0.");
+      return 0;
+   }
+   if (empty($IP_str))
+   {
+      error_log("baseIP2long(): WARNING: \$IP_str is empty. Returning 0.");
+      return 0;
+   }
+
+
    $tmp_long = ip2long($IP_str);
+
+
+   if (is_bool($tmp_long))
+   {
+     if ($tmp_long == FALSE)
+     {
+       error_log("baseIP2long(): WARNING: ip2long() complains about an invalid ip address().");
+       error_log("\$IP_str = \"" . $IP_str . "\"");
+       error_log("This is a " . gettype($IP_str));
+       error_log("Returning 0.");
+       return 0;
+     }
+   }
+
    if ( $tmp_long < 0 )
       $tmp_long = 4294967296 - abs($tmp_long);
 
@@ -134,6 +160,22 @@ function getIPMask($ipaddr, $mask)
  ***************************************************************************/
 function baseGetHostByAddr($ipaddr, $db, $cache_lifetime)
 {
+  if (empty($ipaddr) || ($ipaddr == ""))
+  {
+    error_log("WARNING: baseGetHostByAddr() has been provided with an empty string as \$ipaddr.  Returning with error."); 
+    return "&nbsp;<I>"._ERRRESOLVEADDRESS."</I>&nbsp;";
+  }
+
+  $pattern = '/(\d{1,3}\.){3}\d{1,3}/';
+  if (!preg_match($pattern, $ipaddr))
+  {
+    error_log("WARNING: baseGetHostByAddr() has been provided with something that is NOT a dotted IPv4 address.");
+    error_log("\$ipaddr = \"" . $ipaddr . "\"");
+    error_log("This is a " . gettype($ipaddr));
+    error_log("Returning right this string.");
+    return $ipaddr;
+  }
+
   $ip32 = baseIP2long($ipaddr);
 
   $current_unixtime = time();
@@ -222,13 +264,18 @@ function baseGetWhois($ipaddr, $db, $cache_lifetime)
      $tmp = CallWhoisServer($ipaddr, $whois_server);
 
      /* add to cache regardless of whether can resolve */
-     if( $db->DB_type == "oci8" )
-       $sql = "INSERT INTO acid_ip_cache (ipc_ip, ipc_whois, ipc_whois_timestamp) ".
-              "VALUES ($ip32, '".$db->getSafeSQLString($tmp)."', to_date( '$current_time','YYYY-MM-DD HH24:MI:SS' ) )";
-     else
-       $sql = "INSERT INTO acid_ip_cache (ipc_ip, ipc_whois, ipc_whois_timestamp) ".
-              "VALUES ($ip32, '".$db->getSafeSQLString($tmp)."', '$current_time')";
-     $db->baseExecute($sql);
+     /* xxx jl: Why? Hmmm, no. Not, if tmp is empty. */
+     if (!empty($tmp))
+     {
+       if ( $db->DB_type == "oci8" )
+         $sql = "INSERT INTO acid_ip_cache (ipc_ip, ipc_whois, ipc_whois_timestamp) ".
+                "VALUES ($ip32, '".$db->getSafeSQLString($tmp)."', to_date( '$current_time','YYYY-MM-DD HH24:MI:SS' ) )";
+       else
+         $sql = "INSERT INTO acid_ip_cache (ipc_ip, ipc_whois, ipc_whois_timestamp) ".
+                "VALUES ($ip32, '".$db->getSafeSQLString($tmp)."', '$current_time')";
+     
+       $db->baseExecute($sql);
+     }
   }
   else     /* cache hit */
   {
@@ -247,13 +294,18 @@ function baseGetWhois($ipaddr, $db, $cache_lifetime)
         $tmp = CallWhoisServer($ipaddr, $whois_server);
 
         /* Update entry in cache regardless of whether can resolve */
-	if( $db->DB_type == "oci8" )
-          $sql = "UPDATE acid_ip_cache SET ipc_whois='".$db->getSafeSQLString($tmp)."', ".
-                 " ipc_whois_timestamp=to_date( '$current_time','YYYY-MM-DD HH24:MI:SS' ) WHERE ipc_ip='$ip32'";
-	else
-          $sql = "UPDATE acid_ip_cache SET ipc_whois='".$db->getSafeSQLString($tmp)."', ".
-                 " ipc_whois_timestamp='$current_time' WHERE ipc_ip='$ip32'";
-        $db->baseExecute($sql);
+        // xxx jl: Well, no. Not, if tmp is empty.
+        if (!empty($tmp)) 
+        {
+          if ( $db->DB_type == "oci8" )
+            $sql = "UPDATE acid_ip_cache SET ipc_whois='".$db->getSafeSQLString($tmp)."', ".
+                   " ipc_whois_timestamp=to_date( '$current_time','YYYY-MM-DD HH24:MI:SS' ) WHERE ipc_ip='$ip32'";
+          else
+            $sql = "UPDATE acid_ip_cache SET ipc_whois='".$db->getSafeSQLString($tmp)."', ".
+                   " ipc_whois_timestamp='$current_time' WHERE ipc_ip='$ip32'";
+
+          $db->baseExecute($sql);
+        }
      }
   }
 
@@ -262,6 +314,18 @@ function baseGetWhois($ipaddr, $db, $cache_lifetime)
 
 function GetWhoisRaw($ipaddr, $whois_addr)
 {
+	GLOBAL $debug_mode;
+	$response = "";
+
+
+	if ($debug_mode >= 1)
+	{
+		print "<BR><BR>\n\n" . __FILE__ . ":" . __LINE__ . ":<BR>\n";
+		print "ipaddr     = \"$ipaddr\"<BR>\n";
+		print "whois_addr = \"$whois_addr\"<BR>\n";
+		print "<BR><BR>\n\n";
+	}
+
   $fp = @fsockopen ($whois_addr, 43, $errno, $errstr, 15);
 
   if (!$fp)
@@ -284,42 +348,24 @@ function GetWhoisRaw($ipaddr, $whois_addr)
 
 function CallWhoisServer($ipaddr, &$whois_server)
 {
-/* IPs of Whois servers (rdd 5/12/2001)
- *
- * Name:    whois.arin.net
- * Addresses:  192.149.252.43
- *
- * Name:    whois4.apnic.net
- * Address:  202.12.29.4
- * Aliases:  whois.apnic.net
- *
- * Name:    whois.ripe.net
- * Address:  193.0.0.135
- *
- * Name:    whois.nic.ad.jp
- * Address:  202.12.30.153
- *
- */
+	GLOBAL $arin_ip, $apnic_ip, $ripe_ip, $jnic_ip, $debug_mode;
 
-  $arin_ip  = "192.149.252.43";
-  $apnic_ip = "202.12.29.4";
-  $ripe_ip  = "193.0.0.135";
-  $jnic_ip  = "202.12.30.153";
+
 
   $whois_server = "ARIN";
   $response = GetWhoisRaw($ipaddr, $arin_ip);
 
-  if ( stristr($response, "Maintainer: RIPE") )
+  if ( stristr($response, "Allocated to RIPE NCC") || stristr($response, "Transferred to RIPE NCC") )
   {
      $response = GetWhoisRaw($ipaddr, $ripe_ip);
      $whois_server = "RIPE";
   }
-  else if ( stristr($response, "Maintainer: AP") )
+  else if ( stristr($response, "Allocated to AP") )
   {
      $response = GetWhoisRaw($ipaddr, $apnic_ip);
      $whois_server = "AP";
   }
-  else if ( stristr($response, "Maintainer: JNIC") )
+  else if ( stristr($response, "Allocated to JNIC") )
   {
      $response = GetWhoisRaw($ipaddr, $jnic_ip);
      $whois_server = "JNIC";

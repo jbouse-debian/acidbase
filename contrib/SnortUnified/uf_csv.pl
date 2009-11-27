@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use SnortUnified(qw(:DEFAULT :record_vars));
+use Socket;
 
 $file = shift;
 $debug = 0;
@@ -31,7 +32,14 @@ while ( $record = readSnortUnifiedRecord() ) {
     
     foreach $field ( @fields ) {
         if ( $field ne 'pkt' ) {
-            print("," . $record->{$field});
+            if ($field eq 'sip' || $field eq 'dip' )
+            {
+              print("," . inet_ntoa(pack("N", $record->{$field})));
+            }
+            else
+            {
+              print("," . $record->{$field});
+            }
         }
     }
     print("\n");

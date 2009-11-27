@@ -28,7 +28,7 @@ function GetSignatureName($sig_id, $db)
 {
    $name = "";
 
-   $temp_sql = "SELECT sig_name FROM signature WHERE sig_id='$sig_id'";
+   $temp_sql = "SELECT sig_name FROM signature WHERE sig_id='". addslashes($sig_id) . "'";
    $tmp_result = $db->baseExecute($temp_sql);
    if ( $tmp_result )
    {
@@ -46,7 +46,7 @@ function GetSignaturePriority($sig_id, $db)
 {
    $priority = "";
 
-   $temp_sql = "SELECT sig_priority FROM signature WHERE sig_id='$sig_id'";
+   $temp_sql = "SELECT sig_priority FROM signature WHERE sig_id='". addslashes($sig_id) . "'";
    $tmp_result = $db->baseExecute($temp_sql);
    if ( $tmp_result )
    {
@@ -68,7 +68,7 @@ function GetSignatureID($sig_id, $db)
    if ( $sig_id == "" )
       return $id;
 
-   $temp_sql = "SELECT sig_id FROM signature WHERE sig_name='$sig_id'";
+   $temp_sql = "SELECT sig_id FROM signature WHERE sig_name='". addslashes($sig_id) . "'";
    if ($db->DB_type == "mssql")
      $temp_sql = "SELECT sig_id FROM signature WHERE sig_name LIKE '".MssqlKludgeValue($sig_id)."' ";
 
@@ -104,18 +104,106 @@ function GetRefSystemName($ref_system_id, $db)
 
 function GetSingleSignatureReference($ref_system, $ref_tag, $style)
 {
+	GLOBAL $BASE_urlpath, $debug_mode;
+
+
+
    $tmp_ref_system_name = strtolower($ref_system);
    if ( in_array($tmp_ref_system_name, array_keys($GLOBALS['external_sig_link'])) )
    {
-      if ( $style == 1 )
-         return "<FONT SIZE=-1>[".
+      if ($tmp_ref_system_name == "local_rules_dir")
+      {
+				$dir = $GLOBALS['external_sig_link'][$tmp_ref_system_name][0];
+        $to_look_for = $ref_tag;
+
+				if (file_exists($dir))
+				{       	
+        	if ($style == 1)
+        	{
+          	$result = "<FONT SIZE = -1>[" .
+                "<A HREF = \"$BASE_urlpath/base_local_rules.php?sid=" . $to_look_for . 
+                        "\" TARGET = \"_ACID_ALERT_DESC\">" . 
+                "rule" . 
+                "</A>]</FONT> ";
+
+
+          	return $result;
+        	}
+        	else
+        	{
+          	return "[local rules dir: sid:" . $ref_tag . ";]"; 
+        	}
+				}
+      }
+      elseif ( $style == 1 )
+      {
+         if ($tmp_ref_system_name == "snort")
+         {
+           if (ereg("([0-9]+):([0-9]+)", $ref_tag, $backref))
+           {
+             if ($backref[1] == "1")
+             {
+               $ref_tag_number = sprintf("%d", $backref[2]);
+							 /* print "ref_tag_numbr = $ref_tag_number<BR>\n"; */
+             }
+             else
+             {
+               $ref_tag_number = 0;
+             }             
+           }
+           /* The following pattern tries to catch those bogus
+              ref_tags, as can appear, when barnyard does not
+              deliver a proper $sig_gid. See below the line
+              "Hack to fix blank gid from barnyard -- Kevin Johnson"
+           */
+           elseif (preg_match("/^[\t ]*([0-9]+)[\t ]*$/", $ref_tag, $backref))
+           {
+             if ($backref[1] != "")
+             {
+               $ref_tag_number = sprintf("%d", $backref[1]);
+             }
+             else
+             {
+               $ref_tag_number = 0;
+             }
+           }
+           else
+           {
+             $ref_tag_number = 0;
+           }
+
+
+           if ($ref_tag_number >= 2000000 && $ref_tag_number < 10000000)
+           /* then we assume it is actually emerging threats rather than snort */
+           {
+              return "<FONT SIZE=-1>" .
+                     "[<A HREF=\"" . $GLOBALS['external_sig_link']["EmThreats"][0] . $ref_tag_number . "\" " .
+                             "TARGET=\"_ACID_ALERT_DESC\">" . "EmThreats</a>]";
+           }
+           else
+           {
+             return "<FONT SIZE=-1>[".
+                    "<A HREF=\"".$GLOBALS['external_sig_link'][$tmp_ref_system_name][0].
+                             $ref_tag.
+                             $GLOBALS['external_sig_link'][$tmp_ref_system_name][1]."\" ".
+                             "TARGET=\"_ACID_ALERT_DESC\">".$ref_system."</A>".
+                    "]</FONT> ";
+           }
+         }
+         else
+         {
+           return "<FONT SIZE=-1>[".
                 "<A HREF=\"".$GLOBALS['external_sig_link'][$tmp_ref_system_name][0].
                              $ref_tag.
                              $GLOBALS['external_sig_link'][$tmp_ref_system_name][1]."\" ".
                              "TARGET=\"_ACID_ALERT_DESC\">".$ref_system."</A>".
                  "]</FONT> ";
+        }
+      }
       else if ( $style == 2 )
+      {
          return "[".$ref_system."/$ref_tag] ";
+      }
    }            
    else
    {
@@ -123,14 +211,17 @@ function GetSingleSignatureReference($ref_system, $ref_tag, $style)
    }
 }
 
+
+
+
 function GetSignatureReference($sig_id, $db, $style)
 {
    $ref = "";
-   GLOBAL $BASE_display_sig_links;
+   GLOBAL $BASE_display_sig_links, $debug_mode;
    
    if ( $BASE_display_sig_links == 1)
    {
-      $temp_sql = "SELECT ref_seq, ref_id FROM sig_reference WHERE sig_id='".$sig_id."'";
+      $temp_sql = "SELECT ref_seq, ref_id FROM sig_reference WHERE sig_id='". addslashes($sig_id) ."'";
       $tmp_sig_ref = $db->baseExecute($temp_sql);
    
       if ( $tmp_sig_ref )
@@ -152,7 +243,7 @@ function GetSignatureReference($sig_id, $db, $style)
    
             $ref = $ref.GetSingleSignatureReference($ref_system, $ref_tag, $style);
    
-            /* Automatically add an ICAT reference is a CVE reference exists */
+            /* Automatically add an ICAT reference if a CVE reference exists */
             if ( $ref_system == "cve" )
                 $ref = $ref.GetSingleSignatureReference("icat", $ref_tag, $style);
           
@@ -164,9 +255,9 @@ function GetSignatureReference($sig_id, $db, $style)
       if ( $db->baseGetDBversion() >= 103 )
       {
          if ( $db->baseGetDBversion() >= 107 )
-            $tmp_sql = "SELECT sig_sid, sig_gid FROM signature WHERE sig_id='".$sig_id."'";
+            $tmp_sql = "SELECT sig_sid, sig_gid FROM signature WHERE sig_id='". addslashes($sig_id) ."'";
          else
-            $tmp_sql = "SELECT sig_sid FROM signature WHERE sig_id='".$sig_id."'";
+            $tmp_sql = "SELECT sig_sid FROM signature WHERE sig_id='". addslashes($sig_id) ."'";
    
          $tmp_sig_sid = $db->baseExecute($tmp_sql);
    
@@ -182,59 +273,201 @@ function GetSignatureReference($sig_id, $db, $style)
       else
          $sig_sid = "";
    
-      $href = "";
    
-      /* xxx jl: provided, that there is a subdirectory "signatures/" in $BASE_urlpath */
-      if ( ( is_numeric($sig_id) ) && ($sig_sid >= 103) ) {
-         $ref = $ref.GetSingleSignatureReference("local", $sig_sid, $style);
-      }
-   
-   
+			if (is_numeric($sig_id) && (is_numeric($sig_sid )))
+			{
+				// 0 - 1,999,999: http://www.snort.org/
+				// 2,000,000 - 99,999,999: http://www.emergingthreats.net/
+				// 100,000,000 - ...: Former so-called "Community Rules, distributed
+				//                    by http://www.snort.org/
+				if ($sig_sid < 2000000 || $sig_sid >= 100000000)
+				{
+					$bp = dirname(__FILE__);
+
+      		if ($sig_sid >= 103) 
+					// then we assume it is a rule based alert:
+					{						
+						$docu_file = "$bp/../signatures/$sig_sid.txt"; 
+            if ($debug_mode > 0) 
+            {
+						  error_log("sig_sid = $sig_sid; docu_file = $docu_file");
+            }
+
+						if (file_exists($docu_file)) 
+						{
+        	 		$ref = $ref.GetSingleSignatureReference("local", $sig_sid, $style);
+						}
+      		} 
+					else 
+        	// then we assume it is a preprocessor alert:
+					{
+						$docu_file = "$bp/../signatures/$sig_gid" . '-' . "$sig_sid.txt";
+						if (file_exists($docu_file))
+						{
+							$ref = $ref.GetSingleSignatureReference("local", $sig_gid . '-' . $sig_sid, $style); 
+						}
+   				}
+      	} // if ($sig_sid < 2000000 || $sig_sid >= 100000000)
+
+
+        if ($sig_sid >= 103)
+        {
+				  $local_rules_dir = $GLOBALS['external_sig_link']['local_rules_dir'][0];
+          if (!empty($local_rules_dir)) {
+            if (is_dir($local_rules_dir)) {
+              if (is_readable($local_rules_dir)) {
+		            $ref = $ref . GetSingleSignatureReference("local_rules_dir", $sig_sid, $style);
+              }
+            }
+				  }
+        } // if ($sig_sid >= 103)
+			} // if (is_numeric($sig_id) && (is_numeric($sig_sid )))
+
+
+
       /* snort.org should be documenting all official signatures,
        * so automatically add a link
        */
-      if ( $sig_sid != "") {
+      if ( $sig_sid != "") 
+      {
          if ( $db->baseGetDBversion() >= 107 )
-	    /* Hack to finx blank gid from barnyard -- Kevin Johnson */
-	    if ( $sig_gid != "") {
+         {
+	          /* Hack to fix blank gid from barnyard -- Kevin Johnson */
+	          if ( $sig_gid != "") 
+            {
             	$ref = $ref.GetSingleSignatureReference("snort", $sig_gid .':'. $sig_sid, $style);
-	    } else {
-		$ref = $ref.GetSingleSignatureReference("snort", $sig_sid, $style);
-	    }
+	          } 
+            else 
+            {
+		          $ref = $ref.GetSingleSignatureReference("snort", $sig_sid, $style);
+	          }
+         }
          else
+         {
             $ref = $ref.GetSingleSignatureReference("snort", $sig_sid, $style);
+         }
       }
    }
 
    return $ref;
 }
 
+
+function check_string($str)
+{
+  if (
+       !isset($str) ||
+       empty($str) ||
+       !is_string($str)
+     )
+  {
+    $msg = __FILE__ . ":" . __LINE__ . ":" . __FUNCTION__ . ": ERROR: \$str has not been defined OR is empty OR is not a string.";
+    error_log($msg);
+
+    if ($debug_mode > 1)
+    {
+      SQLTraceLog(__FILE__ . ":" . __LINE__ . ":" . __FUNCTION__ . ": ERROR: \$msg == \"" . var_dump($str) . "\".");
+    }
+
+    return 0;
+  }
+  else
+  {
+    return 1;
+  }
+}
+
+
+
 function BuildSigLookup($signature, $style)
 /* - Paul Harrington <paul@pizza.org> : reference URL links
  * - Michael Bell <michael.bell@web.de> : links for IP address in spp_portscan alerts
  */
 {
+  GLOBAL $debug_mode;
+
+  if (
+       !isset($signature) ||
+       empty($signature) ||
+       !is_string($signature)
+     )
+  {
+    if ($debug_mode > 1)
+    {
+      SQLTraceLog(__FILE__ . ":" . __LINE__ . ":" . __FUNCTION__ . ": ERROR: \$signature == \"" . var_dump($signature) . "\". Returning with empty string.");
+
+    }
+
+    return "";
+  }
+
+
+
   if ($style == 2)
      return $signature;
 
+
   /* create hyperlinks for references */
-  $pattern=array("/(IDS)(\d+)/", 
-                 "/(IDS)(0+)(\d+)/",
-                 "/BUGTRAQ ID (\d+)/",
-                 "/MCAFEE ID (\d+)/",
-                 "/(CVE-\d+-\d+)/");
+  $pattern = "/(IDS)(\d+)/";
+  $replace = "<A HREF=\"http://www.whitehats.com/\\1/\\2\" TARGET=\"_ACID_ALERT_DESC\">\\1\\2</A>";
+  $tmp1 = preg_replace($pattern, $replace, $signature);
+  if (!check_string($tmp1))
+  {
+    print "<td bgcolor=\"white\">" . __FILE__ . ":" . __LINE__ . ": ERROR: \$tmp1 = " . var_dump($tmp1) . "</td>";
+    return $signature;
+  }
 
-  $replace=array("<A HREF=\"http://www.whitehats.com/\\1/\\2\" TARGET=\"_ACID_ALERT_DESC\">\\1\\2</A>",
-                 "<A HREF=\"http://www.whitehats.com/\\1/\\3\" TARGET=\"_ACID_ALERT_DESC\">\\1\\2\\3</A>",
-                 "<A HREF=\"".$GLOBALS['external_sig_link']['bugtraq'][0]."\\1\" TARGET=\"_ACID_ALERT_DESC\">BUGTRAQ ID \\1</A>",
-                 "<A HREF=\"".$GLOBALS['external_sig_link']['mcafee'][0]."\\1\" TARGET=\"_ACID_ALERT_DESC\">MCAFEE ID \\1</A>",
-                 "<A HREF=\"".$GLOBALS['external_sig_link']['cve'][0]."\\1\" TARGET=\"_ACID_ALERT_DESC\">\\1</A>");
 
-  $msg = preg_replace($pattern, $replace, $signature);
+  $pattern = "/(IDS)(0+)(\d+)/";
+  $replace = "<A HREF=\"http://www.whitehats.com/\\1/\\3\" TARGET=\"_ACID_ALERT_DESC\">\\1\\2\\3</A>";
+  $tmp2 = preg_replace($pattern, $replace, $tmp1);
+  if (!check_string($tmp2))
+  {
+    print "<td bgcolor=\"white\">" . __FILE__ . ":" . __LINE__ . ": ERROR: \$tmp2 = " . var_dump($tmp2) . "</td>";
+    return $tmp1;
+  }
+
+
+  $pattern = "/BUGTRAQ ID (\d+)/";
+  $replace = "<A HREF=\"".$GLOBALS['external_sig_link']['bugtraq'][0]."\\1\" TARGET=\"_ACID_ALERT_DESC\">BUGTRAQ ID \\1</A>";
+  $tmp3 = preg_replace($pattern, $replace, $tmp2);
+  if (!check_string($tmp3))
+  {
+    print "<td bgcolor=\"white\">" . __FILE__ . ":" . __LINE__ . ": ERROR: \$tmp3 = " . var_dump($tmp3) . "</td>";
+    return $tmp2;
+  }
+
+
+  $pattern = "/MCAFEE ID (\d+)/";
+  $replace = "<A HREF=\"".$GLOBALS['external_sig_link']['mcafee'][0]."\\1\" TARGET=\"_ACID_ALERT_DESC\">MCAFEE ID \\1</A>";
+  $tmp4 = preg_replace($pattern, $replace, $tmp3);
+  if (!check_string($tmp4))
+  {
+    print "<td bgcolor=\"white\">" . __FILE__ . ":" . __LINE__ . ": ERROR: \$tmp4 = " . var_dump($tmp4) . "</td>";
+    return $tmp3;
+  }
+
+
+  $pattern = "/(CVE-\d+-\d+)/";
+  $replace = "<A HREF=\"".$GLOBALS['external_sig_link']['cve'][0]."\\1\" TARGET=\"_ACID_ALERT_DESC\">\\1</A>";
+  $msg = preg_replace($pattern, $replace, $tmp4);
+  if (!check_string($msg))
+  {
+    print "<td bgcolor=\"white\">ERROR: \$msg = " . var_dump($msg) . "</td>";
+    return $tmp4;
+  }
+
+
 
   /* fixup portscan message strings */
   if ( stristr($msg, "spp_portscan") )
   {
+    if ($debug_mode > 1)
+    {
+      SQLTraceLog(__FILE__ . ":" . __LINE__ . ":" . __FUNCTION__ . ": Before fixup portscan message strings");
+    }
+
+
       /* replace "spp_portscan: portscan status" => "spp_portscan"  */
       $msg = preg_replace("/spp_portscan: portscan status/", "spp_portscan", $msg);
 
@@ -245,6 +478,11 @@ function BuildSigLookup($signature, $style)
       $msg = preg_replace("/([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*)/",
                           "<A HREF=\"base_stat_ipaddr.php?ip=\\1&amp;netmask=32\">\\1</A>",
                           $msg);
+
+    if ($debug_mode > 1)
+    {
+      SQLTraceLog(__FILE__ . ":" . __LINE__ . ":" . __FUNCTION__ . ": After fixup portscan message strings");
+    }
   }
 
   return $msg;
@@ -263,16 +501,82 @@ function BuildSigByID($sig_id, $db, $style = 1)
  * RETURNS: a formatted signature and the associated references
  */
 {
+  GLOBAL $debug_mode;
+
+
   if ( $db->baseGetDBversion() >= 100 )
   {
      /* Catch the odd circumstance where $sig_id is still an alert text string
       * despite using normalized signature as of DB version 100. 
       */
      if ( !is_numeric($sig_id) )
-        return $sig_id;
+       return $sig_id;
+
+     if ($debug_mode > 1)
+     {
+       SQLTraceLog(__FILE__ . ":" . __LINE__ . ":" . __FUNCTION__ . ": Before GetSignatureName()");
+     }
      $sig_name = GetSignatureName($sig_id, $db);
-     if ( $sig_name != "" )
-        return GetSignatureReference($sig_id, $db, $style)." ".BuildSigLookup($sig_name, $style);
+     if ($debug_mode > 1)
+     {
+       SQLTraceLog(__FILE__ . ":" . __LINE__ . ":" . __FUNCTION__ . ": After GetSignatureName()");
+     }
+
+     if (
+          isset($sig_name) &&
+          !empty($sig_name) &&
+          is_string($sig_name) &&
+          ($sig_name != "")
+        )
+     {
+       //return GetSignatureReference($sig_id, $db, $style)." ".BuildSigLookup($sig_name, $style);
+       if ($debug_mode > 1)
+       {
+         SQLTraceLog(__FILE__ . ":" . __LINE__ . ":" . __FUNCTION__ . ": Before BuildSigLookup() with \$sig_name == \"" . $sig_name . "\"");
+       }
+
+       # try-catch is php-5.x only :-(
+       #try
+       #{
+         $buf1 = BuildSigLookup($sig_name, $style);
+       #}
+       #catch(Exception $e)
+       #{
+       #  $error_msg = __FILE__ . ":" . __LINE__ . ":" . __FUNCTION__ . ": ERROR: BuildSigLookup() has failed: \"" . $e . "\". Returning with empty string.";
+       #  if ($debug_mode > 1)
+       #  {
+       #    SQLTraceLog($error_msg);
+       #  }
+       #
+       #  return "(" . $sig_id . ") (1) " . _ERRSIGNAMEUNK;
+       #}
+
+       if (
+            !isset($buf1) ||
+            empty($buf1) ||
+            !is_string($buf1)
+          )
+       {
+         $error_msg = var_dump($buf1);
+         if ($debug_mode > 1)
+         {
+           SQLTraceLog($error_msg);
+         }
+         return "(" . $sig_id . ") (2) " . _ERRSIGNAMEUNK;
+       }
+
+       if ($debug_mode > 1)
+       {
+         SQLTraceLog(__FILE__ . ":" . __LINE__ . ":" . __FUNCTION__ . ": After BuildSigLookup() and before GetSignatureReference()");
+       }
+       $buf2 = GetSignatureReference($sig_id, $db, $style)." " . $buf1;
+       if ($debug_mode > 1)
+       {
+         SQLTraceLog(__FILE__ . ":" . __LINE__ . ":" . __FUNCTION__ . ": After GetSignatureReference() and about to return.");
+       }
+
+       return $buf2;
+     }
      else
      {
         if ( $style == 1 )
@@ -282,13 +586,26 @@ function BuildSigByID($sig_id, $db, $style = 1)
      }
   }
   else
-     return BuildSigLookup($sig_id, $style);
+  {
+    if ($debug_mode > 1)
+    {
+      SQLTraceLog(__FILE__ . ":" . __LINE__ . ":" . __FUNCTION__ . ": Before BuildSigLookup()");
+    }
+    $buf1 = BuildSigLookup($sig_id, $style);
+    if ($debug_mode > 1)
+    {
+      SQLTraceLog(__FILE__ . ":" . __LINE__ . ":" . __FUNCTION__ . ": After BuildSigLookup() and about to return.");
+    }
+
+    //return BuildSigLookup($sig_id, $style);
+    return $buf1;
+  }
 }
 
 function GetSigClassID($sig_id, $db)
 {
   $sql = "SELECT sig_class_id FROM signature ".
-         "WHERE sig_id = '$sig_id'";
+         "WHERE sig_id = '" . addslashes($sig_id) . "'";
 
   $result = $db->baseExecute($sql);
   $row = $result->baseFetchRow();

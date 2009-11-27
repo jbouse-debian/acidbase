@@ -43,14 +43,37 @@
     base_header("Location: ". $BASE_urlpath . "/index.php");
 
   $submit = ImportHTTPVar("submit", VAR_ALPHA | VAR_SPACE, array(_SELECTED, _ALLONSCREEN, _ENTIREQUERY));
+  $sort_order=ImportHTTPVar("sort_order", VAR_LETTER | VAR_USCORE);
+  $action = ImportHTTPVar("action", VAR_ALPHA); 
   $qs->MoveView($submit);             /* increment the view if necessary */
 
   $page_title = _CHRTCLASS;
   if ( $qs->isCannedQuery() )
-     PrintBASESubHeader($page_title.": ".$qs->GetCurrentCannedQueryDesc(),
-                        $page_title.": ".$qs->GetCurrentCannedQueryDesc(), $cs->GetBackLink(), 1);
+	{
+		if ($action == "")
+		{
+    	PrintBASESubHeader($page_title.": ".$qs->GetCurrentCannedQueryDesc(),
+                         $page_title.": ".$qs->GetCurrentCannedQueryDesc(), 
+         	               $cs->GetBackLink(), 1);
+		}
+		else
+		{
+			PrintBASESubHeader($page_title.": ".$qs->GetCurrentCannedQueryDesc(),
+                         $page_title.": ".$qs->GetCurrentCannedQueryDesc(), 
+         	               $cs->GetBackLink(), $refresh_all_pages);
+		}
+	}
   else
-     PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+	{
+		if ($action == "")
+		{
+    	PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+		}
+		else
+		{
+			PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), $refresh_all_pages);
+		}
+	}
   
   /* Connect to the Alert database */
   $db = NewBASEDBConnection($DBlib_path, $DBtype);
@@ -226,6 +249,7 @@
   $qs->PrintBrowseButtons();
   $qs->PrintAlertActionButtons();
   $qs->SaveState();
+	ExportHTTPVar("sort_order", $sort_order);
   echo "\n</FORM>\n";
   
   PrintBASESubFooter();

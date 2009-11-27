@@ -137,7 +137,7 @@ DEFINE('_PREVIOUS','Previous'); //NEW
 
 //Menu items
 DEFINE('_HOME','Hjem');
-DEFINE('_SEARCH','S&oring;k');
+DEFINE('_SEARCH','S&oslash;k');
 
 DEFINE('_AGMAINT','Hendelsesgruppe vedlikehold');
 DEFINE('_USERPREF','Brukerpreferanser');
@@ -550,7 +550,7 @@ DEFINE('_QCERRFIELD','A field of');
 DEFINE('_QCERROPER','An operator of');
 DEFINE('_QCERRDATETIME','A date/time value of');
 DEFINE('_QCERRPAYLOAD','A payload value of');
-DEFINE('_QCERRIP','A IP address of');
+DEFINE('_QCERRIP','An IP address of');
 DEFINE('_QCERRIPTYPE','An IP address of type');
 DEFINE('_QCERRSPECFIELD',' was entered for a protocol field, but the particular field was not specified.');
 DEFINE('_QCERRSPECVALUE','was selected indicating that it should be a criteria, but no value was specified on which to match.');
@@ -611,7 +611,7 @@ DEFINE('_SCPORT','Port');
 
 //base_stat_ipaddr.php
 DEFINE('_PSEVENTERR','PORTSCAN HENDELSE FEIL: ');
-DEFINE('_PSEVENTERRNOFILE','Ingen fil var oppgitt i \$portscan_file variabelen.');
+DEFINE('_PSEVENTERRNOFILE','Ingen fil var oppgitt i $portscan_file variabelen.');
 DEFINE('_PSEVENTERROPENFILE','Unable to open Portscan event file');
 DEFINE('_PSDATETIME','Dato/Tid');
 DEFINE('_PSSRCIP','Kilde IP');

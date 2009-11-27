@@ -333,7 +333,7 @@ if (strlen($base_custom_footer) != 0) {
 
 $stop = time();
 if ($debug_time_mode > 0) {
-    echo "<div class='systemdebug'>[Loaded in ".($stop-$start)." seconds]</div>";
+    echo "<div class='systemdebug'>[" . _LOADEDIN . "&nbsp;" .($stop - $start)." seconds]</div>";
 }
 ?>
 </body>

@@ -64,6 +64,9 @@
   $submit = ImportHTTPVar("submit", VAR_ALPHA | VAR_SPACE, array(_SELECTED, _ALLONSCREEN, _ENTIREQUERY));
   $port_type = ImportHTTPVar("port_type", VAR_DIGIT);
   $proto = ImportHTTPVar("proto", VAR_DIGIT);
+	$sort_order=ImportHTTPVar("sort_order", VAR_LETTER | VAR_USCORE);
+  $action = ImportHTTPVar("action", VAR_ALPHA);
+
 
   $qs->MoveView($submit);             /* increment the view if necessary */
 
@@ -92,10 +95,31 @@
   }
 
   if ( $qs->isCannedQuery() )
-     PrintBASESubHeader($page_title.": ".$qs->GetCurrentCannedQueryDesc(),
-                        $page_title.": ".$qs->GetCurrentCannedQueryDesc(), $cs->GetBackLink(), 1);
+	{
+		if ($action == "")
+		{
+     	PrintBASESubHeader($page_title.": ".$qs->GetCurrentCannedQueryDesc(),
+                         $page_title.": ".$qs->GetCurrentCannedQueryDesc(), 
+                         $cs->GetBackLink(), 1);
+		}
+		else
+		{
+			PrintBASESubHeader($page_title.": ".$qs->GetCurrentCannedQueryDesc(),
+                         $page_title.": ".$qs->GetCurrentCannedQueryDesc(), 
+                         $cs->GetBackLink(), $refresh_all_pages);
+		}
+	}
   else
-     PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+	{
+		if ($action == "")
+		{
+     	PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+		}
+		else
+		{
+			PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), $refresh_all_pages);
+		}
+	}
 
   if ( $event_cache_auto_update == 1 )  UpdateAlertCache($db);
 
@@ -160,6 +184,7 @@
 
   /* Setup the Query Results Table */
   $qro = new QueryResultsOutput("base_stat_ports.php?caller=$caller".
+                                "&amp;sort_order=".$sort_order.
                                 "&amp;port_type=$port_type&amp;proto=$proto");
 
   $qro->AddTitle(" ");
@@ -273,6 +298,7 @@
                    "&amp;".$url_port_type."_port%5B0%5D%5B5%5D=+".
                    "&amp;".$url_port_type."_port_cnt=1".
                    "&amp;layer4=".$url_layer4.
+                   "&amp;sort_order=".$sort_order.
                    "&amp;num_result_rows=-1&amp;current_view=-1";
 
       qroPrintEntryHeader($i);
@@ -317,6 +343,7 @@
   $qs->SaveState();
   ExportHTTPVar("port_type", $port_type);
   ExportHTTPVar("proto", $proto);
+	ExportHTTPVar("sort_order", $sort_order);	
 
   echo "\n</FORM>\n";
   

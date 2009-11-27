@@ -608,7 +608,7 @@ DEFINE('_SCPORT','Puerto');
 
 //base_stat_ipaddr.php
 DEFINE('_PSEVENTERR','ERROR EVENTO BUSQUEDA DE PUERTOS: ');
-DEFINE('_PSEVENTERRNOFILE','Ning&uacute;n fichero especificado en la variable \$portscan_file.');
+DEFINE('_PSEVENTERRNOFILE','Ning&uacute;n fichero especificado en la variable $portscan_file.');
 DEFINE('_PSEVENTERROPENFILE','No se pudo abrir el fichero de eventos de la b&uacute;squeda de puertos');
 DEFINE('_PSDATETIME','Fecha/Hora');
 DEFINE('_PSSRCIP','IP Origen');

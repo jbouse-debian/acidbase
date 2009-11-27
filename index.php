@@ -24,13 +24,15 @@
  *  Check to see if the base_conf.php file exists and is big enough...
  *  if not redirect to the setup/index.php page
 */
-if (!file_exists('base_conf.php') || filesize('base_conf.php') < 10)
+if (!file_exists('base_conf.php') || filesize('base_conf.php') < 10) {
     header( 'Location: setup/index.php' );
     die();
+    }
 
 require("base_conf.php");
 include("$BASE_path/includes/base_include.inc.php");
 include_once("$BASE_path/base_db_common.php");
+include_once("$BASE_path/base_common.php");
 
 $errorMsg      = "";
 $displayError  = 0;
@@ -51,10 +53,10 @@ if (isset($_POST['submit'])) {
         header("Location: base_main.php");
 	exit();
     }
-} else {
+
     $displayError = 1;
     $errorMsg     = _LOGINERROR;
-}
+} 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <!-- <?php echo _TITLE . $BASE_VERSION; ?> -->
@@ -64,7 +66,7 @@ if (isset($_POST['submit'])) {
   <meta http-equiv="Content-Type" content="text/html; charset=<?php echo(_CHARSET); ?>" />
   <meta http-equiv="pragma" content="no-cache" />
   <title><?php echo(_TITLE . $BASE_VERSION); ?></title>
-  <link rel="stylesheet" type="text/css" href="styles/<?php echo($base_style); ?>" />
+  <link rel="stylesheet" type="text/css" href="./styles/<?php echo($base_style); ?>" />
 </head>
 <body onload="javascript:document.loginform.login.focus();">
   <div class="mainheadertitle">&nbsp;

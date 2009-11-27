@@ -7,7 +7,6 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
-**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Vanilla Config file used for the setup program
@@ -34,7 +33,6 @@ function returnContents()
 ** (see the file "base_main.php" for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
-**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Vanilla Config file
@@ -46,7 +44,7 @@ function returnContents()
 ********************************************************************************
 */
     session_start();
-    $BASE_VERSION = \'1.3.9 (anne)\';
+    $BASE_VERSION = \'1.4.4 (dawn)\';
     
     /*
      Set the below to the language you would like people to use while viewing
@@ -151,85 +149,121 @@ function returnContents()
      *       speed of record deletion, but also slow record
      *       insertion.
      */
-    $use_referential_integrity = 0;
-    
-    /* Variable to start the ability to handle themes... */
-    $base_style = \'base_style.css\';
+		$use_referential_integrity = 0;
 
-    /* File format of charts (png, jpeg, gif) */
-    $chart_file_format = \'png\';
-    
-    /* Chart default colors - (red, green, blue)
-     *    - $chart_bg_color_default    : background color of chart
-     *    - $chart_lgrid_color_default : gridline color of chart
-     *    - $chart_bar_color_default   : bar/line color of chart
-     */
-    $chart_bg_color_default     = array(255,255,255);
-    $chart_lgrid_color_default  = array(205,205,205);
-    $chart_bar_color_default    = array(190, 5, 5);
-    
-    /* Maximum number of rows per criteria element */
-    $MAX_ROWS = 10;
-    
-    /* Number of rows to display for any query results */
-    $show_rows = 48;
-    
-    /* Number of items to return during a snapshot
-     *  Last _X_ # of alerts/unique alerts/ports/IP
-     */
-    $last_num_alerts = 15;
-    $last_num_ualerts = 15;
-    $last_num_uports = 15;
-    $last_num_uaddr = 15;
-    
-    /* Number of items to return during a snapshot
-     *  Most Frequent unique alerts/IPs/ports
-     */
-    $freq_num_alerts = 5;
-    $freq_num_uaddr = 15;
-    $freq_num_uports = 15;
-    
-    /* Number of scroll buttons to use when displaying query results */
-    $max_scroll_buttons = 12;
-    
-    /* Debug mode     - how much debugging information should be shown
-     * Timing mode    - display timing information
-     * SQL trace mode - log SQL statements
-     *   0 : no extra information
-     *   1 : debugging information
-     *   2 : extended debugging information
+		/* SMTP Email Alert action
      *
-     * HTML no cache - whether a no-cache directive should be sent
-     *                 to the browser (should be = 1 for IE)
-     * 
-     * SQL trace file - file to log SQL traces
+     * - action_email_smtp_host : Which smtp server to use
+     * - action_email_smtp_localhost : What name to use for this server in the 
+     *   SMTP HELO statement. You will likely need to replace this with the name
+     *   of the machine running BASE when connecting to a remote mail server.
+     * - action_email_smtp_auth : Whether or not to authenticate with
+     *                            the smtp server
+     *     0: We do NOT authenticate ourselves towards the smtp host
+     *     1: We DO authenticate ourselves towards the smtp host
+     *        with the following credentials:
+     * - action_email_smtp_user : The user name with the smtp host
+     * - action_email_smtp_pw : The password for this mail account
+     * - action_email_from : email address to use in the FROM field of the mail message
+     *                       MUST be the same email address as used for the SMTP account
+     * - action_email_subject : subject to use for the mail message
+     * - action_email_msg : additional text to include in the body of the mail message
+     * - action_email_mode : specifies how the alert information should be enclosed
+     *     0 : all emailed alerts should be in the body of the message
+     *     1 : all emailed alerts should be enclosed in an attachment
      */
-    $debug_mode = 0;
-    $debug_time_mode = 1;
-    $html_no_cache = 1;
-    $sql_trace_mode = 0;
-    $sql_trace_file = \'\';
-    
-    /* Auto-Screen refresh
-     * - Refresh_Stat_Page - Should certain statistics pages refresh?
-     * - Stat_Page_Refresh_Time - refresh interval (in seconds)
-     */
-    $refresh_stat_page = 1;
-    $stat_page_refresh_time = 180;
-    
-    /* Display First/Previous/Last timestamps for alerts or
-     * just First/Last on the Unique Alert listing.
-     *    1: yes
-     *    0: no
-     */
-    $show_previous_alert = 0;
-    
-    /* Sets maximum execution time (in seconds) of any particular page. 
-     * Note: this overrides the PHP configuration file variable 
-     *       max_execution_time.  Thus script can run for a total of
-     *       ($max_script_runtime + max_execution_time) seconds 
-     */
-    $max_script_runtime = 180;
+     $action_email_smtp_host = \'smtp.example.com\';
+     $action_email_smtp_localhost = \'localhost\';
+     $action_email_smtp_auth = 1;
+     $action_email_smtp_user = \'username\';
+     $action_email_smtp_pw = \'password\';
+     $action_email_from = \'smtpuser@example.com\';
+     $action_email_subject = \'BASE Incident Report\';
+     $action_email_msg = \'\';
+     $action_email_mode = 0;
+
+		/* Variable to start the ability to handle themes... */
+		$base_style = \'base_style.css\';
+
+		/* File format of charts (png, jpeg, gif) */
+		$chart_file_format = \'png\';
+
+		/* Chart default colors - (red, green, blue)
+		 *    - $chart_bg_color_default    : background color of chart
+		 *    - $chart_lgrid_color_default : gridline color of chart
+		 *    - $chart_bar_color_default   : bar/line color of chart
+		 */
+		$chart_bg_color_default     = array(255,255,255);
+		$chart_lgrid_color_default  = array(205,205,205);
+		$chart_bar_color_default    = array(190, 5, 5);
+
+		/* Maximum number of rows per criteria element */
+		$MAX_ROWS = 10;
+
+		/* Number of rows to display for any query results */
+		$show_rows = 48;
+
+		/* Number of items to return during a snapshot
+		 *  Last _X_ # of alerts/unique alerts/ports/IP
+		 */
+		$last_num_alerts = 15;
+		$last_num_ualerts = 15;
+		$last_num_uports = 15;
+		$last_num_uaddr = 15;
+
+		/* Number of items to return during a snapshot
+		 *  Most Frequent unique alerts/IPs/ports
+		 */
+		$freq_num_alerts = 5;
+		$freq_num_uaddr = 15;
+		$freq_num_uports = 15;
+
+		/* Number of scroll buttons to use when displaying query results */
+		$max_scroll_buttons = 12;
+
+		/* Debug mode     - how much debugging information should be shown
+		 * Timing mode    - display timing information
+		 * SQL trace mode - log SQL statements
+		 *   0 : no extra information
+		 *   1 : debugging information
+		 *   2 : extended debugging information
+		 *
+		 * HTML no cache - whether a no-cache directive should be sent
+		 *                 to the browser (should be = 1 for IE)
+		 * 
+		 * SQL trace file - file to log SQL traces
+		 */
+		$debug_mode = 0;
+		$debug_time_mode = 1;
+		$html_no_cache = 1;
+		$sql_trace_mode = 0;
+		$sql_trace_file = \'\';
+
+		/* Auto-Screen refresh
+		 * - Refresh_Stat_Page - Should certain statistics pages refresh?
+		 * - refresh_all_pages - Should all the pages trigger the http refresh,
+		 *                       as well?
+		 *                       0: No, they should not.
+		 *                       1: Yes, even these pages should refresh.
+		 * - Stat_Page_Refresh_Time - refresh interval (in seconds)
+		 */
+		$refresh_stat_page = 1;
+		$refresh_all_pages = 0;
+		$stat_page_refresh_time = 180;
+
+		/* Display First/Previous/Last timestamps for alerts or
+		 * just First/Last on the Unique Alert listing.
+		 *    1: yes
+		 *    0: no
+		 */
+		$show_previous_alert = 0;
+
+		/* Sets maximum execution time (in seconds) of any particular page. 
+		 * Note: this overrides the PHP configuration file variable 
+		 *       max_execution_time.  Thus script can run for a total of
+		 *       ($max_script_runtime + max_execution_time) seconds 
+		 */
+		$max_script_runtime = 180;
     
     /* How should the IP address criteria be entered in the Search screen?
      *   1 : each octet is a separate field
@@ -251,6 +285,12 @@ function returnContents()
      */
     $resolve_IP = 0;
     
+    /* automatically expand the IP Criteria and Payload Criteria sections on the Search screen?)  
+     *    1 : yes
+     *    0 : no - you need to click on them to see them
+     */
+    $show_expanded_query = 0;     
+
     /* Should summary stats be calculated on every Query Results page
      * (Enabling this option will slow page loading time)
      */
@@ -329,7 +369,32 @@ function returnContents()
     
     /* Whois query */
     $external_whois_link = \'http://www.dnsstuff.com/tools/whois.ch?ip=\';
-    
+   
+
+    /* Local whois */
+ 		/* IP addresses of whois servers. Updated on Aug, 1st 2009.
+		 *
+		 * Name:    whois.arin.net
+		 * Addresses:  199.212.0.43
+		 *
+		 * Name:    whois4.apnic.net
+		 * Address:  202.12.29.13
+		 * Aliases:  whois.apnic.net
+		 *
+		 * Name:    whois.ripe.net
+		 * Address:  193.0.6.135
+		 *
+		 * Name:    whois.nic.ad.jp
+		 * Address:  192.41.192.40
+		 *
+		 */
+
+	  $arin_ip  = "199.212.0.43";
+  	$apnic_ip = "202.12.29.13";
+	  $ripe_ip  = "193.0.6.135";
+  	$jnic_ip  = "192.41.192.40";
+
+ 
      /* DNS query */
     $external_dns_link = \'http://www.dnsstuff.com/tools/ptr.ch?ip=\';
     
@@ -350,21 +415,10 @@ function returnContents()
                                \'icat\'      => array(\'http://icat.nist.gov/icat.cfm?cvename=CAN-\', \'\'),
                                \'nessus\'    => array(\'http://www.nessus.org/plugins/index.php?view=single&amp;id=\', \'\'),
                                \'url\'       => array(\'http://\', \'\'),
-                               \'local\' => array(\'signatures/\', \'.txt\'));
+                               \'local\'     => array(\'signatures/\', \'.txt\'),
+                               \'local_rules_dir\' => array(\'rules/\', \'.rules\'), 
+                               \'EmThreats\'  => array(\'http://docs.emergingthreats.net/\', \'\'));
     
-    /* Email Alert action
-     *
-     * - action_email_from : email address to use in the FROM field of the mail message
-     * - action_email_subject : subject to use for the mail message
-     * - action_email_msg : additional text to include in the body of the mail message
-     * - action_email_mode : specifies how the alert information should be enclosed
-     *     0 : alerts should be in the body of the message
-     *     1 : alerts should be enclosed in an attachment
-     */
-    $action_email_from = \'BASE Alert <base>\';
-    $action_email_subject = \'BASE Incident Report\';
-    $action_email_msg = \'\';
-    $action_email_mode = 0;
     
     /* Custom (user) PHP session handlers
      *
@@ -393,6 +447,32 @@ function returnContents()
 
     // Red, yellow, orange, gray, white, blue
     $priority_colors = array (\'FF0000\',\'FFFF00\',\'FF9900\',\'999999\',\'FFFFFF\',\'006600\');
+
+
+    /** IP address to country support
+     *
+     * 1. First method for the mapping of ip addresses to country names:
+     *
+     * If you have installed the perl module Geo::IPfree
+     * http://search.cpan.org/CPAN/authors/id/G/GM/GMPASSOS/Geo-IPfree-0.2.tar.gz
+     * then generate the country database in readable ASCII format,
+     * similarly to this:
+     *         cd /usr/lib/perl5/site_perl/5.8.8/Geo/
+     *         perl ipct2txt.pl ./ipscountry.dat /var/www/html/base/ips-ascii.txt
+     *
+     * Set the absolute path to this database accordingly:
+     */
+     //$Geo_IPfree_file_ascii = "/var/www/html/base/ips-ascii.txt";
+    
+    /** 2. Second method for the mapping of ip addresses to country names:
+     * 
+     * If you have installed the perl module IP::Country
+     * http://search.cpan.org/dist/IP-Country/
+     * (requires Geography::Countries as well),
+     * then uncomment and correct the absolute path to this perl executable:
+     */
+     //$IP2CC = "/usr/bin/ip2cc";
+
 
     /*
      The below line should not be changed!

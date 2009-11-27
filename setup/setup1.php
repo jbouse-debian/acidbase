@@ -55,12 +55,15 @@ if (@$_GET['action'] == "check")
         $errorMsg = $errorMsg . "Please correct.";
         $error = 1;
     } else {
-        $_SESSION['adodbpath'] = $_POST['adodbpath'];
+        $_SESSION['adodbpath'] = realpath($_POST['adodbpath']);
+        $error = 0;
     }
     
     if ($error != 1)
+    {
         header("Location: setup2.php");
-	exit();
+	die (__FILE__ . ":" . __LINE__ . ": ERROR: This line should not have been reached.<BR>\n");
+    }
     
 }
 
@@ -96,21 +99,42 @@ if (@$_GET['action'] == "check")
     for ($y = 0; $y < $langCount; $y++) {
         /* If there is language saved from session then make it selected. 
          * If there was no session language - make 'english' selected.
-         */
-        if ( ($languages[$y] == $_SESSION['language']) || ($_SESSION['language'] == '' && $languages[$y] == 'english') )
-            echo("<OPTION name='".$languages[$y]."' SELECTED>".$languages[$y]);
+         */        
+        if (array_key_exists('language', $_SESSION)) 
+        {
+            if ( 
+                 ($languages[$y] == $_SESSION['language']) || 
+                 ($_SESSION['language'] == '' && $languages[$y] == 'english')
+               )           
+            {
+              echo("<OPTION name='".$languages[$y]."' SELECTED>".$languages[$y]);
+            }
+            else
+            {
+              echo("<OPTION name='".$languages[$y]."'>".$languages[$y]);
+            }
+        }
         else
-            echo("<OPTION name='".$languages[$y]."'>".$languages[$y]);
+        {
+            if ($languages[$y] == 'english')
+            {
+               echo("<OPTION name='".$languages[$y]."' SELECTED>".$languages[$y]);
+            }
+            else
+            {
+              echo("<OPTION name='".$languages[$y]."'>".$languages[$y]);
+            }
+        }
     }
 ?>
 </select>
-[<a href="#" onClick="javascript:window.open('../help/base_setup_help.php#language','helpscreen','width=300,height=300');">?</a>]
+[<a href="../help/base_setup_help.php#language" onClick="javascript:window.open('../help/base_setup_help.php#language','helpscreen','width=300,height=300');">?</a>]
 </td></tr>
 <tr><td class="setupKey">
 Path to ADODB:
 </td><td class="setupValue">
 <input type="text" name="adodbpath" value="<?php echo(@$_POST['adodbpath']); ?>">
-[<a href="#" onClick="javascript:window.open('../help/base_setup_help.php#adodb','helpscreen','width=300,height=300');">?</a>]
+[<a href="../help/base_setup_help.php#adodb" onClick="javascript:window.open('../help/base_setup_help.php#adodb','helpscreen','width=300,height=300');">?</a>]
 </td></tr>
 <tr><td colspan=2 align="center"><input type="submit"></td></tr>
 </table></form>

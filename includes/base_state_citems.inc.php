@@ -7,7 +7,6 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
-**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: individual criteria classes
@@ -239,12 +238,12 @@ class MultipleElementCriteria extends BaseCriteria
 		if (!is_array($this->criteria[$i]))
 			$this->criteria = array();
 
-         echo '    <SELECT NAME="'.$this->export_name.'['.$i.'][0]">';
+         echo '    <SELECT NAME="'.htmlspecialchars($this->export_name).'['.$i.'][0]">';
          echo '      <OPTION VALUE=" " '.chk_select($this->criteria[$i][0]," ").'>__</OPTION>'; 
          echo '      <OPTION VALUE="(" '.chk_select($this->criteria[$i][0],"(").'>(</OPTION>';
          echo '    </SELECT>';
 
-         echo '    <SELECT NAME="'.$this->export_name.'['.$i.'][1]">';
+         echo '    <SELECT NAME="'.htmlspecialchars($this->export_name).'['.$i.'][1]">';
          echo '      <OPTION VALUE=" "      '.chk_select($this->criteria[$i][1]," ").'>'.$blank_field_string.'</OPTION>';
  
          reset($field_list);
@@ -254,7 +253,7 @@ class MultipleElementCriteria extends BaseCriteria
          }
          echo '    </SELECT>';
 
-         echo '    <SELECT NAME="'.$this->export_name.'['.$i.'][2]">';
+         echo '    <SELECT NAME="'.htmlspecialchars($this->export_name).'['.$i.'][2]">';
          echo '      <OPTION VALUE="="  '.chk_select($this->criteria[$i][2],"="). '>=</OPTION>';
          echo '      <OPTION VALUE="!=" '.chk_select($this->criteria[$i][2],"!=").'>!=</OPTION>';
          echo '      <OPTION VALUE="<"  '.chk_select($this->criteria[$i][2],"<"). '><</OPTION>';
@@ -263,21 +262,21 @@ class MultipleElementCriteria extends BaseCriteria
          echo '      <OPTION VALUE=">=" '.chk_select($this->criteria[$i][2],">=").'>>=</OPTION>';
          echo '    </SELECT>';
 
-         echo '    <INPUT TYPE="text" NAME="'.$this->export_name.'['.$i.'][3]" SIZE=5 VALUE="'.$this->criteria[$i][3].'">';
+         echo '    <INPUT TYPE="text" NAME="'.htmlspecialchars($this->export_name).'['.$i.'][3]" SIZE=5 VALUE="'.htmlspecialchars($this->criteria[$i][3]).'">';
 
-         echo '    <SELECT NAME="'.$this->export_name.'['.$i.'][4]">';
+         echo '    <SELECT NAME="'.htmlspecialchars($this->export_name).'['.$i.'][4]">';
          echo '      <OPTION VALUE=" " '.chk_select($this->criteria[$i][4]," ").'>__</OPTION';
          echo '      <OPTION VALUE="(" '.chk_select($this->criteria[$i][4],"(").'>(</OPTION>';
          echo '      <OPTION VALUE=")" '.chk_select($this->criteria[$i][4],")").'>)</OPTION>';
          echo '    </SELECT>';
 
-         echo '    <SELECT NAME="'.$this->export_name.'['.$i.'][5]">';
+         echo '    <SELECT NAME="'.htmlspecialchars($this->export_name).'['.$i.'][5]">';
          echo '      <OPTION VALUE=" "   '.chk_select($this->criteria[$i][5]," ").  '>__</OPTION>';
          echo '      <OPTION VALUE="OR" '.chk_select($this->criteria[$i][5],"OR").  '>'._OR.'</OPTION>';
          echo '      <OPTION VALUE="AND" '.chk_select($this->criteria[$i][5],"AND").'>'._AND.'</OPTION>';
          echo '    </SELECT>';
          if ( $i == $this->criteria_cnt-1 )
-            echo '    <INPUT TYPE="submit" NAME="submit" VALUE="'.$add_button_string.'">';
+            echo '    <INPUT TYPE="submit" NAME="submit" VALUE="'.htmlspecialchars($add_button_string).'">';
          echo '<BR>';
       }
    }
@@ -326,13 +325,17 @@ class ProtocolFieldCriteria extends MultipleElementCriteria
    }
 }
 
+
+
+
 class SignatureCriteria extends SingleElementCriteria
 {
 /*
- * $sig[3]: stores signature
+ * $sig[4]: stores signature
  *   - [0] : exactly, roughly
  *   - [1] : signature
  *   - [2] : =, !=
+ *   - [3] : signature from signature list
  */
 
    var $sig_type;
@@ -350,7 +353,7 @@ class SignatureCriteria extends SingleElementCriteria
 
    function Init()
    {      
-      InitArray($this->criteria, 3, 0, "");
+      InitArray($this->criteria, 4, 0, "");
       $this->sig_type = "";
    }
 
@@ -376,12 +379,13 @@ class SignatureCriteria extends SingleElementCriteria
       $this->criteria[0] = CleanVariable(@$this->criteria[0], "", array(" ", "=", "LIKE"));
       $this->criteria[1] = filterSql(@$this->criteria[1]); /* signature name */
       $this->criteria[2] = CleanVariable(@$this->criteria[2], "", array("=", "!="));
+      $this->criteria[3] = filterSql(@$this->criteria[3]); /* signature name from the signature list */
    }
 
    function PrintForm()
    {
-		if (!@is_array($this->criteria))
-			$this->criteria = array();
+      if (!@is_array($this->criteria))
+        $this->criteria = array();
 
       echo '<SELECT NAME="sig[0]"><OPTION VALUE=" "  '.chk_select(@$this->criteria[0]," "). '>'._DISPSIG;    
       echo '                      <OPTION VALUE="="     '.chk_select(@$this->criteria[0],"="). '>'._SIGEXACTLY;
@@ -391,7 +395,7 @@ class SignatureCriteria extends SingleElementCriteria
       echo '                      <OPTION VALUE="!="     '.chk_select(@$this->criteria[2],"!="). '>!=';
       echo '</SELECT>';
 
-      echo '<INPUT TYPE="text" NAME="sig[1]" SIZE=40 VALUE="'.@$this->criteria[1].'"><BR>';
+      echo '<INPUT TYPE="text" NAME="sig[1]" SIZE=40 VALUE="'.htmlspecialchars(@$this->criteria[1]).'"><BR>';
 
       if ( $GLOBALS['use_sig_list'] > 0)
       {
@@ -403,7 +407,7 @@ class SignatureCriteria extends SingleElementCriteria
 
          $temp_sql = $temp_sql." ORDER BY sig_name";
          $tmp_result = $this->db->baseExecute($temp_sql);
-         echo '<SELECT NAME="sig_lookup"
+         echo '<SELECT NAME="sig[3]"
                        onChange=\'PacketForm.elements[4].value =
                          this.options[this.selectedIndex].value;return true;\'>
                 <OPTION VALUE="null" SELECTED>{ Select Signature from List }';
@@ -416,6 +420,7 @@ class SignatureCriteria extends SingleElementCriteria
          }
          echo '</SELECT><BR>';
       }
+      
    } 
 
    function ToSQL()
@@ -426,6 +431,36 @@ class SignatureCriteria extends SingleElementCriteria
    {
       $tmp = $tmp_human = "";
 
+
+      // First alternative: signature name is taken from the
+      // signature list.  The user has clicked at a drop down menu for this
+      if ( 
+           (isset($this->criteria[0])) && ($this->criteria[0] != " ") && 
+           (isset($this->criteria[3])) && ($this->criteria[3] != "" ) &&
+           ($this->criteria[3] != "null") && ($this->criteria[3] != "NULL") &&
+           ($this->criteria[3] != NULL)
+         )
+      {
+        if ( $this->criteria[0] == '=' && $this->criteria[2] == '!=' )
+           $tmp_human = '!=';
+        else if ( $this->criteria[0] == '=' && $this->criteria[2] == '=' )
+           $tmp_human = '=';
+        else if ( $this->criteria[0] == 'LIKE' && $this->criteria[2] == '!=' )
+           $tmp_human = ' '._DOESNTCONTAIN.' ';
+        else if ( $this->criteria[0] == 'LIKE' && $this->criteria[2] == '=' )
+           $tmp_human = ' '._CONTAINS.' ';
+
+        $tmp = $tmp._SIGNATURE.' '.$tmp_human.' "';
+        if ( ($this->db->baseGetDBversion() >= 100) && $this->sig_type == 1 )
+          $tmp = $tmp.BuildSigByID($this->criteria[3], $this->db).'" '.$this->cs->GetClearCriteriaString($this->export_name);
+        else
+          $tmp = $tmp.htmlentities($this->criteria[3]).'"'.$this->cs->GetClearCriteriaString($this->export_name);
+
+        $tmp = $tmp.'<BR>';
+      }
+      else
+      // Second alternative: Signature is taken from a string that
+      // has been typed in manually by the user:
       if ( (isset($this->criteria[0])) && ($this->criteria[0] != " ") && 
            (isset($this->criteria[1])) && ($this->criteria[1] != "") )
       {
@@ -440,16 +475,18 @@ class SignatureCriteria extends SingleElementCriteria
 
         $tmp = $tmp._SIGNATURE.' '.$tmp_human.' "';
         if ( ($this->db->baseGetDBversion() >= 100) && $this->sig_type == 1 )
-          $tmp = $tmp.htmlentities(BuildSigByID($this->criteria[1], $this->db)).'" '.$this->cs->GetClearCriteriaString($this->export_name);
+          $tmp = $tmp.BuildSigByID($this->criteria[1], $this->db).'" '.$this->cs->GetClearCriteriaString($this->export_name);
         else
           $tmp = $tmp.htmlentities($this->criteria[1]).'"'.$this->cs->GetClearCriteriaString($this->export_name);
 
         $tmp = $tmp.'<BR>';
       }
-
+      
       return $tmp;
    }
 };  /* SignatureCriteria */
+
+
 
 class SignatureClassificationCriteria extends SingleElementCriteria
 {
@@ -510,7 +547,7 @@ class SignatureClassificationCriteria extends SingleElementCriteria
             else
                $tmp = $tmp._SIGCLASS.' = '.
                               htmlentities(GetSigClassName($this->criteria, $this->db)).
-                              htmlentities($this->cs->GetClearCriteriaString($this->export_name)).'<BR>';
+                              $this->cs->GetClearCriteriaString($this->export_name).'<BR>';
          }
       }
 
@@ -595,7 +632,7 @@ class SignaturePriorityCriteria extends SingleElementCriteria
                                '<I>'._NONE.'</I><BR>';
              else
                 $tmp = $tmp._SIGPRIO.' '.htmlentities($this->criteria[0])." ".htmlentities($this->criteria[1]).
-                       htmlentities($this->cs->GetClearCriteriaString($this->export_name)).'<BR>';
+                       $this->cs->GetClearCriteriaString($this->export_name).'<BR>';
           }
        }
  
@@ -632,7 +669,7 @@ class AlertGroupCriteria extends SingleElementCriteria
       {
          while ( $myrow = $tmp_result->baseFetchRow() )
            echo '<OPTION VALUE="'.$myrow[0].'" '.chk_select($this->criteria, $myrow[0]).'>'.
-                 '['.$myrow[0].'] '.$myrow[1];
+                 '['.$myrow[0].'] '.htmlspecialchars($myrow[1]);
 
          $tmp_result->baseFreeRows();
       }
@@ -650,7 +687,7 @@ class AlertGroupCriteria extends SingleElementCriteria
 
       if ( $this->criteria != " " && $this->criteria != "" )
         $tmp = $tmp._ALERTGROUP.' = ['.htmlentities($this->criteria).'] '.GetAGNameByID($this->criteria, $this->db).
-                    htmlentities($this->cs->GetClearCriteriaString($this->export_name)).'<BR>';
+                    $this->cs->GetClearCriteriaString($this->export_name).'<BR>';
 
       return $tmp;
    }
@@ -675,20 +712,62 @@ class SensorCriteria extends SingleElementCriteria
  
    function PrintForm()
    {
+      // How many sensors do we have?
+      $number_sensors = 0;
+      $number_sensors_lst = $this->db->baseExecute("SELECT count(*) FROM sensor");
+      $number_sensors_array = $number_sensors_lst->baseFetchRow();
+      $number_sensors_lst->baseFreeRows();
+      if (!isset($number_sensors_array))
+      {
+        $mystr = '<BR>' . __FILE__ . '' . __LINE__ . ": \$ERROR: number_sensors_array has not been set at all!<BR>";
+        ErrorMessage($mystr);        
+        $number_sensors = 0;
+      }
+
+      if ($number_sensors_array == NULL || $number_sensors_array == "")
+      {
+        $number_sensors = 0;
+      }
+      else
+      {
+        $number_sensors = $number_sensors_array[0];
+      }
+
+      if ($debug_mode > 1)
+      {
+        echo '$number_sensors = ' . $number_sensors . '<BR><BR>';
+      }
+
 
       echo '<SELECT NAME="sensor">
              <OPTION VALUE=" " '.chk_select($this->criteria, " ").'>'._DISPANYSENSOR;
 
       $temp_sql = "SELECT sid, hostname, interface, filter FROM sensor";
-      $tmp_result = $this->db->baseExecute($temp_sql);
-      if ( $tmp_result->row  )
-      {
-        while ( $myrow = $tmp_result->baseFetchRow() )
-           echo '<OPTION VALUE="'.$myrow[0].'" '.chk_select($this->criteria, $myrow[0]).'>'.
-                 '['.$myrow[0].'] '.GetSensorName($myrow[0], $this->db);
+      $tmp_result = $this->db->baseExecute($temp_sql);      
 
-        $tmp_result->baseFreeRows();
+      
+      for ($n = 0; $n < $number_sensors; $n++)
+      {
+        $myrow = $tmp_result->baseFetchRow();
+
+        if (!isset($myrow) || $myrow == "" || $myrow == NULL)
+        {
+          if ($n >= $number_sensors)
+          {
+            break;
+          }
+          else
+          {
+            next;
+          }
+        }
+
+        echo '<OPTION VALUE="' . $myrow[0] . '" ' .
+             chk_select($this->criteria, $myrow[0]) . '>' .
+             '[' . $myrow[0] . '] ' .
+             GetSensorName($myrow[0], $this->db);
       }
+      $tmp_result->baseFreeRows();
 
       echo '</SELECT>&nbsp;&nbsp';
    }
@@ -705,7 +784,7 @@ class SensorCriteria extends SingleElementCriteria
      if ( $this->criteria != " " && $this->criteria != "" )
         $tmp = $tmp._SENSOR.' = ['.htmlentities($this->criteria).'] '.
                GetSensorName($this->criteria, $this->db).
-               htmlentities($this->cs->GetClearCriteriaString($this->export_name)).'<BR>';
+               $this->cs->GetClearCriteriaString($this->export_name).'<BR>';
 
       return $tmp;
    }
@@ -778,12 +857,12 @@ class TimeCriteria extends MultipleElementCriteria
          echo '                               <OPTION VALUE="10" '.chk_select(@$this->criteria[$i][2],"10").'>'._SHORTOCT;
          echo '                               <OPTION VALUE="11" '.chk_select(@$this->criteria[$i][2],"11").'>'._SHORTNOV;
          echo '                               <OPTION VALUE="12" '.chk_select(@$this->criteria[$i][2],"12").'>'._SHORTDEC.'</SELECT>';
-         echo '<INPUT TYPE="text" NAME="time['.$i.'][3]" SIZE=2 VALUE="'.@$this->criteria[$i][3].'">';
+         echo '<INPUT TYPE="text" NAME="time['.$i.'][3]" SIZE=2 VALUE="'.htmlspecialchars(@$this->criteria[$i][3]).'">';
          echo '<SELECT NAME="time['.$i.'][4]">'.dispYearOptions(@$this->criteria[$i][4]).'</SELECT>';
 
-         echo '<INPUT TYPE="text" NAME="time['.$i.'][5]" SIZE=2 VALUE="'.@$this->criteria[$i][5].'"><B>:</B>';
-         echo '<INPUT TYPE="text" NAME="time['.$i.'][6]" SIZE=2 VALUE="'.@$this->criteria[$i][6].'"><B>:</B>';
-         echo '<INPUT TYPE="text" NAME="time['.$i.'][7]" SIZE=2 VALUE="'.@$this->criteria[$i][7].'">';
+         echo '<INPUT TYPE="text" NAME="time['.$i.'][5]" SIZE=2 VALUE="'.htmlspecialchars(@$this->criteria[$i][5]).'"><B>:</B>';
+         echo '<INPUT TYPE="text" NAME="time['.$i.'][6]" SIZE=2 VALUE="'.htmlspecialchars(@$this->criteria[$i][6]).'"><B>:</B>';
+         echo '<INPUT TYPE="text" NAME="time['.$i.'][7]" SIZE=2 VALUE="'.htmlspecialchars(@$this->criteria[$i][7]).'">';
 
          echo '<SELECT NAME="time['.$i.'][8]"><OPTION VALUE=" " '.chk_select(@$this->criteria[$i][8]," ").'>__';
          echo '                               <OPTION VALUE="(" '.chk_select(@$this->criteria[$i][8],"(").'>(';
@@ -810,7 +889,7 @@ class TimeCriteria extends MultipleElementCriteria
      {
          if ( isset($this->criteria[$i][1]) && $this->criteria[$i][1] != " " )
          { 
-            $tmp = $tmp.'<CODE>'.$this->criteria[$i][0].' time '.$this->criteria[$i][1].' [ ';
+            $tmp = $tmp.'<CODE>'.htmlspecialchars($this->criteria[$i][0]).' time '.htmlspecialchars($this->criteria[$i][1]).' [ ';
 
             /* date */
             if ( $this->criteria[$i][2] == " " && $this->criteria[$i][3] == "" && $this->criteria[$i][4] == " " )
@@ -931,14 +1010,14 @@ class IPAddressCriteria extends MultipleElementCriteria
                    </SELECT>';
 
         if ( $GLOBALS['ip_address_input'] == 2 )
-           echo  '    <INPUT TYPE="text" NAME="ip_addr['.$i.'][3]" SIZE=16 VALUE="'.@$this->criteria[$i][7].'">';
+           echo  '    <INPUT TYPE="text" NAME="ip_addr['.$i.'][3]" SIZE=16 VALUE="'.htmlspecialchars(@$this->criteria[$i][7]).'">';
         else
         {
-           echo '    <INPUT TYPE="text" NAME="ip_addr['.$i.'][3]" SIZE=3 VALUE="'.@$this->criteria[$i][3].'"><B>.</B>';
-           echo '    <INPUT TYPE="text" NAME="ip_addr['.$i.'][4]" SIZE=3 VALUE="'.@$this->criteria[$i][4].'"><B>.</B>';
-           echo '    <INPUT TYPE="text" NAME="ip_addr['.$i.'][5]" SIZE=3 VALUE="'.@$this->criteria[$i][5].'"><B>.</B>';
-           echo '    <INPUT TYPE="text" NAME="ip_addr['.$i.'][6]" SIZE=3 VALUE="'.@$this->criteria[$i][6].'"><!--<B>/</B>';
-           echo '    <INPUT TYPE="text" NAME="ip_addr['.$i.'][7]" SIZE=3 VALUE="'.@$this->criteria[$i][7].'">-->'; 
+           echo '    <INPUT TYPE="text" NAME="ip_addr['.$i.'][3]" SIZE=3 VALUE="'.htmlspecialchars(@$this->criteria[$i][3]).'"><B>.</B>';
+           echo '    <INPUT TYPE="text" NAME="ip_addr['.$i.'][4]" SIZE=3 VALUE="'.htmlspecialchars(@$this->criteria[$i][4]).'"><B>.</B>';
+           echo '    <INPUT TYPE="text" NAME="ip_addr['.$i.'][5]" SIZE=3 VALUE="'.htmlspecialchars(@$this->criteria[$i][5]).'"><B>.</B>';
+           echo '    <INPUT TYPE="text" NAME="ip_addr['.$i.'][6]" SIZE=3 VALUE="'.htmlspecialchars(@$this->criteria[$i][6]).'"><!--<B>/</B>';
+           echo '    <INPUT TYPE="text" NAME="ip_addr['.$i.'][7]" SIZE=3 VALUE="'.htmlspecialchars(@$this->criteria[$i][7]).'">-->'; 
         }
         echo '    <SELECT NAME="ip_addr['.$i.'][8]"><OPTION VALUE=" " '.chk_select(@$this->criteria[$i][8]," ").'>__';
         echo '                                      <OPTION VALUE="(" '.chk_select(@$this->criteria[$i][8],"(").'>(';
@@ -1489,7 +1568,7 @@ class DataCriteria extends MultipleElementCriteria
          echo '                               <OPTION VALUE="LIKE"     '.chk_select(@$this->criteria[$i][1],"LIKE"). '>'._HAS;
          echo '                               <OPTION VALUE="NOT LIKE" '.chk_select(@$this->criteria[$i][1],"NOT LIKE").'>'._HASNOT.'</SELECT>';
 
-         echo '<INPUT TYPE="text" NAME="data['.$i.'][2]" SIZE=45 VALUE="'.@$this->criteria[$i][2].'">';
+         echo '<INPUT TYPE="text" NAME="data['.$i.'][2]" SIZE=45 VALUE="'.htmlspecialchars(@$this->criteria[$i][2]).'">';
 
          echo '<SELECT NAME="data['.$i.'][3]"><OPTION VALUE=" " '.chk_select(@$this->criteria[$i][3]," ").'>__';
          echo '                               <OPTION VALUE="(" '.chk_select(@$this->criteria[$i][3],"(").'>(';
