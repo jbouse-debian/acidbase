@@ -6,15 +6,15 @@
 ## DP: problems when signatures contain spaces (this happens with snortcenter)
 
 @DPATCH@
---- acidbase-1.2.1.orig/includes/base_signature.inc.php
-+++ acidbase-1.2.1/includes/base_signature.inc.php
-@@ -103,7 +103,7 @@
+diff -urNad acidbase~/includes/base_signature.inc.php acidbase/includes/base_signature.inc.php
+--- acidbase~/includes/base_signature.inc.php	2009-11-27 14:10:00.000000000 -0500
++++ acidbase/includes/base_signature.inc.php	2009-11-27 14:13:48.000000000 -0500
+@@ -108,7 +108,7 @@
  
- function GetSingleSignatureReference($ref_system, $ref_tag, $style)
- {
+ 
+ 
 -   $tmp_ref_system_name = strtolower($ref_system);
 +   $tmp_ref_system_name = trim(strtolower($ref_system));
     if ( in_array($tmp_ref_system_name, array_keys($GLOBALS['external_sig_link'])) )
     {
-       if ( $style == 1 )
-
+       if ($tmp_ref_system_name == "local_rules_dir")
