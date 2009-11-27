@@ -1,3 +1,33 @@
+acidbase (1.4.4-1) unstable; urgency=low
+
+  * Imported Upstream version 1.4.4 (Closes: #501644, #552235)
+  * debian/control: Remove David Gil as maintainer (Closes: #551636)
+  * debian/control: Bump Standards-Version to 3.8.3 and change
+    Maintainer/Uploaders.
+  * debian/rules: Change to build in binary-indep to close lintian
+    warnings.
+  * debian/README.source: Added README.source to clear lintian warning.
+  * debian/patches/02_update_external_links.dpatch: Snort ID webdatabase
+    changed (Closes: #542770) - thanks to Robert Sander
+    <robert.sander@epigenomics.com>
+  * debian/patches/08_update_whois_servers.dpatch: Removed as no longer
+    needed
+  * debian/patches/11_use_trim_to_avoid_signature_problems.dpatch: fix
+    patch against new version
+  * debian/po/fi.po: Initial Finnish debconf translation (Closes:
+    #535118) - thanks to Esko Arajärvi <edu@iki.fi>
+  * debian/po/ja.po: Initial Japanese debconf translation (Closes:
+    #556612) - thanks to Hideki Yamane (Debian-JP)
+    <henrich@debian.or.jp>
+  * Updated debconf translations to change Report-Msgid-Bugs-To to
+    jbouse@debian.org
+  * debian/patches/12_remove_php_image_graph.dpatch: Update patch for
+    new version
+  * debian/patches/CVE-2007-6156.dpatch: Removed patch accepted by
+    upstream
+
+ -- Jeremy T. Bouse <jbouse@debian.org>  Fri, 27 Nov 2009 15:26:00 -0500
+
 acidbase (1.3.9-2) unstable; urgency=low
 
   * debian/control: Bump Standards-Version to 3.8.0 with no changes.
