@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Common Functions
@@ -710,7 +711,8 @@ function PrintHexPacketPayload ( $encoded_payload, $output_type )
 function PrintCleanHexPacketPayload( $encoded_payload, $output_type )
 {
      $len = strlen($encoded_payload);
-
+     $s = '';
+     $count = 0;
      for ($i = 0; $i < $len; $i += 2 )
      {
          /* dump the ASCII characters */
@@ -732,9 +734,7 @@ function PrintCleanHexPacketPayload( $encoded_payload, $output_type )
              $s .= $s_tmp;
              $count = 0;
          }
-
      }
-
      return $s;
 }
 
@@ -763,7 +763,7 @@ function PrintPacketPayload($data, $encode_type, $output_type)
          $payload = PrintBase64PacketPayload($data, $output_type);
      else if ($encode_type == "0" )
      {
-         if ( ($_GET[asciiclean] == 1) || ( ($_COOKIE[asciiclean] == "clean") && (!isset($_GET[asciiclean])) ) )
+         if ( isset($_GET['asciiclean']) && ($_GET['asciiclean'] == 1) || ( (isset($_COOKIE['asciiclean']) && $_COOKIE['asciiclean'] == "clean") && (!isset($_GET['asciiclean'])) ) )
 	 {
 	    // Print clean ascii display
             $payload = PrintCleanHexPacketPayload($data, $output_type);
@@ -1073,4 +1073,8 @@ function ExportPacket_summary($sid, $cid, $db, $export_type = 0)
   return $s; 
 }
 
-?>
+function base_header($url) {
+    header($url);
+    exit;
+}
+

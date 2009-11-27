@@ -1,19 +1,15 @@
 - Short Term (all started to some degree)
    - documentation
-   - full input validation
    - Security system (started)
-   - Switch tables to divs and really use the css (started)
-   - WebSite (started)
    - Asset mapping (started)
    - PDF generation (started)
    - Output filters (both in reports and display)
    - Add error returns to constants
-   - Change Include to require where necessary
    - Offender Look up
    - Email functions
    - Alert maintenance
-   - Log out link.
    - Rewrite debugging system
+   - Log out
    - Change Meta Criteria system
    - base_query_common.php Line 515  These need to be checked out and fixed!
    - base_db.inc.php Add support for indexes under postgres (line 313)
@@ -28,4 +24,4 @@
     - Alert Verification system
     - IPv6 support
    
-Last Updated: 04-02-2005
+Last Updated: 05-09-2007

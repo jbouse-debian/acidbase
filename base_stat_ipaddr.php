@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Displays stats on an individual IP address   
@@ -25,7 +26,8 @@
 */
 
   $start = time();
-
+  $sig   = array();
+  
   include("base_conf.php");
   include("$BASE_path/includes/base_constants.inc.php");
   include("$BASE_path/includes/base_include.inc.php");
@@ -39,15 +41,13 @@
   $ip = ImportHTTPVar("ip", VAR_DIGIT | VAR_PERIOD);
   $netmask = ImportHTTPVar("netmask", VAR_DIGIT);
   $action = ImportHTTPVar("action", VAR_ALPHA);
-  $submit = ImportHTTPVar("submit", VAR_ALPHA | VAR_SPACE);
+  $submit = ImportHTTPVar("submit", VAR_ALPHA | VAR_SPACE);  
 
    // Check role out and redirect if needed -- Kevin
   $roleneeded = 10000;
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/index.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/index.php");
 
   $page_title = $ip.'/'.$netmask;
   PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
@@ -69,7 +69,7 @@ function PrintPortscanEvents($db, $ip)
      return;
   }
 
-  echo '<TABLE BORDER=1 width="100%" BORDER=0 CELLSPACING=0 CELLPADDING=5>
+  echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="5">
         <TR>
            <TD CLASS="plfieldhdr">'._PSDATETIME.'</TD>
            <TD CLASS="plfieldhdr">'._PSSRCIP.'</TD>
@@ -94,7 +94,7 @@ function PrintPortscanEvents($db, $ip)
      }
      $contents = ereg_replace("  "," ",$contents);
      $elements = explode(" ", $contents);
-     echo '<tr bgcolor='.$color.'><td align="center">'.
+     echo '<tr bgcolor="'.$color.'"><td align="center">'.
              $elements[0].' '.$elements[1].' '.$elements[2].'</td>';
      ereg("([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*):([0-9]*)",$elements[3],$store);
      echo '<td align="center">'.$store[1].'</td>';
@@ -151,22 +151,22 @@ function PrintEventsByIP($db, $ip)
 
    /* Print out */ 
    echo '<TR>';
-   echo "  <TD ALIGN=CENTER> ".BuildSigByID($unique_events[$i], $db);
+   echo "  <TD ALIGN='center'> ".BuildSigByID($unique_events[$i], $db);
    $tmp_iplookup = 'base_qry_main.php?new=1'.
-                   '&sig%5B0%5D=%3D&sig%5B1%5D='.(rawurlencode(GetSignatureName($unique_events[$i], $db))).
-                   '&num_result_rows=-1'.
-                   '&submit='._QUERYDBP.'&current_view=-1&ip_addr_cnt=2'.
+                   '&amp;sig%5B0%5D=%3D&amp;sig%5B1%5D='.(rawurlencode(GetSignatureName($unique_events[$i], $db))).
+                   '&amp;num_result_rows=-1'.
+                   '&amp;submit='._QUERYDBP.'&amp;current_view=-1&amp;ip_addr_cnt=2'.
                    BuildIPFormVars($ip);
 
    $tmp_sensor_lookup = 'base_stat_sensor.php?'.
-                        'sig%5B0%5D=%3D&sig%5B1%5D='.
+                        'sig%5B0%5D=%3D&amp;sig%5B1%5D='.
                         (rawurlencode($unique_events[$i])).
-                        '&ip_addr_cnt=2'.BuildIPFormVars($ip);
+                        '&amp;ip_addr_cnt=2'.BuildIPFormVars($ip);
 
-   echo "  <TD ALIGN=CENTER> <A HREF=\"$tmp_iplookup\">$total</A> ";
-   echo "  <TD ALIGN=CENTER> <A HREF=\"$tmp_sensor_lookup\">$num_sensors</A> ";
-   echo "  <TD ALIGN=CENTER> $start_time";
-   echo "  <TD ALIGN=CENTER VALIGN=CENTER> $stop_time";
+   echo "  <TD align='center'> <A HREF=\"$tmp_iplookup\">$total</A> ";
+   echo "  <TD align='center'> <A HREF=\"$tmp_sensor_lookup\">$num_sensors</A> ";
+   echo "  <TD align='center'> $start_time";
+   echo "  <TD align='center' valign='middle'> $stop_time";
    echo '</TR>';
 }
 
@@ -180,7 +180,7 @@ echo "</TABLE>\n";
 
   if ( $event_cache_auto_update == 1 )  UpdateAlertCache($db);
 
-  if ( strstr($sig[1], "spp_portscan") )
+  if ( sizeof($sig) != 0 && strstr($sig[1], "spp_portscan") )
      $sig[1] = "";
 
   /*  Build new link for criteria-based sensor page 
@@ -191,18 +191,18 @@ echo "</TABLE>\n";
 
 
    $tmp_srcdst_iplookup = 'base_qry_main.php?new=2'.
-                          '&num_result_rows=-1'.
-                          '&submit='._QUERYDBP.'&current_view=-1&ip_addr_cnt=2'.
+                          '&amp;num_result_rows=-1'.
+                          '&amp;submit='._QUERYDBP.'&amp;current_view=-1&amp;ip_addr_cnt=2'.
                           BuildIPFormVars($ip);
 
    $tmp_src_iplookup    = 'base_qry_main.php?new=2'.
-                          '&num_result_rows=-1'.
-                          '&submit='._QUERYDBP.'&current_view=-1&ip_addr_cnt=1'.
+                          '&amp;num_result_rows=-1'.
+                          '&amp;submit='._QUERYDBP.'&amp;current_view=-1&amp;ip_addr_cnt=1'.
                           BuildSrcIPFormVars($ip);
 
    $tmp_dst_iplookup    = 'base_qry_main.php?new=2'.
-                          '&num_result_rows=-1'.
-                          '&submit='._QUERYDBP.'&current_view=-1&ip_addr_cnt=1'.
+                          '&amp;num_result_rows=-1'.
+                          '&amp;submit='._QUERYDBP.'&amp;current_view=-1&amp;ip_addr_cnt=1'.
                           BuildDstIPFormVars($ip);
   echo '<CENTER>';
   printf ("<FONT>"._PSALLALERTSAS.":</FONT>",$ip,$netmask); 
@@ -212,17 +212,17 @@ echo "</TABLE>\n";
  <A HREF="'.$tmp_srcdst_iplookup.'">'._SCSOURCE.'/'._SCDEST.'</A><BR>';
 
  echo _PSSHOW.':
-       <A HREF="base_stat_ipaddr.php?ip='.$ip.'&netmask='.$netmask.'&action=events">'._PSUNIALERTS.'</A>
+       <A HREF="base_stat_ipaddr.php?ip='.$ip.'&amp;netmask='.$netmask.'&amp;action=events">'._PSUNIALERTS.'</A>
        &nbsp; | &nbsp;
-       <A HREF="base_stat_ipaddr.php?ip='.$ip.'&netmask='.$netmask.'&action=portscan">'._PSPORTSCANEVE.'</A>
-       </FONT><BR>';
+       <A HREF="base_stat_ipaddr.php?ip='.$ip.'&amp;netmask='.$netmask.'&amp;action=portscan">'._PSPORTSCANEVE.'</A>
+       <BR>';
 
  echo '<FONT>'._PSREGWHOIS.': ';
     echo '
        <A HREF="http://ws.arin.net/cgi-bin/whois.pl?queryinput='.$ip.'" target="_NEW">ARIN</A> |
        <A HREF="http://www.ripe.net/perl/whois?query='.$ip.'" target="_NEW">RIPE</A> | 
        <A HREF="http://www.apnic.net/apnic-bin/whois.pl?search='.$ip.'" target="_NEW">APNIC</A> | 
-       <A HREF="http://lacnic.net/cgi-bin/lacnic/whois?lg=EN&qr='.$ip.'" target="_NEW">LACNIC</A><BR>';
+       <A HREF="http://lacnic.net/cgi-bin/lacnic/whois?lg=EN&amp;qr='.$ip.'" target="_NEW">LACNIC</A><BR></FONT>';
 
  $octet=preg_split("/\./", $ip);
  $classc=sprintf("%03s.%03s.%03s",$octet[0],$octet[1],$octet[2]);
@@ -231,12 +231,10 @@ echo "</TABLE>\n";
       '<A HREF="'.$external_dns_link.$ip.'" target="_NEW">DNS</A> | '.
       '<A HREF="'.$external_whois_link.$ip.'" target="_NEW">whois</A> | '.
       '<A HREF="'.$external_all_link.$ip.'" target="_NEW">Extended whois</A> | '.
-      '<A HREF="http://www.dshield.org/ipinfo.php?ip='.$ip.'&Submit=Submit" target="_NEW">DShield.org IP Info</A> | '.
+      '<A HREF="http://www.dshield.org/ipinfo.php?ip='.$ip.'&amp;Submit=Submit" target="_NEW">DShield.org IP Info</A> | '.
       '<A HREF="http://www.trustedsource.org/query.php?q='.$ip.'" target="_NEW">TrustedSource.org IP Info</A> | '.
-      '<A HREF="http://isc.sans.org/source_report.php?order=subnet&subnet='.$classc.'" target="_NEW">ISC Source/Subnet Report</A><BR>';
+      '<A HREF="http://isc.sans.org/ipinfo.html?ip='.$ip.'" target="_NEW">ISC Source/Subnet Report</A><BR> </FONT>';
 ?>
- <P>
-
 </CENTER>
 <HR>
 
@@ -264,7 +262,7 @@ echo "</TABLE>\n";
   } 
 
   if ( VerifySocketSupport() )
-     echo '&nbsp;&nbsp;( <A HREF="base_stat_ipaddr.php?ip='.$ip.'&netmask='.$netmask.'&action=whois">local whois</A> )';
+     echo '&nbsp;&nbsp;( <A HREF="base_stat_ipaddr.php?ip='.$ip.'&amp;netmask='.$netmask.'&amp;action=whois">local whois</A> )';
  
   echo    '</B>
         <TABLE BORDER=1>
@@ -306,18 +304,18 @@ echo "</TABLE>\n";
 
   /* Print out */ 
   echo '<TR>
-         <TD ALIGN=CENTER><A HREF="'.$tmp_sensor_lookup.'">'.$num_sensors.'</A>';
+         <TD ALIGN="center"><A HREF="'.$tmp_sensor_lookup.'">'.$num_sensors.'</A>';
   if ( $num_src_ip == 0 )
-         echo '<TD ALIGN=CENTER>'.$num_src_ip;
+         echo '<TD ALIGN="center">'.$num_src_ip;
   else
-         echo '<TD ALIGN=CENTER><A HREF="'.$tmp_src_iplookup.'">'.$num_src_ip.'</A>';
+         echo '<TD ALIGN="center"><A HREF="'.$tmp_src_iplookup.'">'.$num_src_ip.'</A>';
   if ( $num_dst_ip == 0 )         
-         echo '<TD ALIGN=CENTER>'.$num_dst_ip;
+         echo '<TD ALIGN="center">'.$num_dst_ip;
   else
-         echo '<TD ALIGN=CENTER><A HREF="'.$tmp_dst_iplookup.'">'.$num_dst_ip.'</A>';
+         echo '<TD ALIGN="center"><A HREF="'.$tmp_dst_iplookup.'">'.$num_dst_ip.'</A>';
   echo '
-         <TD ALIGN=CENTER>'.$start_time.'
-         <TD ALIGN=CENTER VALIGN=CENTER>'.$stop_time.'
+         <TD align="center">'.$start_time.'
+         <TD align="center" valign="middle">'.$stop_time.'
        </TR>
       </TABLE></CENTER>';
 
@@ -347,4 +345,5 @@ echo "</TABLE>\n";
   PrintBASESubFooter();
 
   $et->PrintTiming();
+  echo "</body>\r\n</html>";
 ?>

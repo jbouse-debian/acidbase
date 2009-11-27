@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Vanilla Config file
@@ -18,7 +19,7 @@
 ********************************************************************************
 */
 session_start();
-$BASE_VERSION = '1.2.7 (karen)';
+$BASE_VERSION = '1.3.9 (anne)';
 
 /*
  Set the below to the language you would like people to use while viewing
@@ -311,8 +312,7 @@ $external_dns_link = 'http://www.dnsstuff.com/tools/ptr.ch?ip=';
 $external_all_link = 'http://www.whois.sc/';
 
 /* TCP/UDP port database */
-$external_port_link = array('sans'     => 'http://isc.sans.org/port_details.php?port=',
-                            'portsdb'  => 'http://www.portsdb.org/bin/portsdb.cgi?portnumber=', 
+$external_port_link = array('sans'     => 'http://isc.sans.org/port.html?port=',
                             'tantalo'  => 'http://ports.tantalo.net/?q=',
                             'sstats'   => 'http://www.securitystats.com/tools/portsearch.php?type=port&select=any&Submit=Submit&input=');
 

@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Index page for the administrative functions
@@ -32,9 +33,8 @@
   // Check role out and redirect if needed -- Kevin
   $roleneeded = 1;
   $BUser = new BaseUser();
-  if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/base_main.php");
+  if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1)) {
+    base_header("Location: ". $BASE_urlpath . "/base_main.php");
   }
     
   $page_title = _BASEADMIN;
@@ -48,4 +48,5 @@
     PrintBASEAdminMenuFooter();
 
     PrintBASESubFooter();
+    echo "</body>\r\n</html>";
 ?>

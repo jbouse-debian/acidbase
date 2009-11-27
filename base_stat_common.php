@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: summary statistics
@@ -364,55 +365,55 @@ function PrintGeneralStats($db, $compact, $show_stats, $join = "", $where = "", 
       	$result->baseFreeRows();
       }
 
-      $class_cnt_info[0] = " <B>"._SCCATEGORIES." </B>";
-      $class_cnt_info[1] = "<A HREF=\"base_stat_class.php?sort_order=class_a\">";
-      $class_cnt_info[2] = "</A>";
+      $class_cnt_info[0] = " <strong>"._SCCATEGORIES." </strong>";
+      $class_cnt_info[1] = "<a href=\"base_stat_class.php?sort_order=class_a\">";
+      $class_cnt_info[2] = "</a>";
    }
 
-   $sensor_cnt_info[0] = "<B>"._SCSENSORTOTAL."</B>\n";
-   $sensor_cnt_info[1] = "<A HREF=\"base_stat_sensor.php\">";
-   $sensor_cnt_info[2] = "</A> / ";
+   $sensor_cnt_info[0] = "<strong>"._SCSENSORTOTAL."</strong>\n";
+   $sensor_cnt_info[1] = "<a href=\"base_stat_sensor.php\">";
+   $sensor_cnt_info[2] = "</a> / ";
 
-   $unique_alert_cnt_info[0] = "<B>"._UNIALERTS.":</B>\n";
-   $unique_alert_cnt_info[1] = "<A HREF=\"base_stat_alerts.php\">"; 
-   $unique_alert_cnt_info[2] = "</A>";
+   $unique_alert_cnt_info[0] = "<strong>"._UNIALERTS.":</strong>\n";
+   $unique_alert_cnt_info[1] = "<a href=\"base_stat_alerts.php\">"; 
+   $unique_alert_cnt_info[2] = "</a>";
 
-   $event_cnt_info[0] = "<B>"._SCTOTALNUMALERTS."</B>\n";
-   $event_cnt_info[1] = '<A HREF="base_qry_main.php?&amp;num_result_rows=-1'.
+   $event_cnt_info[0] = "<strong>"._SCTOTALNUMALERTS."</strong>\n";
+   $event_cnt_info[1] = '<a href="base_qry_main.php?&amp;num_result_rows=-1'.
                         '&amp;submit='._QUERYDBP.'&amp;current_view=-1">';
-   $event_cnt_info[2] = "</A>";
+   $event_cnt_info[2] = "</a>";
 
    $unique_src_ip_cnt_info[0] = _SCSRCIP;
    $unique_src_ip_cnt_info[1] = " ".BuildUniqueAddressLink(1);
-   $unique_src_ip_cnt_info[2] = "</A>";
+   $unique_src_ip_cnt_info[2] = "</a>";
    $unique_dst_ip_cnt_info[0] = _SCDSTIP;
    $unique_dst_ip_cnt_info[1] = " ".BuildUniqueAddressLink(2);
-   $unique_dst_ip_cnt_info[2] = "</A>";
+   $unique_dst_ip_cnt_info[2] = "</a>";
 
    $unique_links_info[0] = _SCUNILINKS;
-   $unique_links_info[1] = " <A HREF=\"base_stat_iplink.php\">";
-   $unique_links_info[2] = "</A>";
+   $unique_links_info[1] = " <a href=\"base_stat_iplink.php\">";
+   $unique_links_info[2] = "</a>";
 
    $unique_src_port_cnt_info[0] = _SCSRCPORTS; 
-   $unique_src_port_cnt_info[1] = " <A HREF=\"base_stat_ports.php?port_type=1&amp;proto=-1\">";
-   $unique_src_port_cnt_info[2] = "</A>";
+   $unique_src_port_cnt_info[1] = " <a href=\"base_stat_ports.php?port_type=1&amp;proto=-1\">";
+   $unique_src_port_cnt_info[2] = "</a>";
    $unique_dst_port_cnt_info[0] = _SCDSTPORTS; 
-   $unique_dst_port_cnt_info[1] = " <A HREF=\"base_stat_ports.php?port_type=2&amp;proto=-1\">";
-   $unique_dst_port_cnt_info[2] = "</A>";
+   $unique_dst_port_cnt_info[1] = " <a href=\"base_stat_ports.php?port_type=2&amp;proto=-1\">";
+   $unique_dst_port_cnt_info[2] = "</a>";
 
    $unique_tcp_src_port_cnt_info[0] = "TCP (";
-   $unique_tcp_src_port_cnt_info[1] = " <A HREF=\"base_stat_ports.php?port_type=1&amp;proto=".TCP."\">";
-   $unique_tcp_src_port_cnt_info[2] = "</A>)";
+   $unique_tcp_src_port_cnt_info[1] = " <a href=\"base_stat_ports.php?port_type=1&amp;proto=".TCP."\">";
+   $unique_tcp_src_port_cnt_info[2] = "</a>)";
    $unique_tcp_dst_port_cnt_info[0] = "TCP (";
-   $unique_tcp_dst_port_cnt_info[1] = " <A HREF=\"base_stat_ports.php?port_type=2&amp;proto=".TCP."\">";
-   $unique_tcp_dst_port_cnt_info[2] = "</A>)";
+   $unique_tcp_dst_port_cnt_info[1] = " <a href=\"base_stat_ports.php?port_type=2&amp;proto=".TCP."\">";
+   $unique_tcp_dst_port_cnt_info[2] = "</a>)";
 
    $unique_udp_src_port_cnt_info[0] = "UDP (";
-   $unique_udp_src_port_cnt_info[1] = " <A HREF=\"base_stat_ports.php?port_type=1&amp;proto=".UDP."\">";
-   $unique_udp_src_port_cnt_info[2] = "</A>)";
+   $unique_udp_src_port_cnt_info[1] = " <a href=\"base_stat_ports.php?port_type=1&amp;proto=".UDP."\">";
+   $unique_udp_src_port_cnt_info[2] = "</a>)";
    $unique_udp_dst_port_cnt_info[0] = "UDP (";
-   $unique_udp_dst_port_cnt_info[1] = " <A HREF=\"base_stat_ports.php?port_type=2&amp;proto=".UDP."\">";
-   $unique_udp_dst_port_cnt_info[2] = "</A>)";
+   $unique_udp_dst_port_cnt_info[1] = " <a href=\"base_stat_ports.php?port_type=2&amp;proto=".UDP."\">";
+   $unique_udp_dst_port_cnt_info[2] = "</a>)";
 
 
    if ( $show_stats == 1 )
@@ -421,7 +422,7 @@ function PrintGeneralStats($db, $compact, $show_stats, $join = "", $where = "", 
         $sensor_cnt_info[1].
         $sensor_cnt.
         $sensor_cnt_info[2].
-        $sensor_total."\n<BR>";
+        $sensor_total."\n<br />";
 
    echo $unique_alert_cnt_info[0].
         $unique_alert_cnt_info[1].
@@ -429,52 +430,56 @@ function PrintGeneralStats($db, $compact, $show_stats, $join = "", $where = "", 
         $unique_alert_cnt_info[2];
 
    if ( $db->baseGetDBversion() >= 103 )
-      echo "<BR>".
+      echo "<br />".
            $class_cnt_info[0].
            $class_cnt_info[1].
            $class_cnt.
            $class_cnt_info[2];
 
-   echo "<BR>";
+   echo "<br />";
 
    echo $event_cnt_info[0].
         $event_cnt_info[1].
         $event_cnt.
         $event_cnt_info[2];
 
-   echo "<UL>";
+   echo "<ul>";
 
-   echo "<LI>".
+   echo "<li>".
         $unique_src_ip_cnt_info[0].
         $unique_src_ip_cnt_info[1]. 
         $unique_ip_cnt[0].
-        $unique_src_ip_cnt_info[2];
+        $unique_src_ip_cnt_info[2] .
+        "</li>";
 
-   echo "<LI>".
+   echo "<li>".
         $unique_dst_ip_cnt_info[0].
         $unique_dst_ip_cnt_info[1]. 
         $unique_ip_cnt[1].
-        $unique_dst_ip_cnt_info[2];
+        $unique_dst_ip_cnt_info[2] .
+        "</li>";
 
-   echo "<LI>".
+   echo "<li>".
         $unique_links_info[0].
         $unique_links_info[1].
         $unique_links_cnt.
-        $unique_links_info[2];
+        $unique_links_info[2] .
+        "</li>";
 
-   if ( $compact == 0 )
-      echo "<P>";
-
-   echo "<LI>".
-        $unique_src_port_cnt_info[0].
+   echo "<li>";
+       if ( $compact == 0 )
+           echo "<p>";
+           
+   echo $unique_src_port_cnt_info[0].
         $unique_src_port_cnt_info[1]. 
         $unique_port_cnt[0].
-        $unique_src_port_cnt_info[2];
+        $unique_src_port_cnt_info[2] . 
+        "</li>";
 
    if ( $compact == 0 )
-     echo "<UL><LI>";
+     echo "<li><ul><li>";
    else
-     echo "&nbsp;&nbsp;--&nbsp;&nbsp;";
+     echo "<li>&nbsp;&nbsp;--&nbsp;&nbsp;";
 
    echo $unique_tcp_src_port_cnt_info[0].
         $unique_tcp_src_port_cnt_info[1]. 
@@ -487,18 +492,19 @@ function PrintGeneralStats($db, $compact, $show_stats, $join = "", $where = "", 
         $unique_udp_src_port_cnt_info[2];
    
    if ( $compact == 0 )
-     echo "</UL>";
+     echo "</li></ul></li>";
 
-   echo "<LI>".
+   echo "<li>".
         $unique_dst_port_cnt_info[0].
         $unique_dst_port_cnt_info[1]. 
         $unique_port_cnt[1].
-        $unique_dst_port_cnt_info[2];
+        $unique_dst_port_cnt_info[2] .
+        "</li>";
 
    if ( $compact == 0 )
-     echo "<UL><LI>";
+     echo "<li><ul><li>";
    else
-     echo "&nbsp;&nbsp;--&nbsp;&nbsp;";
+     echo "<li>&nbsp;&nbsp;--&nbsp;&nbsp;";
 
    echo $unique_tcp_dst_port_cnt_info[0].
         $unique_tcp_dst_port_cnt_info[1]. 
@@ -511,41 +517,42 @@ function PrintGeneralStats($db, $compact, $show_stats, $join = "", $where = "", 
         $unique_udp_dst_port_cnt_info[2];
 
    if ( $compact == 0 )
-     echo "</UL>";
+     echo "</li></ul>";
 
-   echo "</UL>";
+   echo "</li></ul>";
    }
    else
    {
       if ( $show_total_events )
       {
          $event_cnt = EventCnt($db, $join, $where);
-         echo "<LI>".
+         echo "<li>".
                $event_cnt_info[0].
                $event_cnt_info[1].
                $event_cnt.
-               $event_cnt_info[2]."<P>";
+               $event_cnt_info[2]."</li><li><p>";
       }
-      echo
-           "  <LI>".$sensor_cnt_info[1]._SCSENSORS.
-           "  <LI>".$unique_alert_cnt_info[1]._UNIALERTS.$unique_alert_cnt_info[2];
+      echo "<ul style='padding-left:20px'>" .
+           "  <li>".$sensor_cnt_info[1]._SCSENSORS. "</a></li>" . 
+           "  <li>".$unique_alert_cnt_info[1]._UNIALERTS.$unique_alert_cnt_info[2] . "</li>";
    
      if ( $db->baseGetDBversion() >= 103 )
-        echo "&nbsp;&nbsp;&nbsp;( ".$class_cnt_info[1]._SCCLASS."</A> )";
+        echo "<li>&nbsp;&nbsp;&nbsp;( ".$class_cnt_info[1]._SCCLASS."</a> )</li>";
        echo 
-           "  <LI>"._SCUNIADDRESS.
+           "  <li>"._SCUNIADDRESS.
              $unique_src_ip_cnt_info[1]._SCSOURCE.' | '.$unique_src_ip_cnt_info[2].
              $unique_dst_ip_cnt_info[1]._SCDEST.$unique_dst_ip_cnt_info[2].
-           "  <LI>".
+           "</li><li>".
              $unique_links_info[1].$unique_links_info[0].$unique_links_info[2].
-           "  <LI>".
+           "</li><li>".
              $unique_src_port_cnt_info[1]._SCSOURCE." ".$unique_src_port_cnt_info[2]._SCPORT.": ".
-             $unique_tcp_src_port_cnt_info[1]." TCP</A> | ".
-             $unique_udp_src_port_cnt_info[1]." UDP</A>".
-           "  <LI>".
+             $unique_tcp_src_port_cnt_info[1]." TCP</a> | ".
+             $unique_udp_src_port_cnt_info[1]." UDP</a>".
+           "</li><li>".
              $unique_dst_port_cnt_info[1]._SCDEST." ".$unique_dst_port_cnt_info[2]._SCPORT.": ".
-             $unique_tcp_dst_port_cnt_info[1]." TCP</A> | ".
-             $unique_udp_dst_port_cnt_info[1]." UDP</A>";
+             $unique_tcp_dst_port_cnt_info[1]." TCP</a> | ".
+             $unique_udp_dst_port_cnt_info[1]." UDP</a>" .
+           "</li></li>";
    }
 }
 

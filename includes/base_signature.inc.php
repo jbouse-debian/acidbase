@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Handles signatures and references in the 
@@ -194,7 +195,12 @@ function GetSignatureReference($sig_id, $db, $style)
        */
       if ( $sig_sid != "") {
          if ( $db->baseGetDBversion() >= 107 )
-            $ref = $ref.GetSingleSignatureReference("snort", $sig_gid .':'. $sig_sid, $style);
+	    /* Hack to finx blank gid from barnyard -- Kevin Johnson */
+	    if ( $sig_gid != "") {
+            	$ref = $ref.GetSingleSignatureReference("snort", $sig_gid .':'. $sig_sid, $style);
+	    } else {
+		$ref = $ref.GetSingleSignatureReference("snort", $sig_sid, $style);
+	    }
          else
             $ref = $ref.GetSingleSignatureReference("snort", $sig_sid, $style);
       }
@@ -237,7 +243,7 @@ function BuildSigLookup($signature, $style)
 
       /* create hyperlink for IP addresses in portscan alerts */
       $msg = preg_replace("/([0-9]*\.[0-9]*\.[0-9]*\.[0-9]*)/",
-                          "<A HREF=\"base_stat_ipaddr.php?ip=\\1&netmask=32\">\\1</A>",
+                          "<A HREF=\"base_stat_ipaddr.php?ip=\\1&amp;netmask=32\">\\1</A>",
                           $msg);
   }
 

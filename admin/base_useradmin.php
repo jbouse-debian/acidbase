@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: page for the user functions (create, disable etc....)
@@ -33,9 +34,7 @@
   $roleneeded = 1;
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/base_main.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/base_main.php");
 
   $page_title = _USERADMIN;
     
@@ -109,7 +108,7 @@
       $user = new BaseUser();
       $userarray = array(filterSql($_POST['usr_id']), filterSql($_POST['fullname']), filterSql($_POST['roleID']),);
       $user->updateUser($userarray);
-      header("Location: base_useradmin.php?action=list");
+      base_header("Location: base_useradmin.php?action=list");
       break;
 
     case "disableuser";
@@ -117,7 +116,7 @@
       $userid = filterSql($_GET['userid']);
       $BUser = new BaseUser();
       $BUser->disableUser($userid);
-      header("Location: base_useradmin.php?action=list");
+      base_header("Location: base_useradmin.php?action=list");
       break;
     
     case "enableuser";
@@ -125,7 +124,7 @@
       $userid = filterSql($_GET['userid']);
       $BUser = new BaseUser();
       $BUser->enableUser($userid);
-      header("Location: base_useradmin.php?action=list");
+      base_header("Location: base_useradmin.php?action=list");
       break;
 
     case "deleteuser";
@@ -133,7 +132,7 @@
       $userid = filterSql($_GET['userid']);
       $BUser = new BaseUser();
       $BUser->deleteUser($userid);
-      header("Location: base_useradmin.php?action=list");
+      base_header("Location: base_useradmin.php?action=list");
       break;
     
     case "list";
@@ -153,14 +152,14 @@
         {
           //explode array rows and build table
           $tmpRow = explode("|", $row);
-          $enabled = ($tmpRow[4] == 1) ? "<a href='base_useradmin.php?action=disableuser&userid=".$tmpRow[0]."'><img src='".$BASE_urlpath ."/images/greencheck.png' border=0></a>" : "<a href='base_useradmin.php?action=enableuser&userid=".$tmpRow[0]."'><img src='".$BASE_urlpath ."/images/button_exclamation.png' border=0>";
+          $enabled = ($tmpRow[4] == 1) ? "<a href='base_useradmin.php?action=disableuser&amp;userid=".$tmpRow[0]."'><img src='".$BASE_urlpath ."/images/greencheck.png' border='0' alt='button_greencheck'></a>" : "<a href='base_useradmin.php?action=enableuser&amp;userid=".$tmpRow[0]."'><img src='".$BASE_urlpath ."/images/button_exclamation.png' border='0' alt='button_exclamation'>";
           $rolename = $user->roleName($tmpRow[2]);
           $name = ($tmpRow[2] == 1) ? "<font color='#ff000'><b>".$tmpRow[1]."</b></font>" : $tmpRow[1];
           
-          $tmpHTML = $tmpHTML . "<tr><td align='center'><a href='base_useradmin.php?action=edituser&userid=".$tmpRow[0]."'>";
-          $tmpHTML = $tmpHTML . "<img src='" . $BASE_urlpath ."/images/button_edit.png' border=0></a></td>";
-          $tmpHTML = $tmpHTML . "<td align='center'><a href='base_useradmin.php?action=deleteuser&userid=".$tmpRow[0]."'>";
-          $tmpHTML = $tmpHTML . "<img src='" . $BASE_urlpath ."/images/button_delete.png' border=0></a></td>";
+          $tmpHTML = $tmpHTML . "<tr><td align='center'><a href='base_useradmin.php?action=edituser&amp;userid=".$tmpRow[0]."'>";
+          $tmpHTML = $tmpHTML . "<img src='" . $BASE_urlpath ."/images/button_edit.png' border='0' alt='button_edit'></a></td>";
+          $tmpHTML = $tmpHTML . "<td align='center'><a href='base_useradmin.php?action=deleteuser&amp;userid=".$tmpRow[0]."'>";
+          $tmpHTML = $tmpHTML . "<img src='" . $BASE_urlpath ."/images/button_delete.png' border='0' alt='button_delete'></a></td>";
           $tmpHTML = $tmpHTML . "<td align='center'>" . $tmpRow[0];
           $tmpHTML = $tmpHTML . "</td><td align='center'>" . $name;
           $tmpHTML = $tmpHTML . "</td><td align='center'>" . $rolename;
@@ -174,14 +173,12 @@
       $pagebody = $tmpHTML;
       break;
   }
-    // Start the output to the page.....
-    PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
-    
-    PrintBASEAdminMenuHeader();
-        
-        echo($pagebody);
-    PrintBASEAdminMenuFooter();
-    
-
-    PrintBASESubFooter();
+  
+  // Start the output to the page.....
+  PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
+  PrintBASEAdminMenuHeader();
+  echo($pagebody);
+  PrintBASEAdminMenuFooter();
+  PrintBASESubFooter();
+  echo "</body>\r\n</html>";
 ?>

@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Input GET/POST variables
@@ -27,6 +28,10 @@ function StoreAlertNum($sql, $label, $time_sep, $i_year, $i_month, $i_day, $i_ho
 
   $label_lst [ $cnt ] = $label;
 
+  if (sizeof($time_sep) == 0) {
+      $time_sep = array(0 => '', 1 => '');
+  }
+  
   if ( $debug_mode > 0 )
      echo $sql."<BR>";
 
@@ -36,26 +41,26 @@ function StoreAlertNum($sql, $label, $time_sep, $i_year, $i_month, $i_day, $i_ho
      $value_lst [ $cnt ] = $myrow[0];
      $result->baseFreeRows();
 
-     $value_POST_lst[$cnt] = "base_qry_main.php?new=1&submit="._QUERYDBP."&num_result_rows=-1&time_cnt=1".
-                             "&time%5B0%5D%5B0%5D=+&time%5B0%5D%5B1%5D=%3D";
+     $value_POST_lst[$cnt] = "base_qry_main.php?new=1&amp;submit="._QUERYDBP."&amp;num_result_rows=-1&amp;time_cnt=1".
+                             "&amp;time%5B0%5D%5B0%5D=+&time%5B0%5D%5B1%5D=%3D";
 
      if ( $time_sep[0] == "hour" )
-        $value_POST_lst[$cnt] = $value_POST_lst[$cnt].'&time%5B0%5D%5B2%5D='.$i_month.
-                                '&time%5B0%5D%5B3%5D='.$i_day.
-                                '&time%5B0%5D%5B4%5D='.$i_year.
-                                '&time%5B0%5D%5B5%5D='.$i_hour;
+        $value_POST_lst[$cnt] = $value_POST_lst[$cnt].'&amp;time%5B0%5D%5B2%5D='.$i_month.
+                                '&amp;time%5B0%5D%5B3%5D='.$i_day.
+                                '&amp;time%5B0%5D%5B4%5D='.$i_year.
+                                '&amp;time%5B0%5D%5B5%5D='.$i_hour;
 
      else if ( $time_sep[0] == "day" )
-        $value_POST_lst[$cnt] = $value_POST_lst[$cnt].'&time%5B0%5D%5B2%5D='.$i_month.
-                                '&time%5B0%5D%5B3%5D='.$i_day.
-                                '&time%5B0%5D%5B4%5D='.$i_year;
+        $value_POST_lst[$cnt] = $value_POST_lst[$cnt].'&amp;time%5B0%5D%5B2%5D='.$i_month.
+                                '&amp;time%5B0%5D%5B3%5D='.$i_day.
+                                '&amp;time%5B0%5D%5B4%5D='.$i_year;
 
      else if ( $time_sep[0] == "month" )
-        $value_POST_lst[$cnt] = $value_POST_lst[$cnt].'&time%5B0%5D%5B2%5D='.$i_month.
-                                '&time%5B0%5D%5B4%5D='.$i_year;
+        $value_POST_lst[$cnt] = $value_POST_lst[$cnt].'&amp;time%5B0%5D%5B2%5D='.$i_month.
+                                '&amp;time%5B0%5D%5B4%5D='.$i_year;
 
      /* add no parentheses and no operator */
-     $value_POST_lst[$cnt] = $value_POST_lst[$cnt].'&time%5B0%5D%5B8%5D=+&time%5B0%5D%5B9%5D=+';
+     $value_POST_lst[$cnt] = $value_POST_lst[$cnt].'&amp;time%5B0%5D%5B8%5D=+&amp;time%5B0%5D%5B9%5D=+';
  
      $cnt++;
   }
@@ -131,9 +136,7 @@ function PrintTimeProfile()
   $roleneeded = 10000;
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/index.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/index.php");
 
   $page_title = _BSTTITLE;
   PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
@@ -168,15 +171,15 @@ function PrintTimeProfile()
          <TD>';
 
   echo '<B>'._BSTPROFILEBY.' :</B> &nbsp;
-        <INPUT NAME="time_sep[0]" TYPE="radio" VALUE="hour" '.chk_check($time_sep[0],"hour").'> '._HOUR.'
-        <INPUT NAME="time_sep[0]" TYPE="radio" VALUE="day" '.chk_check($time_sep[0], "day").'> '._DAY.'
-        <INPUT NAME="time_sep[0]" TYPE="radio" VALUE="month" '.chk_check($time_sep[0], "month").'> '._MONTH.'
+        <INPUT NAME="time_sep[0]" TYPE="radio" VALUE="hour" '.@chk_check($time_sep[0],"hour").'> '._HOUR.'
+        <INPUT NAME="time_sep[0]" TYPE="radio" VALUE="day" '.@chk_check($time_sep[0], "day").'> '._DAY.'
+        <INPUT NAME="time_sep[0]" TYPE="radio" VALUE="month" '.@chk_check($time_sep[0], "month").'> '._MONTH.'
         <BR>';
 
   echo '<SELECT NAME="time_sep[1]">
-         <OPTION VALUE=" "  '.chk_select($time_sep[1], " ").'>'._DISPTIME.'
-         <OPTION VALUE="on" '.chk_select($time_sep[1], "on").'>'._TIMEON.'
-         <OPTION VALUE="between"'.chk_select($time_sep[1], "between").'>'._TIMEBETWEEN.'
+         <OPTION VALUE=" "  '.@chk_select($time_sep[1], " ").'>'._DISPTIME.'
+         <OPTION VALUE="on" '.@chk_select($time_sep[1], "on").'>'._TIMEON.'
+         <OPTION VALUE="between"'.@chk_select($time_sep[1], "between").'>'._TIMEBETWEEN.'
         </SELECT>';
  
   for ( $i = 0; $i < 2; $i++ )
@@ -211,7 +214,7 @@ function PrintTimeProfile()
 
         <P><HR>';
 
-  if ( $submit != "" && $time_sep[0] == "" )
+  if ( $submit != "" && @$time_sep[0] == "" )
      echo _BSTERRPROFILECRIT;     
   else if ( $submit != "" && $time_sep[1] == " " )
      echo _BSTERRTIMETYPE;
@@ -391,4 +394,5 @@ function PrintTimeProfile()
   }
 
   PrintBASESubFooter();
+  echo "</body>\r\n</html>";
 ?>

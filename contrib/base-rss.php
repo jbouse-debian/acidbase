@@ -46,7 +46,7 @@ function dec2hex($dec) {
 
 mysql_connect($alert_host,$alert_user,$alert_password);
 @mysql_select_db($alert_dbname) or die( "Unable to select database");
-$query="SELECT * FROM `acid_event` ORDER BY `cid` DESC LIMIT 0 , 50";
+$query="SELECT * FROM `acid_event` ORDER BY `timestamp` DESC LIMIT 0 , 50";
 $result=mysql_query($query);
 
 $num=mysql_numrows($result);

@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: support routines for processing criteria
@@ -123,6 +124,7 @@ function DateTimeRows2sql($field, $cnt, &$s_sql)
 {
   GLOBAL $db;
   $tmp2 = "";
+  $allempty = FALSE;
   $time_field = array("mysql" => ":", "mssql" => ":");
   $minsec = array( ">=" => "00", "<=" => "59");
 
@@ -327,7 +329,7 @@ function FormatPayload($payload_str, $data_encode)
         for ( $i = 0; $i < strlen($payload_str); $i++ )
             $tmp = $tmp.dechex(ord($payload_str[$i]));
 
-     return $tmp;
+     return strtoupper($tmp);
   }
 
   return "";    /* should be unreachable */
@@ -790,7 +792,7 @@ if ( $layer4 == "TCP" )
   
   $proto_tmp = "";
   /* TCP Flags */
-  if ( isset($tcp_flags) )
+  if ( isset($tcp_flags) && sizeof($tcp_flags) == 8)
   {
     if ( $tcp_flags[0] == "contains" || $tcp_flags[0] == "is" )
     {

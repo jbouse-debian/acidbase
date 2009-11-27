@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: individual criteria classes
@@ -150,9 +151,9 @@ class MultipleElementCriteria extends BaseCriteria
 {
    var $element_cnt;
    var $criteria_cnt;
-   var $valid_field_list;
+   var $valid_field_list = Array();
 
-   function MultipleElementCriteria(&$db, &$cs, $export_name, $element_cnt, $field_list = NULL)
+   function MultipleElementCriteria(&$db, &$cs, $export_name, $element_cnt, $field_list = Array() )
    {
 	$tdb =& $db;
 	$cs =& $cs;
@@ -293,20 +294,17 @@ class MultipleElementCriteria extends BaseCriteria
 
 class ProtocolFieldCriteria extends MultipleElementCriteria
 {
-   function ProtocolFieldCriteria() {
-      return(0);
-   }
    function SanitizeElement($i)
    { 
       // Make a copy of the element array
       $curArr = $this->criteria[$i];
       // Sanitize the element
-      $this->criteria[$i][0] = CleanVariable($curArr[0], VAR_OPAREN);
-      $this->criteria[$i][1] = CleanVariable($curArr[1], "", array_keys($this->valid_field_list));
-      $this->criteria[$i][2] = CleanVariable($curArr[2], "", array("=", "!=", "<", "<=", ">", ">="));
-      $this->criteria[$i][3] = CleanVariable($curArr[3], VAR_DIGIT);
-      $this->criteria[$i][4] = CleanVariable($curArr[4], VAR_OPAREN | VAR_CPAREN);
-      $this->criteria[$i][5] = CleanVariable($curArr[5], "", array("AND", "OR"));
+      $this->criteria[$i][0] = @CleanVariable($curArr[0], VAR_OPAREN);
+      $this->criteria[$i][1] = @CleanVariable($curArr[1], "", array_keys($this->valid_field_list));
+      $this->criteria[$i][2] = @CleanVariable($curArr[2], "", array("=", "!=", "<", "<=", ">", ">="));
+      $this->criteria[$i][3] = @CleanVariable($curArr[3], VAR_DIGIT);
+      $this->criteria[$i][4] = @CleanVariable($curArr[4], VAR_OPAREN | VAR_CPAREN);
+      $this->criteria[$i][5] = @CleanVariable($curArr[5], "", array("AND", "OR"));
       // Destroy the copy
       unset($curArr);
    }
@@ -316,9 +314,10 @@ class ProtocolFieldCriteria extends MultipleElementCriteria
       $tmp = "";
       for ( $i = 0; $i < $this->criteria_cnt; $i++ )
       {
-         if ($this->criteria[$i][1] != " " && $this->criteria[$i][3] != "" )
-            $tmp = $tmp.$this->criteria[$i][0].$human_fields[($this->criteria[$i][1])].' '.
-                   $this->criteria[$i][2].' '.$this->criteria[$i][3].$this->criteria[$i][4].' '.$this->criteria[$i][5];
+	  if (is_array($this->criteria[$i]))
+	      if ($this->criteria[$i][1] != " " && $this->criteria[$i][3] != "" )
+		  $tmp = $tmp.$this->criteria[$i][0].$human_fields[($this->criteria[$i][1])].' '.
+		      $this->criteria[$i][2].' '.$this->criteria[$i][3].$this->criteria[$i][4].' '.$this->criteria[$i][5];
       }
       if ( $tmp != "" )
          $tmp = $tmp.$this->cs->GetClearCriteriaString($this->export_name); 
@@ -337,6 +336,7 @@ class SignatureCriteria extends SingleElementCriteria
  */
 
    var $sig_type;
+   var $criteria = array(0 => '', 1 => '');
 
    function SignatureCriteria(&$db, &$cs, $export_name)
    {
@@ -369,6 +369,10 @@ class SignatureCriteria extends SingleElementCriteria
 
    function SanitizeElement()
    {
+      if (!isset($this->criteria[0]) || !isset($this->criteria[1])) {
+          $this->criteria = array(0 => '', 1 => '');
+      }
+
       $this->criteria[0] = CleanVariable(@$this->criteria[0], "", array(" ", "=", "LIKE"));
       $this->criteria[1] = filterSql(@$this->criteria[1]); /* signature name */
       $this->criteria[2] = CleanVariable(@$this->criteria[2], "", array("=", "!="));
@@ -436,13 +440,13 @@ class SignatureCriteria extends SingleElementCriteria
 
         $tmp = $tmp._SIGNATURE.' '.$tmp_human.' "';
         if ( ($this->db->baseGetDBversion() >= 100) && $this->sig_type == 1 )
-          $tmp = $tmp.BuildSigByID($this->criteria[1], $this->db).'" '.$this->cs->GetClearCriteriaString($this->export_name);
+          $tmp = $tmp.htmlentities(BuildSigByID($this->criteria[1], $this->db)).'" '.$this->cs->GetClearCriteriaString($this->export_name);
         else
-          $tmp = $tmp.$this->criteria[1].'"'.$this->cs->GetClearCriteriaString($this->export_name);
+          $tmp = $tmp.htmlentities($this->criteria[1]).'"'.$this->cs->GetClearCriteriaString($this->export_name);
 
         $tmp = $tmp.'<BR>';
       }
-   
+
       return $tmp;
    }
 };  /* SignatureCriteria */
@@ -505,8 +509,8 @@ class SignatureClassificationCriteria extends SingleElementCriteria
                               '<I>'._UNCLASS.'</I><BR>';
             else
                $tmp = $tmp._SIGCLASS.' = '.
-                              GetSigClassName($this->criteria, $this->db).
-                              $this->cs->GetClearCriteriaString($this->export_name).'<BR>';
+                              htmlentities(GetSigClassName($this->criteria, $this->db)).
+                              htmlentities($this->cs->GetClearCriteriaString($this->export_name)).'<BR>';
          }
       }
 
@@ -516,6 +520,7 @@ class SignatureClassificationCriteria extends SingleElementCriteria
 
 class SignaturePriorityCriteria extends SingleElementCriteria
 {
+   var $criteria = array();
    function Init()
    {
      $this->criteria = "";
@@ -528,6 +533,10 @@ class SignaturePriorityCriteria extends SingleElementCriteria
 
    function SanitizeElement()
    {
+     if (!isset($this->criteria[0]) || !isset($this->criteria[1])) {
+         $this->criteria = array(0 => '', 1 => '');
+     }
+
       $this->criteria[0] = CleanVariable(@$this->criteria[0], "", array("=", "!=", "<", "<=", ">", ">="));
       $this->criteria[1] = CleanVariable(@$this->criteria[1], VAR_DIGIT);
    }
@@ -573,6 +582,9 @@ class SignaturePriorityCriteria extends SingleElementCriteria
     function Description()
     {
        $tmp = "";
+       if (!isset($this->criteria[1])) {
+           $this->criteria = array(0 => '', 1 => '');
+       }
  
        if ( $this->db->baseGetDBversion() >= 103 )
        {
@@ -582,8 +594,8 @@ class SignaturePriorityCriteria extends SingleElementCriteria
                 $tmp = $tmp._SIGPRIO.' = '.
                                '<I>'._NONE.'</I><BR>';
              else
-                $tmp = $tmp._SIGPRIO.' '.$this->criteria[0]." ".$this->criteria[1].
-                       $this->cs->GetClearCriteriaString($this->export_name).'<BR>';
+                $tmp = $tmp._SIGPRIO.' '.htmlentities($this->criteria[0])." ".htmlentities($this->criteria[1]).
+                       htmlentities($this->cs->GetClearCriteriaString($this->export_name)).'<BR>';
           }
        }
  
@@ -637,8 +649,8 @@ class AlertGroupCriteria extends SingleElementCriteria
       $tmp = "";
 
       if ( $this->criteria != " " && $this->criteria != "" )
-        $tmp = $tmp._ALERTGROUP.' = ['.$this->criteria.'] '.GetAGNameByID($this->criteria, $this->db).
-                    $this->cs->GetClearCriteriaString($this->export_name).'<BR>';
+        $tmp = $tmp._ALERTGROUP.' = ['.htmlentities($this->criteria).'] '.GetAGNameByID($this->criteria, $this->db).
+                    htmlentities($this->cs->GetClearCriteriaString($this->export_name)).'<BR>';
 
       return $tmp;
    }
@@ -691,9 +703,9 @@ class SensorCriteria extends SingleElementCriteria
      $tmp = "";
 
      if ( $this->criteria != " " && $this->criteria != "" )
-        $tmp = $tmp._SENSOR.' = ['.$this->criteria.'] '.
+        $tmp = $tmp._SENSOR.' = ['.htmlentities($this->criteria).'] '.
                GetSensorName($this->criteria, $this->db).
-               $this->cs->GetClearCriteriaString($this->export_name).'<BR>';
+               htmlentities($this->cs->GetClearCriteriaString($this->export_name)).'<BR>';
 
       return $tmp;
    }
@@ -722,16 +734,16 @@ class TimeCriteria extends MultipleElementCriteria
       // Make copy of element array.
       $curArr = $this->criteria[$i];
       // Sanitize the element
-      $this->criteria[$i][0] = CleanVariable($curArr[0], VAR_OPAREN);
-      $this->criteria[$i][1] = CleanVariable($curArr[1], "", array("=", "!=", "<", "<=", ">", ">="));
-      $this->criteria[$i][2] = CleanVariable($curArr[2], VAR_DIGIT);
-      $this->criteria[$i][3] = CleanVariable($curArr[3], VAR_DIGIT);
-      $this->criteria[$i][4] = CleanVariable($curArr[4], VAR_DIGIT);
-      $this->criteria[$i][5] = CleanVariable($curArr[5], VAR_DIGIT);
-      $this->criteria[$i][6] = CleanVariable($curArr[6], VAR_DIGIT);
-      $this->criteria[$i][7] = CleanVariable($curArr[7], VAR_DIGIT);
-      $this->criteria[$i][8] = CleanVariable($curArr[8], VAR_OPAREN | VAR_CPAREN);
-      $this->criteria[$i][9] = CleanVariable($curArr[9], "", array("AND", "OR"));
+      $this->criteria[$i][0] = @CleanVariable($curArr[0], VAR_OPAREN);
+      $this->criteria[$i][1] = @CleanVariable($curArr[1], "", array("=", "!=", "<", "<=", ">", ">="));
+      $this->criteria[$i][2] = @CleanVariable($curArr[2], VAR_DIGIT);
+      $this->criteria[$i][3] = @CleanVariable($curArr[3], VAR_DIGIT);
+      $this->criteria[$i][4] = @CleanVariable($curArr[4], VAR_DIGIT);
+      $this->criteria[$i][5] = @CleanVariable($curArr[5], VAR_DIGIT);
+      $this->criteria[$i][6] = @CleanVariable($curArr[6], VAR_DIGIT);
+      $this->criteria[$i][7] = @CleanVariable($curArr[7], VAR_DIGIT);
+      $this->criteria[$i][8] = @CleanVariable($curArr[8], VAR_OPAREN | VAR_CPAREN);
+      $this->criteria[$i][9] = @CleanVariable($curArr[9], "", array("AND", "OR"));
       // Destroy the old copy
       unset($curArr);
    }
@@ -884,16 +896,16 @@ class IPAddressCriteria extends MultipleElementCriteria
       // Make copy of old element array
       $curArr = $this->criteria[$i];
       // Sanitize element
-      $this->criteria[$i][0] = CleanVariable($curArr[0], VAR_OPAREN);
-      $this->criteria[$i][1] = CleanVariable($curArr[1], "", array_keys($this->valid_field_list));
-      $this->criteria[$i][2] = CleanVariable($curArr[2], "", array("=", "!=", "<", "<=", ">", ">="));
-      $this->criteria[$i][3] = CleanVariable($curArr[3], VAR_DIGIT);
-      $this->criteria[$i][4] = CleanVariable($curArr[4], VAR_DIGIT);
-      $this->criteria[$i][5] = CleanVariable($curArr[5], VAR_DIGIT);
-      $this->criteria[$i][6] = CleanVariable($curArr[6], VAR_DIGIT);
-      $this->criteria[$i][7] = CleanVariable($curArr[7], VAR_DIGIT | VAR_PERIOD | VAR_FSLASH);
-      $this->criteria[$i][8] = CleanVariable($curArr[8], VAR_OPAREN | VAR_CPAREN);
-      $this->criteria[$i][9] = CleanVariable($curArr[9], "", array("AND", "OR"));
+      $this->criteria[$i][0] = @CleanVariable($curArr[0], VAR_OPAREN);
+      $this->criteria[$i][1] = @CleanVariable($curArr[1], "", array_keys($this->valid_field_list));
+      $this->criteria[$i][2] = @CleanVariable($curArr[2], "", array("=", "!=", "<", "<=", ">", ">="));
+      $this->criteria[$i][3] = @CleanVariable($curArr[3], VAR_DIGIT);
+      $this->criteria[$i][4] = @CleanVariable($curArr[4], VAR_DIGIT);
+      $this->criteria[$i][5] = @CleanVariable($curArr[5], VAR_DIGIT);
+      $this->criteria[$i][6] = @CleanVariable($curArr[6], VAR_DIGIT);
+      $this->criteria[$i][7] = @CleanVariable($curArr[7], VAR_DIGIT | VAR_PERIOD | VAR_FSLASH);
+      $this->criteria[$i][8] = @CleanVariable($curArr[8], VAR_OPAREN | VAR_CPAREN);
+      $this->criteria[$i][9] = @CleanVariable($curArr[9], "", array("AND", "OR"));
       // Destroy copy
       unset($curArr);
    }
@@ -1030,7 +1042,7 @@ class IPFieldCriteria extends ProtocolFieldCriteria
 
    function PrintForm()
    {
-//      parent::PrintForm($this->valid_field_list, _DISPFIELD, _ADDIPFIELD);
+      parent::PrintForm($this->valid_field_list, _DISPFIELD, _ADDIPFIELD);
    }
 
    function ToSQL()
@@ -1210,7 +1222,7 @@ class TCPFlagsCriteria extends SingleElementCriteria
 
    function isEmpty()
    {
-     if ( ($this->criteria[0] != "") && ($this->criteria[0] != " ") )
+     if ( strlen($this->criteria) != 0 && ($this->criteria[0] != "") && ($this->criteria[0] != " ") )
         return false;
      else
         return true; 

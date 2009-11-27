@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Displays form for graphing
@@ -20,12 +21,12 @@
 
   echo '<FORM ACTION="base_graph_main.php" METHOD="post">';
 
-  echo '<TABLE WIDTH="100%" BORDER=2 class="query">
+  echo '<TABLE WIDTH="100%" BORDER="2" class="query">
           <TR>
            <TD COLSPAN=2>';
 
   echo '<B>'._CHARTTITLE.'</B> &nbsp;
-            <INPUT TYPE="text" NAME="user_chart_title" SIZE=60 VALUE="'.$user_chart_title.'"><BR>';
+            <INPUT TYPE="text" NAME="user_chart_title" SIZE="60" VALUE="'.$user_chart_title.'"><BR>';
 
   echo '<B>'._CHARTTYPE.'</B>&nbsp;
         <SELECT NAME="chart_type">
@@ -150,7 +151,7 @@
   <ul id="zMenu">
 <li><a href="#">'._AXISCONTROLS.'</a>
   <ul>
-        <TABLE WIDTH="100%" BORDER=1>
+        <TABLE WIDTH="100%" BORDER="1">
         <TR>
          <TD ALIGN="CENTER" WIDTH="50%"><B>'._CHRTX.'</B></TD>
          <TD ALIGN="CENTER" WIDTH="50%"><B>'._CHRTY.'</B></TD>
@@ -174,7 +175,7 @@
 
            echo '</SELECT><BR>'.
                  '<B>'._CHRTMINTRESH.' ( &gt;= ):</B>
-                 <INPUT TYPE="text" NAME="min_size" SIZE=5 VALUE='.$min_size.'>
+                 <INPUT TYPE="text" NAME="min_size" SIZE="5" VALUE='.$min_size.'>
                  &nbsp;&nbsp;
                  <BR>
                  <INPUT TYPE="checkbox" NAME="rotate_xaxis_lbl" VALUE="1" '.

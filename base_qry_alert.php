@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: displays a single alert   
@@ -31,23 +32,16 @@
 
    // Check role out and redirect if needed -- Kevin
   $roleneeded = 10000;
+  $payload = FALSE;
+  $offset  = 0;
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/index.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/index.php");
 
   # set cookie for packet display
-  if ($_GET[asciiclean] == 1)
-  {
-    setcookie('asciiclean', 'clean');
-  }
-  
-  if ( isset($_GET[asciiclean]) && ($_GET[asciiclean] == 0) )
-  {
-    setcookie('asciiclean', 'normal');
-  }
-  
+  if (isset($_GET['asciiclean'])) {
+      1 == $_GET['asciiclean'] ? setcookie('asciiclean', 'clean') : setcookie('asciiclean', 'normal');   
+  }  
 
 function PrintCleanURL()
 {
@@ -55,18 +49,18 @@ function PrintCleanURL()
   $query = CleanVariable($_SERVER["QUERY_STRING"], VAR_PERIOD | VAR_DIGIT | VAR_PUNC | VAR_LETTER);
   $sort_order=ImportHTTPVar("sort_order", VAR_LETTER | VAR_USCORE);
 
-  if ( ($_GET[asciiclean] == 1) || ( ($_COOKIE["asciiclean"] == "clean") && (!isset($_GET[asciiclean])) ) )
+  if ( (isset($_GET['asciiclean']) && $_GET['asciiclean'] == 1) || ( isset($_COOKIE['asciiclean']) && ($_COOKIE['asciiclean'] == "clean") && (!isset($_GET['asciiclean'])) ) )
   {
     //create link to non-cleaned payload display
     $url = '<center><a href="base_qry_alert.php?'.$query;
-    $url.= '&sort_order='.$sort_order.'&asciiclean=0">'._QANORMALD.'</a></center>';
+    $url.= '&amp;sort_order='.$sort_order.'&amp;asciiclean=0">'._QANORMALD.'</a></center>';
     return $url;
   }
   else
   {
     //create link to cleaned payload display
     $url = '<center><a href="base_qry_alert.php?'.$query;
-    $url.= '&sort_order='.$sort_order.'&asciiclean=1">'._QAPLAIND.'</a></center>';
+    $url.= '&amp;sort_order='.$sort_order.'&amp;asciiclean=1">'._QAPLAIND.'</a></center>';
     return $url;
   }
   
@@ -75,31 +69,32 @@ function PrintCleanURL()
 function PrintBinDownload($db, $cid, $sid){
 // Offering a URL to a download possibility:
     	$query = CleanVariable($_SERVER["QUERY_STRING"], VAR_PERIOD | VAR_DIGIT | VAR_PUNC | VAR_LETTER);
-	if ( ($_GET[asciiclean] == 1) || ( ($_COOKIE["asciiclean"] == "clean") && (!isset($_GET[asciiclean])) ) ){
+	if ( isset($_GET['asciiclean']) && ($_GET['asciiclean'] == 1) || ( (isset($_COOKIE['asciiclean']) && $_COOKIE['asciiclean'] == "clean") && (!isset($_GET['asciiclean'])) ) ){
 		$url = '<center><a href="base_payload.php?'.$query;
-		$url.= '&download=1&cid='.$cid.'&sid='.$sid.'&asciiclean=1">Download of Payload</a></center>';
+		$url.= '&amp;download=1&amp;cid='.$cid.'&amp;sid='.$sid.'&amp;asciiclean=1">Download of Payload</a></center>';
 	} else {
 		$url = '<center><a href="base_payload.php?'.$query;
-		$url.= '&download=1&cid='.$cid.'&sid='.$sid.'&asciiclean=0">Download of Payload</a></center>';
+		$url.= '&amp;download=1&amp;cid='.$cid.'&amp;sid='.$sid.'&amp;asciiclean=0">Download of Payload</a></center>';
 	}
 	return $url;
 }
 
 function PrintPcapDownload($db, $cid, $sid){
-// If we have FLoP extended database offer a URL to download in pcap format:
 
-        if ( !in_array("pcap_header", $db->DB->MetaColumnNames('data')) ||
-             !in_array("data_header", $db->DB->MetaColumnNames('data'))) {
-		return;
-	}
+   if ( !in_array("pcap_header", $db->DB->MetaColumnNames('data')) ||
+        !in_array("data_header", $db->DB->MetaColumnNames('data'))) {
+      $type = 3;
+   } else {
+      $type = 2;
+   }
 
-    	$query = CleanVariable($_SERVER["QUERY_STRING"], VAR_PERIOD | VAR_DIGIT | VAR_PUNC | VAR_LETTER);
-	if ( ($_GET[asciiclean] == 1) || ( ($_COOKIE["asciiclean"] == "clean") && (!isset($_GET[asciiclean])) ) ){
+   $query = CleanVariable($_SERVER["QUERY_STRING"], VAR_PERIOD | VAR_DIGIT | VAR_PUNC | VAR_LETTER);
+	if ( (isset($_GET['asciiclean']) && $_GET['asciiclean'] == 1) || ( isset($_COOKIE['asciiclean']) && ($_COOKIE["asciiclean"] == "clean") && (!isset($_GET['asciiclean'])) ) ){
 		$url = '<center><a href="base_payload.php?'.$query;
-		$url.= '&download=2&cid='.$cid.'&sid='.$sid.'&asciiclean=1">Download in pcap format</a></center>';
+		$url.= '&amp;download='.$type.'&amp;cid='.$cid.'&amp;sid='.$sid.'&amp;asciiclean=1">Download in pcap format</a></center>';
 	} else {
 		$url = '<center><a href="base_payload.php?'.$query;
-		$url.= '&download=2&cid='.$cid.'&sid='.$sid.'&asciiclean=0">Download in pcap format</a></center>';
+		$url.= '&amp;download='.$type.'&amp;cid='.$cid.'&amp;sid='.$sid.'&amp;asciiclean=0">Download in pcap format</a></center>';
 	}
 	return $url;
 }
@@ -146,7 +141,7 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
   $_SERVER["QUERY_STRING"] = "submit=".rawurlencode($submit);
 
   $et = new EventTiming($debug_time_mode);
-  $cs = new CriteriaState("base_qry_main.php", "&new=1&submit="._QUERYDBP);
+  $cs = new CriteriaState("base_qry_main.php", "&amp;new=1&amp;submit="._QUERYDBP);
   $cs->ReadState();
 
   $qs = new QueryState();
@@ -381,10 +376,10 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
                         <TD class="plfieldhdr">TTL</TD>
                         <TD class="plfieldhdr">chksum</TD></TR>';
   echo '             <TR><TD class="plfield">
-                       <A HREF="base_stat_ipaddr.php?ip='.baseLong2IP($myrow2[0]).'&netmask=32">'.
+                       <A HREF="base_stat_ipaddr.php?ip='.baseLong2IP($myrow2[0]).'&amp;netmask=32">'.
                             baseLong2IP($myrow2[0]).'</A></TD>';
   echo '                 <TD class="plfield">
-                         <A HREF="base_stat_ipaddr.php?ip='.baseLong2IP($myrow2[1]).'&netmask=32">'.
+                         <A HREF="base_stat_ipaddr.php?ip='.baseLong2IP($myrow2[1]).'&amp;netmask=32">'.
                             baseLong2IP($myrow2[1]).'</A></TD>';
   echo '                 <TD class="plfield">'.$myrow2[2].'</TD>';
   echo '                 <TD class="plfield">'.($myrow2[3] << 2).'</TD>';    /* ihl is in 32 bit words, must be multiplied by 4 to show in bytes */
@@ -392,19 +387,15 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
   echo '                 <TD class="plfield">'.$myrow2[5].'</TD>';
   echo '                 <TD class="plfield">'.$myrow2[6].'</TD>';
   echo '                 <TD class="plfield">';
-  if ( ($myrow2[7] & 2 ) != 0 )
-     echo 'X';
+  if ($myrow2[7] == 1)
+	echo 'yes';
   else
-     echo '&nbsp;';
-  echo '                    </TD><TD class="plfield">';
-  if ( ($myrow2[7] & 1 ) != 0 )
-     echo 'X';
-  else
-     echo '&nbsp;';
-  echo '                    </TD>';
-  echo '                 <TD class="plfield">'.$myrow2[8].'</TD>';
+	echo 'no';
+  echo 							  '</TD>';
+  list( , $my_offset, ) = unpack("n", pack("S", $myrow2[8]));
+  echo '                 <TD class="plfield">'. ($my_offset * 8) .'</TD>';
   echo '                 <TD class="plfield">'.$myrow2[9].'</TD>';
-  echo '                 <TD class="plfield">'.$myrow2[10].'</TD></TR>';
+  echo '                 <TD class="plfield">'.$myrow2[10].'<BR>= 0x'.dechex($myrow2[10]).'</TD></TR>';
   echo '         </TABLE>';
 
   if ( $resolve_IP == 1 )
@@ -628,7 +619,7 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
       echo '                <TD class="plfield">'.$myrow2[7].'</TD>';
       echo '                <TD class="plfield">'.$myrow2[9].'</TD>';
       echo '                <TD class="plfield">'.$myrow2[8].'<BR>=<BR>0x'.dechex($myrow2[8]).'</TD></TR>';
-      echo '         </TABLE></TR></TR>';
+      echo '         </TABLE></TR>';
       echo '  <TR>';
       echo '      <TD>';
       echo '         <TABLE BORDER=1 CELLPADDING=4>';
@@ -740,7 +731,7 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
   $result2 = $db->baseExecute($sql2);
   $myrow2 = $result2->baseFetchRow();
   $result2->baseFreeRows();
-  $payload = $myrow2[0];
+  !empty($myrow2) ? $payload = $myrow2[0] : '';
 
   echo '
         <TABLE BORDER=1 WIDTH="90%">
@@ -830,17 +821,17 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
               echo '<TR>';
               if ( $ICMPitype == "5" ) {
                  echo '<TD class="plfield">';
-                 echo '<A HREF="base_stat_ipaddr.php?ip='.$gateway.'&netmask=32" TARGET="_PL_SIP">'.$gateway.'</A></TD>';
+                 echo '<A HREF="base_stat_ipaddr.php?ip='.$gateway.'&amp;netmask=32" TARGET="_PL_SIP">'.$gateway.'</A></TD>';
                  echo '<TD class="plfield">'.baseGetHostByAddr($gateway, $db, $dns_cache_lifetime).'</TD>';
               }
               echo '<TD class="plfield">'.IPProto2Str($icmp_proto).'</TD>';
               echo '<TD class="plfield">';
-              echo '<A HREF="base_stat_ipaddr.php?ip='.$icmp_src.'&netmask=32" TARGET="_PL_SIP">'.$icmp_src.'</A></TD>';
+              echo '<A HREF="base_stat_ipaddr.php?ip='.$icmp_src.'&amp;netmask=32" TARGET="_PL_SIP">'.$icmp_src.'</A></TD>';
               echo '<TD class="plfield">'.baseGetHostByAddr($icmp_src, $db, $dns_cache_lifetime).'</TD>';
               if ( $icmp_proto == "6" || $icmp_proto == "17" )
                  echo '<TD class="plfield">'.$icmp_src_port.'</TD>';
               echo '<TD class="plfield">';
-              echo '<A HREF="base_stat_ipaddr.php?ip='.$icmp_dst.'&netmask=32" TARGET="_PL_DIP">'.$icmp_dst.'</A></TD>';
+              echo '<A HREF="base_stat_ipaddr.php?ip='.$icmp_dst.'&amp;netmask=32" TARGET="_PL_DIP">'.$icmp_dst.'</A></TD>';
               echo '<TD class="plfield">'.baseGetHostByAddr($icmp_dst, $db, $dns_cache_lifetime).'</TD>';
               if ( $icmp_proto == "6" || $icmp_proto == "17" )
                  echo '<TD class="plfield">'.$icmp_dst_port.'</TD>';
@@ -874,4 +865,5 @@ function PrintPacketLookupBrowseButtons($seq, $save_sql, $db, &$previous_button,
 
   $et->Mark("Get Query Elements");
   $et->PrintTiming();
+  echo "</body>\r\n</html>";
 ?>

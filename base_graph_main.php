@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Input GET/POST variables
@@ -92,9 +93,7 @@
   $roleneeded = 10000;
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/index.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/index.php");
 
   $page_title = _GRAPHALERTDATA;
   PrintBASESubHeader($page_title, $page_title, $cs->GetBackLink(), 1);
@@ -305,19 +304,19 @@
 
         $_SESSION['xdata'] = $xdata;
         echo "<CENTER>
-              <IMG SRC=\"base_graph_display.php?width=$width&height=$height".
-                      "&pmargin0=$pmargin0&pmargin1=$pmargin1".
-                      "&pmargin2=$pmargin2&pmargin3=$pmargin3".
-                      "&title=".rawurlencode($user_chart_title."\n".$chart_title).
-                      "&xaxis_label=".rawurlencode($xaxis_label).
-                      "&yaxis_label=".rawurlencode($yaxis_label).
-                      "&yaxis_scale=".rawurlencode($yaxis_scale).
-                      "&rotate_xaxis_lbl=".rawurlencode($rotate_xaxis_lbl).
-                      "&yaxis_scale=".$yaxis_scale.
-                      "&xaxis_grid=".$xaxis_grid.
-                      "&yaxis_grid=".$yaxis_grid.
-                      "&chart_type=".$chart_type.
-                      "&style=".$chart_style."\"></CENTER>";
+              <IMG SRC=\"base_graph_display.php?width=$width&amp;height=$height".
+                      "&amp;pmargin0=$pmargin0&pmargin1=$pmargin1".
+                      "&amp;pmargin2=$pmargin2&pmargin3=$pmargin3".
+                      "&amp;title=".rawurlencode($user_chart_title."\n".$chart_title).
+                      "&amp;xaxis_label=".rawurlencode($xaxis_label).
+                      "&amp;yaxis_label=".rawurlencode($yaxis_label).
+                      "&amp;yaxis_scale=".rawurlencode($yaxis_scale).
+                      "&amp;rotate_xaxis_lbl=".rawurlencode($rotate_xaxis_lbl).
+                      "&amp;yaxis_scale=".$yaxis_scale.
+                      "&amp;xaxis_grid=".$xaxis_grid.
+                      "&amp;yaxis_grid=".$yaxis_grid.
+                      "&amp;chart_type=".$chart_type.
+                      "&amp;style=".$chart_style."\"></CENTER>";
 
         echo '</TD>
               </TR>
@@ -332,5 +331,6 @@
   ($debug_time_mode >= 1) ? $et->PrintTiming() : '';
 
   PrintBASESubFooter();
+  echo "</body>\r\n</html>";
 ?>
 

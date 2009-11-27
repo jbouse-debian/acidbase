@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Sensor statistics
@@ -41,9 +42,7 @@
   $roleneeded = 10000;
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/index.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/index.php");
 
   $submit = ImportHTTPVar("submit", VAR_LETTER | VAR_SPACE, array(_SELECTED, _ALLONSCREEN, _ENTIREQUERY));
   $qs->MoveView($submit);             /* increment the view if necessary */
@@ -147,10 +146,7 @@
   }
 
   /* Print the current view number and # of rows */
-  $qs->PrintResultCnt();
-
-  echo '<FORM METHOD="post" NAME="PacketForm" ACTION="base_stat_sensor.php">';
-  
+  $qs->PrintResultCnt('<FORM METHOD="post" NAME="PacketForm" ACTION="base_stat_sensor.php">');  
   $qro->PrintHeader();
 
   $i = 0;
@@ -168,18 +164,18 @@
     qroPrintEntryHeader($i);    
 
     $tmp_rowid = $sensor_id;
-    echo '    <TD><INPUT TYPE="checkbox" NAME="action_chk_lst['.$i.']" VALUE="'.$tmp_rowid.'"></TD>';
-    echo '        <INPUT TYPE="hidden" NAME="action_lst['.$i.']" VALUE="'.$tmp_rowid.'">';
+    echo '    <TD><INPUT TYPE="checkbox" NAME="action_chk_lst['.$i.']" VALUE="'.$tmp_rowid.'">';
+    echo '        <INPUT TYPE="hidden" NAME="action_lst['.$i.']" VALUE="'.$tmp_rowid.'"></TD>';
 
     qroPrintEntry($sensor_id);
     qroPrintEntry(GetSensorName($sensor_id, $db));
-    qroPrintEntry('<A HREF="base_qry_main.php?new=1&sensor='.$sensor_id.
-                  '&num_result_rows=-1&submit='._QUERYDBP.'">'.
+    qroPrintEntry('<A HREF="base_qry_main.php?new=1&amp;sensor='.$sensor_id.
+                  '&amp;num_result_rows=-1&amp;submit='._QUERYDBP.'">'.
                   $event_cnt.'</A>');
 
      qroPrintEntry(BuildUniqueAlertLink("?sensor=".$sensor_id).$unique_event_cnt.'</A>');
-     qroPrintEntry(BuildUniqueAddressLink(1, "&sensor=".$sensor_id).$num_src_ip.'</A>');
-     qroPrintEntry(BuildUniqueAddressLink(2, "&sensor=".$sensor_id).$num_dst_ip.'</A>');
+     qroPrintEntry(BuildUniqueAddressLink(1, "&amp;sensor=".$sensor_id).$num_src_ip.'</A>');
+     qroPrintEntry(BuildUniqueAddressLink(2, "&amp;sensor=".$sensor_id).$num_dst_ip.'</A>');
      qroPrintEntry($start_time);
      qroPrintEntry($stop_time);
 
@@ -195,10 +191,11 @@
   $qs->PrintBrowseButtons();
   $qs->PrintAlertActionButtons();
   $qs->SaveState();
-  echo "\n</FORM>\n";
+  
   
   PrintBASESubFooter();
 
   $et->Mark("Get Query Elements");
   $et->PrintTiming();
+  echo "</body>\r\n</html>";
 ?>

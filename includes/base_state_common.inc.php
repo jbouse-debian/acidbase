@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: routines to manipulate shared state (session information)
@@ -116,16 +117,15 @@ function CleanVariable($item, $valid_data, $exception = "")
 
    /* Recursively clean array elements -- nikns */
    if (is_array($item)) {
-      for ($i = 0; $i < count($item); $i++)
-          $item[$i] = CleanVariable($item[$i], $valid_data, $exception);
+      foreach ($item as $key => $value)
+          $item[$key] = CleanVariable($value, $valid_data, $exception);
       return $item;
    }
 
 
    /* Check the exception value list first */
-   if ( $exception != "" )
-      if ( in_array($item, $exception) )
-         return $item;
+   if ( $exception != "" && in_array($item, $exception) )
+      return $item;
 
    if ( $valid_data == "" )
       return $item;

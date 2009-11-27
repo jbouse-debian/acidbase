@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: English language file
@@ -149,6 +150,7 @@ DEFINE('_LISTU','Lista användare');
 DEFINE('_CREATEU','Skapa en användare');
 DEFINE('_ROLEMAN','Roll hantering');
 DEFINE('_LISTR','Lista Roller');
+DEFINE('_LOGOUT','Logout');
 DEFINE('_CREATER','Skapa en roll');
 DEFINE('_LISTALL','Lista alla');
 DEFINE('_CREATE','Skapa');
