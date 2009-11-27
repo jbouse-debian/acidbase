@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Prints or generates HTML to display
@@ -30,10 +31,10 @@ function PrintBASESubHeader($page_title, $page_name, $back_link, $refresh = 0, $
   if ( ini_get("safe_mode") != true )
      set_time_limit($max_script_runtime);
 
-  echo '<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+  echo '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <!-- '. _TITLE . $BASE_VERSION .' -->
 <HTML>
-  <HEAD><meta http-equiv="Content-Type" content="text/html; charset='. _CHARSET .'" />';
+  <HEAD><meta http-equiv="Content-Type" content="text/html; charset='. _CHARSET .'">';
 
   if ( $html_no_cache == 1 )
      echo '<META HTTP-EQUIV="pragma" CONTENT="no-cache">';
@@ -53,7 +54,7 @@ function PrintBASESubHeader($page_title, $page_name, $back_link, $refresh = 0, $
   include("$BASE_path/base_hdr1.php");
   include("$BASE_path/base_hdr2.php");
 
-  echo "<TABLE WIDTH=\"100%\"><TR><TD ALIGN=RIGHT>[&nbsp;".$back_link."&nbsp;]</TD></TR></TABLE><BR>";
+  echo "<TABLE WIDTH=\"100%\"><TR><TD ALIGN=RIGHT>".$back_link."</TD></TR></TABLE><BR>";
 
   if ( $debug_mode > 0 )  PrintPageHeader();
 }
@@ -64,8 +65,7 @@ function PrintBASESubFooter()
   echo "\n\n<!-- BASE Footer -->\n".
        "<P>\n";
   include("$BASE_path/base_footer.php");
-  echo "\n\n".
-       "</BODY>\n</HTML>\n";
+  echo "\n\n";
 }
 
       
@@ -90,7 +90,7 @@ function PrintFreshPage($refresh_stat_page, $stat_page_refresh_time)
 {
    if ( $refresh_stat_page )
       echo '<META HTTP-EQUIV="REFRESH" CONTENT="'.$stat_page_refresh_time.'; URL='.
-            CleanVariable($_SERVER["REQUEST_URI"], VAR_FSLASH | VAR_PERIOD | VAR_DIGIT | VAR_PUNC | VAR_LETTER).'">'."\n";
+            htmlspecialchars(CleanVariable($_SERVER["REQUEST_URI"], VAR_FSLASH | VAR_PERIOD | VAR_DIGIT | VAR_PUNC | VAR_LETTER), ENT_QUOTES).'">'."\n";
 }
 
 function chk_select($stored_value, $current_value)
@@ -126,7 +126,7 @@ function dispYearOptions($stored_value)
 function PrintBASEAdminMenuHeader()
 {
   $menu = "<table width='100%' border=0><tr><td width='15%'>";
-  $menu = $menu . "<div class='mainheadermenu' width='50%'>";
+  $menu = $menu . "<div class='mainheadermenu'>";
   $menu = $menu . "<table border='0' class='mainheadermenu'>";
   $menu = $menu . "<tr><td class='menuitem'>". _USERMAN ."<br>";
   $menu = $menu . "<hr><a href='base_useradmin.php?action=list' class='menuitem'>"._LISTU."</a><br>";

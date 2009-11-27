@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: manages the necessary state information for
@@ -126,7 +127,7 @@ class QueryState
 
   function AddValidAction($action)
   {
-      if (($action == "archive_alert" || $action == "archive_alert2") && $_COOKIE['archive'] == 1)
+      if (($action == "archive_alert" || $action == "archive_alert2") && isset($_COOKIE['archive']) && $_COOKIE['archive'] == 1)
       {
         // We do nothing here because we are looking at the archive tables
         // We do not want to add the archive actions to this list -- Kevin
@@ -225,13 +226,13 @@ class QueryState
      {
         if ( $this->isCannedQuery() )
         {
-           echo "<FONT><CENTER>"._DISPLAYING." ".$this->GetCurrentCannedQueryDesc().
-                "</CENTER></CONT><BR>\n";
+           echo "<div style='text-align:center;margin:auto'>"._DISPLAYING." ".$this->GetCurrentCannedQueryDesc().
+                "</div><BR>\n";
         }
         else      
         {  
-           printf("<FONT><CENTER>"._DISPLAYINGTOTAL."<BR> ".
-                  "</CENTER></FONT><BR>\n", 
+           printf("<div style='text-align:center;margin:auto'>"._DISPLAYINGTOTAL.
+                  "</div><BR>\n", 
                   ($this->current_view * $show_rows)+1, 
                   (($this->current_view * $show_rows) + $show_rows-1) < $this->num_result_rows ? 
                   (($this->current_view * $show_rows) + $show_rows) : $this->num_result_rows, 
@@ -344,15 +345,16 @@ class QueryState
      echo "<!-- Saving Query State -->\n";
      ExportHTTPVar("caller", $this->current_canned_query);
      ExportHTTPVar("num_result_rows", $this->num_result_rows);
-     ExportHTTPVar("sort_order", $this->current_sort_order);
+     // The below line is commented to fix bug #1761605 please verify this doesnt break anything else -- Kevin Johnson
+     //ExportHTTPVar("sort_order", $this->current_sort_order);
      ExportHTTPVar("current_view", $this->current_view);
   }
 
   function SaveStateGET()
   {
      return "?caller=".$this->current_canned_query.
-            "&num_result_rows=".$this->num_result_rows.
-            "&current_view=".$this->current_view;
+            "&amp;num_result_rows=".$this->num_result_rows.
+            "&amp;current_view=".$this->current_view;
   }
 
   function DumpState()

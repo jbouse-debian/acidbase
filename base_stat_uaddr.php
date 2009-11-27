@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Displays statistics on the detected source and
@@ -38,14 +39,13 @@
 
  $addr_type = ImportHTTPVar("addr_type", VAR_DIGIT);
  $submit = ImportHTTPVar("submit", VAR_ALPHA | VAR_SPACE, array(_SELECTED, _ALLONSCREEN, _ENTIREQUERY));
+ $dst_ip = NULL;
 
    // Check role out and redirect if needed -- Kevin
   $roleneeded = 10000;
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/index.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/index.php");
 
  $et = new EventTiming($debug_time_mode);
    // The below three lines were moved from line 87 because of the odd errors some users were having
@@ -54,7 +54,7 @@
   $db->baseDBConnect($db_connect_method,
                      $alert_dbname, $alert_host, $alert_port, $alert_user, $alert_password);
 
-$cs = new CriteriaState("base_stat_uaddr.php", "&addr_type=$addr_type");
+$cs = new CriteriaState("base_stat_uaddr.php", "&amp;addr_type=$addr_type");
 
  $cs->ReadState();
 
@@ -124,7 +124,7 @@ if ( $debug_mode > 0 )
   $et->Mark("Counting Result size");
 
   /* Setup the Query Results Table */
-  $qro = new QueryResultsOutput("base_stat_uaddr.php?caller=".$caller."&addr_type=".$addr_type);
+  $qro = new QueryResultsOutput("base_stat_uaddr.php?caller=".$caller."&amp;addr_type=".$addr_type);
 
   $qro->AddTitle(" "); 
   $qro->AddTitle($results_title, 
@@ -216,8 +216,8 @@ if ( $debug_mode > 0 )
      ($addr_type == SOURCE_IP) ? ($src_ip = $myrow[0]) : ($dst_ip = $myrow[0]);
      $tmp_rowid = $src_ip . "_" . $dst_ip;
 
-     echo '    <TD><INPUT TYPE="checkbox" NAME="action_chk_lst['.$i.']" VALUE="'.$tmp_rowid.'"></TD>';
-     echo '        <INPUT TYPE="hidden" NAME="action_lst['.$i.']" VALUE="'.$tmp_rowid.'">';
+     echo '    <TD><INPUT TYPE="checkbox" NAME="action_chk_lst['.$i.']" VALUE="'.$tmp_rowid.'">';
+     echo '    <INPUT TYPE="hidden" NAME="action_lst['.$i.']" VALUE="'.$tmp_rowid.'"></TD>';
 
      /* Check for a NULL IP which indicates an event (e.g. portscan)
       * which has no IP
@@ -235,12 +235,12 @@ if ( $debug_mode > 0 )
 
       /* Print # of Occurances */
       $tmp_iplookup = 'base_qry_main.php?new=1'.
-                      '&num_result_rows=-1'.
-                      '&submit='._QUERYDBP.'&current_view=-1&ip_addr_cnt=1';
+                      '&amp;num_result_rows=-1'.
+                      '&amp;submit='._QUERYDBP.'&amp;current_view=-1&amp;ip_addr_cnt=1';
 
       $tmp_iplookup2 = 'base_stat_alerts.php?new=1'.   
-                       '&num_result_rows=-1'.
-                       '&submit='.QUERYDBP.'&current_view=-1&ip_addr_cnt=1';
+                       '&amp;num_result_rows=-1'.
+                       '&amp;submit='._QUERYDBP.'&amp;current_view=-1&amp;ip_addr_cnt=1';
 
       if ( $addr_type == 1 )
       {
@@ -279,10 +279,9 @@ if ( $debug_mode > 0 )
   ExportHTTPVar("addr_type", $addr_type);
 
   echo "\n</FORM>\n";
-  
-  PrintBASESubFooter();
-
   $et->Mark("Get Query Elements");
   $et->PrintTiming();
-
+  
+  PrintBASESubFooter();
+  echo "</body>\r\n</html>";
 ?>

@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: User Preferences page
@@ -29,9 +30,7 @@
   $roleneeded = 10000;
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/index.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/index.php");
 
   $page_body="";
   $et = new EventTiming($debug_time_mode);
@@ -116,4 +115,5 @@
 </table></div>&nbsp;&nbsp;&nbsp;</td><td><?php echo($page_body); ?></td></tr></table>
 <?php
     PrintBASESubFooter();
+    echo "</body>\r\n</html>";
 ?>

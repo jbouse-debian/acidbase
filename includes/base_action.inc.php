@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Alert action (e.g. add to AG, delete, email,
@@ -701,7 +702,7 @@ function Action_add_new_ag_Post($action_arg, &$action_ctx, $db, &$num_alert, $ac
    {
      /* Add was successful, so redirect user to AG edit page */
      echo '<script type=text/javascript>
-            var _page = "base_ag_main.php?ag_action=edit&ag_id='.$action_ctx.'&submit=x";
+            var _page = "base_ag_main.php?ag_action=edit&amp;ag_id='.$action_ctx.'&amp;submit=x";
             window.location=_page;
           </script>';
    }
@@ -729,8 +730,8 @@ function Action_del_alert_post($action_arg, &$action_ctx, $db, &$num_alert, $act
   /* count the number of check boxes selected  */
   for ( $i = 0; $i < $action_lst_cnt ; $i++)  
   { 
-     if ($action_chk_lst[$i] > "" )
-       $sel_cnt += 1;
+     if (isset($action_chk_lst[$i]))
+       $sel_cnt++;
   }
   if ($sel_cnt > 0)       /* 1 or more check boxes selected ? */
       $num_alert -= $sel_cnt;

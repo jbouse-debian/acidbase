@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Creates a user object that will contain the authenticated user
@@ -257,7 +258,7 @@ class BaseUser
          * each array item is formatted as
          * array[] = usr_id|usr_login|role_id|usr_name|usr_enabled
         */
-        
+        $userarray = NULL;
         $db = $this->db;
         $sql = "SELECT usr_id, usr_login, role_id, usr_name, usr_enabled ";
         $sql = $sql . "FROM base_users ORDER BY usr_id;";
@@ -336,7 +337,7 @@ class BaseUser
         $cookievalue = @$_COOKIE['BASERole'];
         $cookiearr = explode('|', $cookievalue);
         $passwd = $this->db->DB->qstr($cookiearr[0],get_magic_quotes_gpc());
-        $user = $this->db->DB->qstr($cookiearr[1],get_magic_quotes_gpc());
+        $user = $this->db->DB->qstr(@$cookiearr[1],get_magic_quotes_gpc());
         $sql = "SELECT role_id FROM base_users where usr_login=$user and usr_pwd=$passwd;";
         $result = $this->db->baseExecute($sql);
         $role = $result->row->fields['role_id'];

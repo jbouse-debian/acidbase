@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: extracts and calculates the data to plot
@@ -39,36 +40,39 @@ function VerifyGraphingLib()
             (<CODE>--with-gd</CODE>)</FONT>";
       die();
    }
-   
+
+    // PHP will search the default path and try to include the file
+    $file = "Image/Graph.php";    
+    $fileIncluded = @include_once($file);
+
     // We have to locate Image/Graph.php -- Alejandro
-    $file = "Image/Graph.php";
-    $found = false;
-    // Will search in Path   
-    $paths = explode(PATH_SEPARATOR, ini_get('include_path'));
-    foreach ($paths as $path) {
-        $fullpath = $path . DIRECTORY_SEPARATOR . $file; 
-        if (file_exists($fullpath)) {
-            $found = true;
-           break;         
-        }
-    }
-    
-    if ( $found ) {
-            // Cool, file was found, so you have Image_Graph installed. -- Alejandro
-            include($file);
-            return true;
-    } else {
-            // Sorry dude, you haven't finished your home work. -- Alejandro
-      echo "<P><B>Error loading the Graphing library: </B>".
-           "<P>Check your Pear::Image_Graph installation!".
-            "<P>".
-            "Image_Graph can be found here:".
-            "at <A HREF=\"http://pear.veggerby.dk/\">http://pear.veggerby.dk/</A>.  Without this ".
-            "library no graphing operations can be performed.";
+    if (!$fileIncluded) { // Will search in Path
+    	$found = false;
+    	$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
+    	foreach ($paths as $path) {
+	        $fullpath = $path . DIRECTORY_SEPARATOR . $file; 
+    	    if (file_exists($fullpath)) {
+        	    $found = true;
+          	 break;         
+        	}
+    	}
 
-      die();
+    	if ( $found ) {
+            	// Cool, file was found, so you have Image_Graph installed. -- Alejandro
+            	include_once($file);
+            	return true;
+    	} else {
+        	    // Sorry dude, you haven't finished your home work. -- Alejandro
+      	echo "<P><B>Error loading the Graphing library: </B>".
+        	   "<P>Check your Pear::Image_Graph installation!".
+            	"<P>".
+            	"Image_Graph can be found here:".
+            	"at <A HREF=\"http://pear.veggerby.dk/\">http://pear.veggerby.dk/</A>.  Without this ".
+            	"library no graphing operations can be performed.";
 
-    }      
+      	die();
+    	}
+    } 
 }
 
 /* Generates the required SQL from the chart time criteria */
@@ -230,7 +234,7 @@ function GetTimeDataSet(&$xdata, $chart_type, $data_source, $min_threshold, $cri
 
   if ( $debug_mode > 0 )
   {
-     echo '<TABLE BORDER=1>
+     echo '<TABLE BORDER="1">
             <TR>
               <TD>year_start<TD>year_end<TD>month_start<TD>month_end
               <TD>day_start<TD>day_end<TD>hour_start<TD>hour_end

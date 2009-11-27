@@ -6,11 +6,11 @@
 **
 ** (see the file 'base_main.php' for license details)
 **
-** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
 **                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
-** Purpose: File to prevent access to this directory directly
+** Purpose: Logout -- axe the cookie, redir to index.php 
 ********************************************************************************
 ** Authors:
 ********************************************************************************
@@ -18,6 +18,7 @@
 **
 ********************************************************************************
 */
-
-    base_header("Location: base_main.php");
+include("base_conf.php");
+setcookie('BASERole', "", time()-600000);
+base_header("Location: ". $BASE_urlpath . "/index.php");
 ?>

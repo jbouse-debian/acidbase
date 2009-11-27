@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: TCP/IP network routines
@@ -155,7 +156,7 @@ function baseGetHostByAddr($ipaddr, $db, $cache_lifetime)
              "VALUES ($ip32, '$tmp', to_date( '$current_time', 'YYYY-MM-DD HH24:MI:SS' ) )";
      else
        $sql = "INSERT INTO acid_ip_cache (ipc_ip, ipc_fqdn, ipc_dns_timestamp) ".
-              "VALUES ($ip32, '$tmp', '$current_time')";
+              "VALUES ('$ip32', '$tmp', '$current_time')";
      $db->baseExecute($sql);
   }
   else     /* cache hit */

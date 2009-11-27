@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Setup step 4, create the database stuff
@@ -23,7 +24,8 @@
 defined( '_BASE_INC' ) or die( 'Accessing this file directly is not allowed.' );
 
 function CreateBASEAG($db) {
-
+     global $debug_mode;
+     
      $tblBaseAG_present = $db->baseTableExists("acid_ag");
      $tblBaseAGAlert_present = $db->baseTableExists("acid_ag_alert");
      $tblBaseIPCache_present = $db->baseTableExists("acid_ip_cache");

@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: page for the role admin functions (create, disable etc....)
@@ -33,9 +34,7 @@
   $roleneeded = 1;
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/base_main.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/base_main.php");
 
   $page_title = _ROLEADMIN;
     
@@ -98,7 +97,7 @@
       $role = new BaseRole();
       $rolearray = array(filterSql($_POST['role_id']), filterSql($_POST['role_name']), filterSql($_POST['desc']),);
       $role->updateRole($rolearray);
-      header("Location: base_roleadmin.php?action=list");
+      base_header("Location: base_roleadmin.php?action=list");
       break;
 
     case "deleterole";
@@ -106,7 +105,7 @@
       $roleid = filterSql($_GET['roleid']);
       $BRole = new BaseRole();
       $BRole->deleteRole($roleid);
-      header("Location: base_roleadmin.php?action=list");
+      base_header("Location: base_roleadmin.php?action=list");
       break;
     
     case "list";
@@ -123,10 +122,10 @@
         //explode array rows and build table
         $tmpRow = explode("|", $row);
         
-        $tmpHTML = $tmpHTML . "<tr><td align='center'><a href='base_roleadmin.php?action=editrole&roleid=".$tmpRow[0]."'>";
-        $tmpHTML = $tmpHTML . "<img src='" . $BASE_urlpath ."/images/button_edit.png' border=0></a></td>";
-        $tmpHTML = $tmpHTML . "<td align='center'><a href='base_roleadmin.php?action=deleterole&roleid=".$tmpRow[0]."'>";
-        $tmpHTML = $tmpHTML . "<img src='" . $BASE_urlpath ."/images/button_delete.png' border=0></a></td>";
+        $tmpHTML = $tmpHTML . "<tr><td align='center'><a href='base_roleadmin.php?action=editrole&amp;roleid=".$tmpRow[0]."'>";
+        $tmpHTML = $tmpHTML . "<img src='" . $BASE_urlpath ."/images/button_edit.png' border='0' alt='button_edit'></a></td>";
+        $tmpHTML = $tmpHTML . "<td align='center'><a href='base_roleadmin.php?action=deleterole&amp;roleid=".$tmpRow[0]."'>";
+        $tmpHTML = $tmpHTML . "<img src='" . $BASE_urlpath ."/images/button_delete.png' border='0' alt='button_delete'></a></td>";
         $tmpHTML = $tmpHTML . "<td align='center'>" . $tmpRow[0];
         $tmpHTML = $tmpHTML . "</td><td align='center'>" . $tmpRow[1];
         $tmpHTML = $tmpHTML . "</td><td align='center'>" . $tmpRow[2];
@@ -147,4 +146,5 @@
     PrintBASEAdminMenuFooter();
     
     PrintBASESubFooter();
+    echo "</body>\r\n</html>";
 ?>

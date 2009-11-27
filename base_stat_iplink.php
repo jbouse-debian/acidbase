@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Displays statistics on communication links (IP addresses) 
@@ -39,9 +40,7 @@
   $roleneeded = 10000;
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/index.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/index.php");
 
   $qs = new QueryState();
   $qs->AddCannedQuery("most_frequent", $freq_num_alerts, _MOSTFREQALERTS, "occur_d"); 
@@ -163,13 +162,13 @@
         qroPrintEntryHeader($i);
 
         $tmp_ip_criteria = 
-          '&ip_addr%5B0%5D%5B0%5D=+&ip_addr%5B0%5D%5B1%5D=ip_src&ip_addr%5B0%5D%5B2%5D=%3D'.
-          '&ip_addr%5B0%5D%5B3%5D='.baseLong2IP($sip).
-          '&ip_addr%5B0%5D%5B8%5D=+&ip_addr%5B0%5D%5B9%5D=AND'.
-          '&ip_addr%5B1%5D%5B0%5D=+&ip_addr%5B1%5D%5B1%5D=ip_dst&ip_addr%5B1%5D%5B2%5D=%3D'.
-          '&ip_addr%5B1%5D%5B3%5D='.baseLong2IP($dip).
-          '&ip_addr%5B1%5D%5B8%5D=+&ip_addr%5B1%5D%5B9%5D=+'.
-          '&ip_addr_cnt=2&layer4='.IPProto2str($proto);
+          '&amp;ip_addr%5B0%5D%5B0%5D=+&amp;ip_addr%5B0%5D%5B1%5D=ip_src&amp;ip_addr%5B0%5D%5B2%5D=%3D'.
+          '&amp;ip_addr%5B0%5D%5B3%5D='.baseLong2IP($sip).
+          '&amp;ip_addr%5B0%5D%5B8%5D=+&amp;ip_addr%5B0%5D%5B9%5D=AND'.
+          '&amp;ip_addr%5B1%5D%5B0%5D=+&amp;ip_addr%5B1%5D%5B1%5D=ip_dst&amp;ip_addr%5B1%5D%5B2%5D=%3D'.
+          '&amp;ip_addr%5B1%5D%5B3%5D='.baseLong2IP($dip).
+          '&amp;ip_addr%5B1%5D%5B8%5D=+&amp;ip_addr%5B1%5D%5B9%5D=+'.
+          '&amp;ip_addr_cnt=2&amp;layer4='.IPProto2str($proto);
 
         $tmp_rowid = $sip . "_" . $dip . "_" . $proto;
         echo '    <TD><INPUT TYPE="checkbox" NAME="action_chk_lst['.$i.']" VALUE="'.$tmp_rowid.'"></TD>';
@@ -182,15 +181,15 @@
         qroPrintEntry('<FONT>'.$dip_fqdn.'</FONT>');
         qroPrintEntry('<FONT>'.IPProto2str($proto).'</FONT>');
 
-        $tmp = '<A HREF="base_stat_ports.php?port_type=2&proto='.$proto.$tmp_ip_criteria.'">';
+        $tmp = '<A HREF="base_stat_ports.php?port_type=2&amp;proto='.$proto.$tmp_ip_criteria.'">';
         qroPrintEntry($tmp.$num_unique_dport.'</A>');
 
         $tmp = '<A HREF="base_stat_alerts.php?foo=1'.$tmp_ip_criteria.'">';
         qroPrintEntry($tmp.$num_unique.'</A>');
 
         $tmp = '<A HREF="base_qry_main.php?new=1'.
-                      '&num_result_rows=-1'.
-                      '&submit='._QUERYDBP.'&current_view=-1'.$tmp_ip_criteria.'">'; 
+                      '&amp;num_result_rows=-1'.
+                      '&amp;submit='._QUERYDBP.'&amp;current_view=-1'.$tmp_ip_criteria.'">'; 
         qroPrintEntry($tmp.$num_occurances.'</A>');
 
         qroPrintEntryFooter();
@@ -211,5 +210,5 @@
 
   $et->Mark("Get Query Elements");
   $et->PrintTiming();
-
+  echo "</body>\r\n</html>";
 ?>

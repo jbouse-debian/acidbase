@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: IP DNS, whois, event cache library   
@@ -475,7 +476,11 @@ function UpdateAlertCache($db)
         $archive_ccid_lst = $db2->baseExecute("SELECT MAX(cid) FROM acid_event WHERE sid='".$sid."'"); 
         $archive_ccid_row = $archive_ccid_lst->baseFetchRow();
         $archive_ccid = $archive_ccid_row[0];
+		$archive_ccid_lst->baseFreeRows();
+		$db2->baseClose();
         if ( $archive_ccid == NULL ) $archive_ccid = 0;
+	$archive_ccid_lst->baseFreeRows();
+	$db2->baseClose();
       } else {
         $archive_ccid = 0; 
       }

@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: English language file
@@ -50,7 +51,7 @@ DEFINE('_ENABLED','Activado');
 DEFINE('_SUCCESS','Exitoso');
 DEFINE('_SENSOR','Sensor');
 DEFINE('_SIGNATURE','Firma');
-DEFINE('_SENSORS','Sensors'); //NEW
+DEFINE('_SENSORS','Sensores');
 DEFINE('_TIMESTAMP','Marca de tiempo');
 DEFINE('_NBSOURCEADDR','Direcci&oacute;n&nbsp;Origen');
 DEFINE('_NBDESTADDR','Direcci&oacute;n&nbsp;Dest');
@@ -82,44 +83,44 @@ DEFINE('_ON','on'); //NEW
 DEFINE('_IN','in'); //NEW
 DEFINE('_ANY','any'); //NEW
 DEFINE('_NONE','none'); //NEW
-DEFINE('_HOUR','Hour'); //NEW
-DEFINE('_DAY','Day'); //NEW
-DEFINE('_MONTH','Month'); //NEW
-DEFINE('_YEAR','Year'); //NEW
-DEFINE('_ALERTGROUP','Alert Group'); //NEW
-DEFINE('_ALERTTIME','Alert Time'); //NEW
-DEFINE('_CONTAINS','contains'); //NEW
-DEFINE('_DOESNTCONTAIN','does not contain'); //NEW
-DEFINE('_SOURCEPORT','source port'); //NEW
-DEFINE('_DESTPORT','dest port'); //NEW
-DEFINE('_HAS','has'); //NEW
-DEFINE('_HASNOT','has not'); //NEW
+DEFINE('_HOUR','Hora');
+DEFINE('_DAY','D&iacute;a');
+DEFINE('_MONTH','Mes');
+DEFINE('_YEAR','a&ntilde;o');
+DEFINE('_ALERTGROUP','Grupo de Alertas');
+DEFINE('_ALERTTIME','Tiempo de Alerta');
+DEFINE('_CONTAINS','contiene');
+DEFINE('_DOESNTCONTAIN','no contiene');
+DEFINE('_SOURCEPORT','puerto origen');
+DEFINE('_DESTPORT','puerto destino');
+DEFINE('_HAS','tiene');
+DEFINE('_HASNOT','no tiene');
 DEFINE('_PORT','Port'); //NEW
 DEFINE('_FLAGS','Flags'); //NEW
 DEFINE('_MISC','Misc'); //NEW
-DEFINE('_BACK','Back'); //NEW
-DEFINE('_DISPYEAR','{ year }'); //NEW
-DEFINE('_DISPMONTH','{ month }'); //NEW
-DEFINE('_DISPHOUR','{ hour }'); //NEW
-DEFINE('_DISPDAY','{ day }'); //NEW
-DEFINE('_DISPTIME','{ time }'); //NEW
-DEFINE('_ADDADDRESS','ADD Addr'); //NEW
-DEFINE('_ADDIPFIELD','ADD IP Field'); //NEW
-DEFINE('_ADDTIME','ADD TIME'); //NEW
-DEFINE('_ADDTCPPORT','ADD TCP Port'); //NEW
-DEFINE('_ADDTCPFIELD','ADD TCP Field'); //NEW
-DEFINE('_ADDUDPPORT','ADD UDP Port'); //NEW
-DEFINE('_ADDUDPFIELD','ADD UDP Field'); //NEW
-DEFINE('_ADDICMPFIELD','ADD ICMP Field'); //NEW
+DEFINE('_BACK','Atr&aacute;s');
+DEFINE('_DISPYEAR','{ a&ntilde;o }');
+DEFINE('_DISPMONTH','{ mes }');
+DEFINE('_DISPHOUR','{ hora }');
+DEFINE('_DISPDAY','{ d&iacute;a }');
+DEFINE('_DISPTIME','{ tiempo }');
+DEFINE('_ADDADDRESS','A&Ntilde;ADIR Direcci&oacute;n');
+DEFINE('_ADDIPFIELD','A&Ntilde;ADIR Campo IP');
+DEFINE('_ADDTIME','A&Ntilde;ADIR TIEMPO');
+DEFINE('_ADDTCPPORT','A&Ntilde;ADIR Puerto TCP');
+DEFINE('_ADDTCPFIELD','A&Ntilde;ADIR Campo TCP');
+DEFINE('_ADDUDPPORT','A&Ntilde;ADIR Puerto UDP');
+DEFINE('_ADDUDPFIELD','A&Ntilde;ADIR Campo UDP');
+DEFINE('_ADDICMPFIELD','A&Ntilde;ADIR Campo ICMP');
 DEFINE('_ADDPAYLOAD','ADD Payload'); //NEW
-DEFINE('_MOSTFREQALERTS','Most Frequent Alerts'); //NEW
-DEFINE('_MOSTFREQPORTS','Most Frequent Ports'); //NEW
-DEFINE('_MOSTFREQADDRS','Most Frequent IP addresses'); //NEW
-DEFINE('_LASTALERTS','Last Alerts'); //NEW
-DEFINE('_LASTPORTS','Last Ports'); //NEW
-DEFINE('_LASTTCP','Last TCP Alerts'); //NEW
-DEFINE('_LASTUDP','Last UDP Alerts'); //NEW
-DEFINE('_LASTICMP','Last ICMP Alerts'); //NEW
+DEFINE('_MOSTFREQALERTS','Alertas M&aacute;s Frecuentes');
+DEFINE('_MOSTFREQPORTS','Puertos M&aacute;s Frecuentes');
+DEFINE('_MOSTFREQADDRS','Direcciones IP M&aacute;s Frecuentes');
+DEFINE('_LASTALERTS','&Uacute;ltimas Alertas');
+DEFINE('_LASTPORTS','&Uacute;ltimos Puertos');
+DEFINE('_LASTTCP','&Uacute;ltimas Alertas TCP');
+DEFINE('_LASTUDP','&Uacute;ltimas Alertas UDP');
+DEFINE('_LASTICMP','&Uacute;ltimas Alertas ICMP');
 DEFINE('_QUERYDB','Query DB'); //NEW
 DEFINE('_QUERYDBP','Query+DB'); //NEW - Equals to _QUERYDB where spaces are '+'s. 
                                 //Should be something like: DEFINE('_QUERYDBP',str_replace(" ", "+", _QUERYDB));
@@ -131,8 +132,8 @@ DEFINE('_LENGTH','length'); //NEW
 DEFINE('_CODE','code'); //NEW
 DEFINE('_DATA','data'); //NEW
 DEFINE('_TYPE','type'); //NEW
-DEFINE('_NEXT','Next'); //NEW
-DEFINE('_PREVIOUS','Previous'); //NEW
+DEFINE('_NEXT','Siguiente');
+DEFINE('_PREVIOUS','Anterior');
 
 //Menu items
 DEFINE('_HOME','Inicio');
@@ -148,11 +149,12 @@ DEFINE('_LISTU','Listar usuarios');
 DEFINE('_CREATEU','Crear usuario');
 DEFINE('_ROLEMAN','Manejar papeles');
 DEFINE('_LISTR','Listar papeles');
+DEFINE('_LOGOUT','Logout');
 DEFINE('_CREATER','Crear papel');
 DEFINE('_LISTALL','Listar todo');
 DEFINE('_CREATE','Crear');
 DEFINE('_VIEW','Ver');
-DEFINE('_CLEAR','Aclarar');
+DEFINE('_CLEAR','Limpiar');
 DEFINE('_LISTGROUPS','Listar Grupos');
 DEFINE('_CREATEGROUPS','Crear Grupo');
 DEFINE('_VIEWGROUPS','Ver Grupo');
@@ -178,8 +180,8 @@ DEFINE('_UNI','&Uacute;nico');
 DEFINE('_LISTING','lista');
 DEFINE('_TALERTS','Alertas de hoy: ');
 DEFINE('_L24ALERTS','Alertas de los &uacute;ltimos 24 horas: ');
-DEFINE('_SOURCEIP','Source IP'); //NEW
-DEFINE('_DESTIP','Destination IP'); //NEW
+DEFINE('_SOURCEIP','IP Origen');
+DEFINE('_DESTIP','IP Destino');
 DEFINE('_L72ALERTS','Alertas de los &uacute;ltimos 72 horas: ');
 DEFINE('_UNIALERTS',' Alertas &uacute;nicas');
 DEFINE('_LSOURCEPORTS','&Uacute;ltimos puertos de origen: ');
@@ -193,7 +195,7 @@ DEFINE('_TIMEWIN','Ventana de tiempo:');
 DEFINE('_NOALERTSDETECT','ninguna alerta detectada');
 DEFINE('_USEALERTDB','Use Alert Database'); //NEW
 DEFINE('_USEARCHIDB','Use Archive Database'); //NEW
-DEFINE('_TRAFFICPROBPRO','Traffic Profile by Protocol'); //NEW
+DEFINE('_TRAFFICPROBPRO','Perfil de Tr&aacute;fico por Protocolo');
 
 //base_auth.inc.php
 DEFINE('_ADDEDSF','A&ntilde;adido con &eacute;xito');
@@ -315,28 +317,28 @@ DEFINE('_UNCLASS','desclasificado');
 //base_state_citems.inc.php
 DEFINE('_DENCODED','datos codificado como');
 DEFINE('_NODENCODED','(sin conversi&oacute;n de datos, asumiendo criterios en codificaci&oacute;n natural del DB)');
-DEFINE('_SHORTJAN','Jan'); //NEW
-DEFINE('_SHORTFEB','Feb'); //NEW
-DEFINE('_SHORTMAR','Mar'); //NEW
-DEFINE('_SHORTAPR','Apr'); //NEW
-DEFINE('_SHORTMAY','May'); //NEW
-DEFINE('_SHORTJUN','Jun'); //NEW
-DEFINE('_SHORTJLY','Jly'); //NEW
-DEFINE('_SHORTAUG','Aug'); //NEW
-DEFINE('_SHORTSEP','Sep'); //NEW
-DEFINE('_SHORTOCT','Oct'); //NEW
-DEFINE('_SHORTNOV','Nov'); //NEW
-DEFINE('_SHORTDEC','Dec'); //NEW
-DEFINE('_DISPSIG','{ signature }'); //NEW
-DEFINE('_DISPANYCLASS','{ any Classification }'); //NEW
-DEFINE('_DISPANYPRIO','{ any Priority }'); //NEW
-DEFINE('_DISPANYSENSOR','{ any Sensor }'); //NEW
-DEFINE('_DISPADDRESS','{ adress }'); //NEW
-DEFINE('_DISPFIELD','{ field }'); //NEW
-DEFINE('_DISPPORT','{ port }'); //NEW
+DEFINE('_SHORTJAN','Ene');
+DEFINE('_SHORTFEB','Feb');
+DEFINE('_SHORTMAR','Mar');
+DEFINE('_SHORTAPR','Abr');
+DEFINE('_SHORTMAY','May');
+DEFINE('_SHORTJUN','Jun');
+DEFINE('_SHORTJLY','Jul');
+DEFINE('_SHORTAUG','Ago');
+DEFINE('_SHORTSEP','Sep');
+DEFINE('_SHORTOCT','Oct');
+DEFINE('_SHORTNOV','Nov');
+DEFINE('_SHORTDEC','Dic');
+DEFINE('_DISPSIG','{ firma }');
+DEFINE('_DISPANYCLASS','{ cualquier Clasificaci&oacute;n }');
+DEFINE('_DISPANYPRIO','{ cualquier Prioridad }');
+DEFINE('_DISPANYSENSOR','{ cualquier Sensor }');
+DEFINE('_DISPADDRESS','{ direcci&oacute;n }');
+DEFINE('_DISPFIELD','{ campo }');
+DEFINE('_DISPPORT','{ puerto }');
 DEFINE('_DISPENCODING','{ encoding }'); //NEW
 DEFINE('_DISPCONVERT2','{ Convert To }'); //NEW
-DEFINE('_DISPANYAG','{ any Alert Group }'); //NEW
+DEFINE('_DISPANYAG','{ cualquier Grupo de Alertas }');
 DEFINE('_DISPPAYLOAD','{ payload }'); //NEW
 DEFINE('_DISPFLAGS','{ flags }'); //NEW
 DEFINE('_SIGEXACTLY','exactly'); //NEW
@@ -368,7 +370,7 @@ DEFINE('_DISPLAYINGTOTAL','Mostrando alertas %d-%d de %d en total');
 DEFINE('_NOALERTS','No hay alertas.');
 DEFINE('_QUERYRESULTS','Resultados de consulta');
 DEFINE('_QUERYSTATE','Estado de consulta');
-DEFINE('_DISPACTION','{ action }'); //NEW
+DEFINE('_DISPACTION','{ acci&oacute;n }');
 
 //base_ag_common.php
 DEFINE('_ERRAGNAMESEARCH','La b&uacute;squeda por nombre AG especificada es inv&aacute;lia. Int&eacute;ntalo de nuevo.');
@@ -572,10 +574,10 @@ DEFINE('_QCERRCRITIPADDRESSNONE1','fue seleccionado (en #');
 DEFINE('_QCERRCRITIPIPBOOL','Varios criterios de direcci&oacute;n IP fueron entrados sin un operador Booleano (ej. AND, OR) entre ellos.');
 
 //base_qry_form.php
-DEFINE('_QFRMSORTORDER','Orden de la clase');
-DEFINE('_QFRMSORTNONE','none'); //NEW
-DEFINE('_QFRMTIMEA','tiempo (ascenso)');
-DEFINE('_QFRMTIMED','tiempo (descenso)');
+DEFINE('_QFRMSORTORDER','Ordenar por');
+DEFINE('_QFRMSORTNONE','nada');
+DEFINE('_QFRMTIMEA','tiempo (ascendente)');
+DEFINE('_QFRMTIMED','tiempo (descendente)');
 DEFINE('_QFRMSIG','firma');
 DEFINE('_QFRMSIP','IP de Origen');
 DEFINE('_QFRMDIP','IP de Destino');
@@ -628,9 +630,9 @@ DEFINE('_PSOCCASDST','Sucesos <BR>como Dest.');
 DEFINE('_PSWHOISINFO','Informaci&oacute;n Whois');
 DEFINE('_PSTOTALHOSTS','Total Hosts Scanned'); //NEW
 DEFINE('_PSDETECTAMONG','%d unique alerts detected among %d alerts on %s'); //NEW
-DEFINE('_PSALLALERTSAS','all alerts with %s/%s as'); //NEW
-DEFINE('_PSSHOW','show'); //NEW
-DEFINE('_PSEXTERNAL','external'); //NEW
+DEFINE('_PSALLALERTSAS','Todas las alertas con %s/%s como');
+DEFINE('_PSSHOW','Mostrar');
+DEFINE('_PSEXTERNAL','Enlaces externos');
 
 //base_stat_iplink.php
 DEFINE('_SIPLTITLE','Enlaces IP');

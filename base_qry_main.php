@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Input GET/POST variables
@@ -77,22 +78,20 @@
   include_once("$BASE_path/base_qry_common.php");
 
   $et = new EventTiming($debug_time_mode);
-  $cs = new CriteriaState("base_qry_main.php", "&new=1&submit="._QUERYDBP);
+  $cs = new CriteriaState("base_qry_main.php", "&amp;new=1&amp;submit="._QUERYDBP);
 
   // Check role out and redirect if needed -- Kevin
   $roleneeded = 10000;
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/index.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/index.php");
 
   $new = ImportHTTPVar("new", VAR_DIGIT);
 
   /* This call can include many values. */
   $submit = ImportHTTPVar("submit", VAR_DIGIT | VAR_PUNC | VAR_LETTER,
                            array(_SELECTED, _ALLONSCREEN, _ENTIREQUERY,
-                                 _QUERYDB, _ADDTIME, _ADDADDR, _ADDIPFIELD,
+                                 _QUERYDB, _ADDTIME, _ADDADDRESS, _ADDIPFIELD,
                                  _ADDTCPPORT, _ADDTCPFIELD, _ADDUDPPORT,
                                  _ADDUDPFIELD, _ADDICMPFIELD));
 
@@ -128,8 +127,8 @@
   /* is this a new query, invoked from the SEARCH screen ? */
   /* if the query string if very long (> 700) then this must be from the Search screen  */
   $back = ImportHTTPVar("back", VAR_DIGIT);
-  if ( ( $GLOBALS['maintain_history'] == 1 ) && ( $back != 1 ) &&  ( $submit == _QUERYDB ) && ( $_GET['search']  == 1  )) {
-    $_SESSION['back_list_cnt'] -= 1;    /* save on top of initial blank query screen   */
+  if ( ( $GLOBALS['maintain_history'] == 1 ) && ( $back != 1 ) &&  ( $submit == _QUERYDB ) && ( isset($_GET['search']) && $_GET['search']  == 1  )) {
+    !empty($_SESSION['back_list_cnt']) ? $_SESSION['back_list_cnt']-- : $_SESSION['back_list_cnt'] = 0;    /* save on top of initial blank query screen   */
     $submit = "";          /*  save entered search criteria as if one hit Enter */
     $_POST['submit'] = $submit;
     $cs->ReadState();      /* save the search criteria       */
@@ -214,7 +213,6 @@ if ( $submit == _QUERYDB || $submit == _QUERYDBP ||
   $et->Mark("Alert Action");
 
   if ( $debug_mode > 0 ) ErrorMessage("Initial/Canned Query or Sort Clicked");
-
   include("$BASE_path/base_qry_sqlcalls.php");
 }
 /* Return the input form to get more criteria from user */
@@ -229,8 +227,9 @@ else
   echo "\n</FORM>\n";
   
   PrintBASESubFooter();
-  
+
   $et->Mark("Get Query Elements");
   $et->PrintTiming();
+  echo "</body>\r\n</html>";
 
 ?>

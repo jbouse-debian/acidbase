@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: executes and prints the query results
@@ -19,7 +20,6 @@
 */
 
 global $colored_alerts;
-
   /* **************** Run the Query ************************************************** */
 
   /* base_ag_main.php will include this file 
@@ -30,7 +30,7 @@ global $colored_alerts;
   {
      ProcessCriteria();
      $page = "base_ag_main.php";
-     $tmp_page_get = "&ag_action=view&ag_id=$ag_id&submit=x";
+     $tmp_page_get = "&amp;ag_action=view&amp;ag_id=$ag_id&amp;submit=x";
      $sql = $save_sql;
   }
   else
@@ -43,11 +43,10 @@ global $colored_alerts;
   /* Run the query to determine the number of rows (No LIMIT)*/
   $qs->GetNumResultRows($cnt_sql, $db);
   $et->Mark("Counting Result size");
-
   /* Setup the Query Results Table */
   $qro = new QueryResultsOutput("$page".$qs->SaveStateGET().$tmp_page_get);
 
-  $qro->AddTitle(qroReturnSelectALLCheck());
+  $qro->AddTitle(qroReturnSelectALLCheck());  
   $qro->AddTitle("ID");
 
   $qro->AddTitle(_SIGNATURE, 
@@ -79,6 +78,10 @@ global $colored_alerts;
      $sort_sql = $qro->GetSortSQL($qs->GetCurrentSort(), $qs->GetCurrentCannedQuerySort());
      //  3/23/05 BDB   mods to make sort by work for Searches
      $sort_sql = "";
+     if (!isset($sort_order)) {
+         $sort_order = NULL;
+     }
+
      if ($sort_order == "sip_a")
         { $sort_sql = " ORDER BY ip_src ASC"; }
      if ($sort_order == "sip_d")
@@ -135,7 +138,7 @@ global $colored_alerts;
      PrintFramedBoxHeader(_QSCSUMM, "#669999", "#FFFFFF");
      PrintGeneralStats($db, 1, $show_summary_stats, 
                        "$join_sql ", "$where_sql $criteria_sql"); 
-     echo('<BR><LI><A HREF="base_stat_time.php">'._QSCTIMEPROF.'</A> '._QSCOFALERTS);
+     echo('<BR><LI><A HREF="base_stat_time.php">'._QSCTIMEPROF.'</A> '._QSCOFALERTS . "</LI>");
      PrintFramedBoxFooter();
 
      echo ' </TD>
@@ -203,7 +206,7 @@ global $colored_alerts;
       echo '    <INPUT TYPE="hidden" NAME="action_lst['.$i.']" VALUE="'.$tmp_rowid.'">';
 
 	/** Fix for bug #1116034 -- Input by Tim Rupp, original solution and code by Alejandro Flores **/
-	$temp = "<A HREF='base_qry_alert.php?submit=".rawurlencode($tmp_rowid)."&sort_order=";
+	$temp = "<A HREF='base_qry_alert.php?submit=".rawurlencode($tmp_rowid)."&amp;sort_order=";
 	$temp .= ($qs->isCannedQuery()) ? $qs->getCurrentCannedQuerySort() : $qs->getCurrentSort();
 	$temp .= "'>".$tmp_rowid."</a>";
 	qroPrintEntry($temp);
@@ -213,9 +216,9 @@ global $colored_alerts;
       qroPrintEntry($myrow[3]);
 
       $tmp_iplookup = 'base_qry_main.php?sig%5B0%5D=%3D'.
-                          '&num_result_rows=-1'.
-                          '&time%5B0%5D%5B0%5D=+&time%5B0%5D%5B1%5D=+'.
-                          '&submit='._QUERYDBP.'&current_view=-1&ip_addr_cnt=2';
+                          '&amp;num_result_rows=-1'.
+                          '&amp;time%5B0%5D%5B0%5D=+&amp;time%5B0%5D%5B1%5D=+'.
+                          '&amp;submit='._QUERYDBP.'&amp;current_view=-1&amp;ip_addr_cnt=2';
 
       /* TCP or UDP show the associated port # */ 
       if ( ($current_proto == TCP) || ($current_proto == UDP) )
@@ -232,7 +235,7 @@ global $colored_alerts;
       
       if ( $current_sip32 != "" )
       {
-         qroPrintEntry('<A HREF="base_stat_ipaddr.php?ip='.$current_sip.'&netmask=32">'.
+         qroPrintEntry('<A HREF="base_stat_ipaddr.php?ip='.$current_sip.'&amp;netmask=32">'.
                        $current_sip.
                        '</A><FONT SIZE="-1">'.$current_sport.'</FONT>');
       }
@@ -250,7 +253,7 @@ global $colored_alerts;
              if ( ereg("[0-9]*\.[0-9]*\.[0-9]*\.[0-9]", $ps_element)  )
              {
                 $ps_element = ereg_replace (":", "", $ps_element);
-                qroPrintEntry("<A HREF=\"base_stat_ipaddr.php?ip=".$ps_element."&netmask=32\">".
+                qroPrintEntry("<A HREF=\"base_stat_ipaddr.php?ip=".$ps_element."&amp;netmask=32\">".
                               $ps_element."</A>");
              }
            }
@@ -260,7 +263,7 @@ global $colored_alerts;
       }
 
       if ( $current_dip32 != "" )
-         qroPrintEntry('<A HREF="base_stat_ipaddr.php?ip='.$current_dip.'&netmask32">'.
+         qroPrintEntry('<A HREF="base_stat_ipaddr.php?ip='.$current_dip.'&amp;netmask32">'.
                        $current_dip.
                        '</A><FONT SIZE="-1">'.$current_dport.'</FONT>');
        else

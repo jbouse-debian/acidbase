@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: English language file
@@ -144,6 +145,8 @@ DEFINE('_ROLEMAN','Gestion des Rôles');
 // Role Management
 DEFINE('_LISTR','Liste des Rôles');
 // List Roles
+DEFINE('_LOGOUT','Logout');
+// Logout
 DEFINE('_CREATER','Créer un Rôle');
 // Create a Role
 DEFINE('_LISTALL','Tout Lister');

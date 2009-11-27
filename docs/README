@@ -1,4 +1,4 @@
-Basic Analysis and Security Engine (BASE) v1.2.7 (karen)
+Basic Analysis and Security Engine (BASE) v1.3.9 (anne)
   
 By Kevin Johnson <kjohnson@secureideas.net , http://www.secureideas.net>
     and the BASE Development Team
@@ -82,16 +82,22 @@ _____________________________________
       Reason:       Back-end database
       Homepage:     http://www.postgresql.org/
 
-   -  Package:      Microsoft SQL Server 2000
+   -  Package:      Microsoft SQL Server
       Version:      8.00.194+
       Description:  Commercial RDBMS
       Reason:       Back-end database
       Homepage:     http://www.microsoft.com/sql/default.asp
 
+   -  Package:	    Oracle Database Server
+      Version:      9.0+
+      Description:  Commercial RDBMS
+      Reason:       Back-end database
+      Homepage:     http://www.oracle.com
+
  o A mechanism by which to log raw information into the database (any of):
 
    -  Package:      Snort
-      Version:      1.7+
+      Version:      2.2+
       Description:  Network Intrusion Detection System
       Reason:       Detects security events
       Homepage:     http://www.snort.org/
@@ -105,7 +111,7 @@ _____________________________________
    - any home-grown script that understands the underlying DB format
 
  o  Package:      PHP
-    Version:      4.0.4+
+    Version:      4.0.4+ (5.0+ recommended)
     Description:  Web scripting language
     Reason:       Implementation language of BASE
     Homepage:     http://www.php.net/
@@ -123,7 +129,7 @@ _____________________________________
      any of these should also be compatible (although untested).  
 
  o  Package:      ADODB
-    Version:      1.2+
+    Version:      4.9+
     Description:  PHP database abstraction library
     Reason:       PHP provides no clean database API
     Homepage:     http://adodb.sourceforge.net/
@@ -353,15 +359,15 @@ The following is a step-by-step list of installing BASE.
 
 5.  Start the web server.
 
-6.  Uncompress and install ADODB 1.2+.  This process should be as simple as
+6.  Uncompress and install ADODB 4.9+.  This process should be as simple as
     copying the files into a directory viewable by the web server and
     PHP.  In the case of Apache, any child directory of 'DocumentRoot'
     set in httpd.conf.
 
     [UNIX]
-      $ cp adodb112.tgz /home/httpd/html
+      $ cp adodb494.tgz /home/httpd/html
       $ cd /home/httpd/html
-      $ tar xvfz adodb112.tgz
+      $ tar xvfz adodb494.tgz
       $ cd ..
 
 7.  If you do not have PEAR::Image_Graph installed follow the below instructions
@@ -370,8 +376,8 @@ The following is a step-by-step list of installing BASE.
       $ pear install Image_Color
       $ pear install Log
       $ pear install Numbers_Roman
-      $ pear install http://pear.php.net/get/Numbers_Words-0.13.1.tgz
-      $ pear install http://pear.php.net/get/Image_Graph-0.3.0dev4.tgz
+      $ pear install Numbers_Words
+      $ pear install http://download.pear.php.net/package/Image_Graph-0.7.2.tgz
 
 8.  Verify that cookie support in the browser is enabled.  
 

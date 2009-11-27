@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Vanilla Config file used for the setup program
@@ -33,6 +34,7 @@ function returnContents()
 ** (see the file "base_main.php" for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Vanilla Config file
@@ -44,7 +46,7 @@ function returnContents()
 ********************************************************************************
 */
     session_start();
-    $BASE_VERSION = \'1.2.7 (karen)\';
+    $BASE_VERSION = \'1.3.9 (anne)\';
     
     /*
      Set the below to the language you would like people to use while viewing
@@ -335,10 +337,9 @@ function returnContents()
     $external_all_link = \'http://www.whois.sc/\';
     
     /* TCP/UDP port database */
-    $external_port_link = array(\'sans\'     => \'http://isc.sans.org/port_details.php?port=\',
-                                \'portsdb\'  => \'http://www.portsdb.org/bin/portsdb.cgi?portnumber=\', 
+    $external_port_link = array(\'sans\'     => \'http://isc.sans.org/port.html?port=\',                             
                                 \'tantalo\'  => \'http://ports.tantalo.net/?q=\',
-                                \'sstats\'   => \'http://www.securitystats.com/tools/portsearch.php?type=port&select=any&Submit=Submit&input=\');
+                                \'sstats\'   => \'http://www.securitystats.com/tools/portsearch.php?type=port&amp;select=any&amp;Submit=Submit&amp;input=\');
     
     /* Signature references */
     $external_sig_link = array(\'bugtraq\'   => array(\'http://www.securityfocus.com/bid/\', \'\'),
@@ -347,7 +348,7 @@ function returnContents()
                                \'arachnids\' => array(\'http://www.whitehats.com/info/ids\', \'\'),
                                \'mcafee\'    => array(\'http://vil.nai.com/vil/content/v_\', \'.htm\'),
                                \'icat\'      => array(\'http://icat.nist.gov/icat.cfm?cvename=CAN-\', \'\'),
-                               \'nessus\'    => array(\'http://www.nessus.org/plugins/index.php?view=single&id=\', \'\'),
+                               \'nessus\'    => array(\'http://www.nessus.org/plugins/index.php?view=single&amp;id=\', \'\'),
                                \'url\'       => array(\'http://\', \'\'),
                                \'local\' => array(\'signatures/\', \'.txt\'));
     
@@ -382,6 +383,17 @@ function returnContents()
     $user_session_path = \'\';
     $user_session_function = \'\';
     
+    /**
+     * This option is used to set if BASE will use colored results
+     * based on the priority of alerts
+     * 0 : no
+     * 1 : yes
+     */
+    $colored_alerts = 0;
+
+    // Red, yellow, orange, gray, white, blue
+    $priority_colors = array (\'FF0000\',\'FFFF00\',\'FF9900\',\'999999\',\'FFFFFF\',\'006600\');
+
     /*
      The below line should not be changed!
      */

@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Displays statistics on the detected alerts   
@@ -39,9 +40,7 @@
   $roleneeded = 10000;
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/index.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/index.php");
 
   $submit = ImportHTTPVar("submit", VAR_ALPHA | VAR_SPACE, array(_SELECTED, _ALLONSCREEN, _ENTIREQUERY));
   $qs->MoveView($submit);             /* increment the view if necessary */
@@ -199,8 +198,8 @@
      qroPrintEntry(GetSigClassName($class_id, $db));
 
      qroPrintEntry('<FONT>'.
-                   '<A HREF="base_qry_main.php?new=1&sig_class='.$class_id.
-                   '&submit='._QUERYDBP.'&num_result_rows=-1">'.$total_occurances.'</A> 
+                   '<A HREF="base_qry_main.php?new=1&amp;sig_class='.$class_id.
+                   '&amp;submit='._QUERYDBP.'&amp;num_result_rows=-1">'.$total_occurances.'</A> 
                    ('.(round($total_occurances/$event_cnt*100)).'%)'.
                    '</FONT>');
      qroPrintEntry('<FONT><A HREF="base_stat_sensor.php?sig_class='.$class_id.'">'.
@@ -208,8 +207,8 @@
      qroPrintEntry('<FONT><A HREF="base_stat_alerts.php?sig_class='.$class_id.'">'.
                     $sig_num.'</FONT>');
 
-     qroPrintEntry('<FONT>'.BuildUniqueAddressLink(1, '&sig_class='.$class_id).$sip_num.'</A></FONT>');
-     qroPrintEntry('<FONT>'.BuildUniqueAddressLink(2, '&sig_class='.$class_id).$dip_num.'</A></FONT>');
+     qroPrintEntry('<FONT>'.BuildUniqueAddressLink(1, '&amp;sig_class='.$class_id).$sip_num.'</A></FONT>');
+     qroPrintEntry('<FONT>'.BuildUniqueAddressLink(2, '&amp;sig_class='.$class_id).$dip_num.'</A></FONT>');
 
      qroPrintEntry('<FONT>'.$min_time.'</FONT>');
      qroPrintEntry('<FONT>'.$max_time.'</FONT>');
@@ -233,5 +232,5 @@
 
   $et->Mark("Get Query Elements");
   $et->PrintTiming();
-
+  echo "</body>\r\n</html>";
 ?>

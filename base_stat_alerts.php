@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Displays statistics on the detected alerts   
@@ -39,9 +40,7 @@
   $roleneeded = 10000;
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/index.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/index.php");
 
   $qs = new QueryState();
   $qs->AddCannedQuery("most_frequent", $freq_num_alerts, _MOSTFREQALERTS, "occur_d"); 
@@ -70,17 +69,17 @@
 	*/
      	echo '<TABLE WIDTH="100%">
            <TR>
-             <TD WIDTH="60%" VALIGN=TOP>';
+             <TD WIDTH="60%" VALIGN="top">';
 
         PrintCriteria("");
 
      	echo '</TD>
-           <TD WIDTH="40%" VALIGN=TOP>';
+           <TD WIDTH="40%" VALIGN="top">';
       
 	PrintFramedBoxHeader(_QSCSUMM, "#669999", "#FFFFFF");
 	PrintGeneralStats($db, 1, $show_summary_stats, 
                        "$join_sql ", "$where_sql $criteria_sql"); 
-	echo('<BR><LI><A HREF="base_stat_time.php">'._QSCTIMEPROF.'</A> '._QSCOFALERTS);
+	echo('<BR><LI><A HREF="base_stat_time.php">'._QSCTIMEPROF.'</A> '._QSCOFALERTS . "</LI>");
 	PrintFramedBoxFooter();
 
 	echo ' </TD>
@@ -146,14 +145,14 @@
                            " ORDER BY sig_cnt DESC");
   $qro->AddTitle(_SENSOR."&nbsp;#");
   $qro->AddTitle(_NBSOURCEADDR, 
-                "saddr_a", ", count(ip_src) AS saddr_cnt ",
+                "saddr_a", ", count(DISTINCT ip_src) AS saddr_cnt ",
                            " ORDER BY saddr_cnt ASC",
-                "saddr_d", ", count(ip_src) AS saddr_cnt ",
+                "saddr_d", ", count(DISTINCT ip_src) AS saddr_cnt ",
                            " ORDER BY saddr_cnt DESC");
   $qro->AddTitle(_NBDESTADDR, 
-                "daddr_a", ", count(ip_dst) AS daddr_cnt ",
+                "daddr_a", ", count(DISTINCT ip_dst) AS daddr_cnt ",
                            " ORDER BY daddr_cnt ASC",
-                "daddr_d", ", count(ip_dst) AS daddr_cnt ",
+                "daddr_d", ", count(DISTINCT ip_dst) AS daddr_cnt ",
                            " ORDER BY daddr_cnt DESC");
   $qro->AddTitle(_FIRST, 
                 "first_a", ", min(timestamp) AS first_timestamp ",
@@ -284,20 +283,20 @@
         qroPrintEntry(GetSigClassName(GetSigClassID($sig_id, $db), $db));
 
      qroPrintEntry('<FONT>'.
-                   '<A HREF="base_qry_main.php?new=1&sig%5B0%5D=%3D&sig%5B1%5D='.
-                   (rawurlencode($sig_id)).'&sig_type=1'.
-                   '&submit='._QUERYDBP.'&num_result_rows=-1">'.$total_occurances.'</A>'.
+                   '<A HREF="base_qry_main.php?new=1amp;&amp;sig%5B0%5D=%3D&amp;sig%5B1%5D='.
+                   (rawurlencode($sig_id)).'&amp;sig_type=1'.
+                   '&amp;submit='._QUERYDBP.'&amp;num_result_rows=-1">'.$total_occurances.'</A>'.
 		   /* mstone 20050309 lose this if we're not showing stats */
                    (($avoid_counts != 1)?('('.(round($total_occurances/$event_cnt*100)).'%)'):('')).
                    '</FONT>');
 
-     qroPrintEntry('<A HREF="base_stat_sensor.php?sig%5B0%5D=%3D&sig%5B1%5D='.
-                    rawurlencode($sig_id).'&sig_type=1">'.$num_sensors.'</A>');
+     qroPrintEntry('<A HREF="base_stat_sensor.php?sig%5B0%5D=%3D&amp;sig%5B1%5D='.
+                    rawurlencode($sig_id).'&amp;sig_type=1">'.$num_sensors.'</A>');
 
      if ( $db->baseGetDBversion() >= 100 )
-        $addr_link = '&sig_type=1&sig%5B0%5D=%3D&sig%5B1%5D='.rawurlencode($sig_id);
+        $addr_link = '&amp;sig_type=1&amp;sig%5B0%5D=%3D&amp;sig%5B1%5D='.rawurlencode($sig_id);
      else
-        $addr_link = '&sig%5B0%5D=%3D&sig%5B1%5D='.rawurlencode($sig_id);
+        $addr_link = '&amp;sig%5B0%5D=%3D&amp;sig%5B1%5D='.rawurlencode($sig_id);
 
      qroPrintEntry('<FONT>'.BuildUniqueAddressLink(1, $addr_link).$num_src_ip.'</A></FONT>');
      qroPrintEntry('<FONT>'.BuildUniqueAddressLink(2, $addr_link).$num_dst_ip.'</A></FONT>');
@@ -347,5 +346,5 @@
 	$et->PrintTiming();
   }
 
- 
+  echo "</body>\r\n</html>";
 ?>

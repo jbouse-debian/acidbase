@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: manages the output of Query results
@@ -57,12 +58,12 @@ class QueryResultsOutput
     return NULL;
   }
  
-  function PrintHeader()
+  function PrintHeader($text = '')
   {
      /* Client-side Javascript to select all the check-boxes on the screen
       *   - Bill Marque (wlmarque@hewitt.com) */
      echo '
-          <SCRIPT Language=Javascript>
+          <SCRIPT type="text/javascript">
             function SelectAll()
             {
                for(var i=0;i<document.PacketForm.elements.length;i++)
@@ -86,6 +87,10 @@ class QueryResultsOutput
             }
            </SCRIPT>';
 
+     if ('' != $text) {
+         echo $text;
+     }
+     
      echo '<TABLE CELLSPACING=0 CELLPADDING=2 BORDER=0 WIDTH="100%" BGCOLOR="#000000">'."\n".
           "<TR><TD>\n".
           '<TABLE CELLSPACING=0 CELLPADDING=0 BORDER=0 WIDTH="100%" BGCOLOR="#FFFFFF">'."\n".
@@ -99,9 +104,9 @@ class QueryResultsOutput
        $sort_keys = array_keys($title["value"]);
        if ( count($sort_keys) == 2 )
        {
-          $print_title = "<A HREF=\"".$this->url."&sort_order=".$sort_keys[0]."\">&lt;</A>".
+          $print_title = "<A HREF=\"".$this->url."&amp;sort_order=".$sort_keys[0]."\">&lt;</A>".
                          "&nbsp;".$title["key"]."&nbsp;".
-                         "<A HREF=\"".$this->url."&sort_order=".$sort_keys[1]."\">&gt;</A>";
+                         "<A HREF=\"".$this->url."&amp;sort_order=".$sort_keys[1]."\">&gt;</A>";
        }
        else
        {

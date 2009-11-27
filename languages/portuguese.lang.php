@@ -7,6 +7,7 @@
 ** (veja o arquivo 'base_main.php' para detalhes de licença)
 **
 ** Lideranças do Projeto: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Feito a partir do trabalho de Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Propósito: Arquivo da linguagem Português Brasileiro

@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: status and event/dns/whois cache maintenance 
@@ -39,20 +40,12 @@
       {
          $usrrole = $BUser->AuthenticateNoCookie(filterSql($_POST['user']), filterSql($_POST['pwd']));
          if ($usrrole == "Failed")
-         {
-            header('HTTP/1.0 401');
-            exit;
-         }
+            base_header('HTTP/1.0 401');
          if ($usrrole > $roleneeded)
-         {
-            header('HTTP/1.0 403');
-            exit;
-         }
+            base_header('HTTP/1.0 403');
       }
       elseif (($BUser->hasRole($roleneeded) == 0))
-      {
-        header("Location: ". $BASE_urlpath . "/index.php");
-      }
+        base_header("Location: ". $BASE_urlpath . "/index.php");
    }
 
   $page_title = _MAINTTITLE;
@@ -158,7 +151,7 @@
          for ( $i = 0; $i < count($module_lst); $i++)
              echo " [ ".$module_lst[$i]." ]";
 
-  echo '      </TD><TR>
+  echo '      </TD></TR>
            </TABLE>
          </TD></TR>
         </TABLE><P>';
@@ -182,7 +175,7 @@
   echo $repair_output;
 
    echo '
-             </TD><TR>
+             </TD></TR>
            </TABLE>
          </TD></TR>
         </TABLE><P>';
@@ -210,7 +203,7 @@
         &nbsp;&nbsp;
         <INPUT TYPE="submit" NAME="submit" VALUE="Rebuild Alert Cache">';
 
-  echo '   </TD><TR>
+  echo '   </TD></TR>
            </TABLE>
          </TD></TR>
         </TABLE><P>';
@@ -263,7 +256,7 @@
         <INPUT TYPE="submit" NAME="submit" VALUE="Rebuild IP Cache">&nbsp;
         <INPUT TYPE="submit" NAME="submit" VALUE="Rebuild Whois Cache"><BR>';
        
-  echo '   </TD><TR>
+  echo '   </TD></TR>
            </TABLE>
          </TD></TR>
         </TABLE><P>';
@@ -273,5 +266,5 @@
   PrintBASESubFooter();
 
   $et->PrintTiming();
-
+  echo "</body>\r\n</html>";
 ?>

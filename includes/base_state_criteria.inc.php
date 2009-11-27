@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Lead: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: routines to manipulate shared state (session information)
@@ -130,7 +131,7 @@ class CriteriaState
   function GetClearCriteriaString($name, $element = "")
   {
     return '&nbsp;&nbsp;<A HREF="'.$this->clear_url.'?clear_criteria='.$name.
-           '&clear_criteria_element='.$element.$this->clear_url_params.'">...'._CLEAR.'...</A>';
+           '&amp;clear_criteria_element='.$element.$this->clear_url_params.'">...'._CLEAR.'...</A>';
   }
 
   function ClearCriteriaStateElement($name, $element)
@@ -220,8 +221,17 @@ function PushHistory()
     *       - remove &back=1 from any QUERY_STRING
     *   - add the current session into the $back_list (history)
     */
-   $tmp_back_list = $_SESSION['back_list'];
-   $tmp_back_list_cnt = $_SESSION['back_list_cnt'];
+   if (isset($_SESSION['back_list'])) {
+       $tmp_back_list = $_SESSION['back_list'];
+   } else {
+       $tmp_back_list = '';
+   }
+   
+   if (isset($_SESSION['back_list_cnt'])) {
+       $tmp_back_list_cnt = $_SESSION['back_list_cnt'];
+   } else {
+       $tmp_back_list_cnt = '';
+   }
 
    $_SESSION['back_list'] = NULL;
    $_SESSION['back_list_cnt'] = -1;
@@ -231,11 +241,11 @@ function PushHistory()
    $_SESSION['back_list_cnt'] = $tmp_back_list_cnt;
 
    $query_string = CleanVariable($_SERVER["QUERY_STRING"], VAR_PERIOD | VAR_DIGIT | VAR_PUNC | VAR_LETTER);
-   if ( isset($_POST['caller']) ) $query_string .= "&caller=".$_POST['caller'];
-   if ( isset($_POST['num_result_rows']) ) $query_string .= "&num_result_rows=".$_POST['num_result_rows'];
-   if ( isset($_POST['sort_order']) ) $query_string .= "&sort_order=".$_POST['sort_order'];
-   if ( isset($_POST['current_view']) ) $query_string .= "&current_view=".$_POST['current_view'];
-   if ( isset($_POST['submit']) ) $query_string .= "&submit=".$_POST['submit'];
+   if ( isset($_POST['caller']) ) $query_string .= "&amp;caller=".$_POST['caller'];
+   if ( isset($_POST['num_result_rows']) ) $query_string .= "&amp;num_result_rows=".$_POST['num_result_rows'];
+   if ( isset($_POST['sort_order']) ) $query_string .= "&amp;sort_order=".$_POST['sort_order'];
+   if ( isset($_POST['current_view']) ) $query_string .= "&amp;current_view=".$_POST['current_view'];
+   if ( isset($_POST['submit']) ) $query_string .= "&amp;submit=".$_POST['submit'];
 
    $query_string = ereg_replace("back=1&", "", CleanVariable($query_string, VAR_PERIOD | VAR_DIGIT | VAR_PUNC | VAR_LETTER));
 
@@ -269,15 +279,15 @@ function PushHistory()
 function PrintBackButton()
 {
    if ( $GLOBALS['maintain_history'] == 0 )
-      return "<FONT>'._BACK.'</FONT>";
+      return "&nbsp;";
 
    $criteria_num = $_SESSION['back_list_cnt'] - 1;
 
    if ( isset($_SESSION['back_list'][$criteria_num]["SCRIPT_NAME"]) )
-     return "<FONT><A HREF=\"".$_SESSION['back_list'][$criteria_num]["SCRIPT_NAME"].
+     return "[&nbsp;<FONT><A HREF=\"".$_SESSION['back_list'][$criteria_num]["SCRIPT_NAME"].
             "?back=1&".
-            $_SESSION['back_list'][$criteria_num]["QUERY_STRING"]."\">"._BACK."</A></FONT>";
+            $_SESSION['back_list'][$criteria_num]["QUERY_STRING"]."\">"._BACK."</A></FONT>&nbsp;]";
    else
-     return "<FONT>"._BACK."</FONT>";
+     return "&nbsp;";
 }
 ?>

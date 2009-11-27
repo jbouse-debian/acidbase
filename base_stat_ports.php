@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Displays statistics on the detected source and
@@ -51,11 +52,10 @@
 
    // Check role out and redirect if needed -- Kevin
   $roleneeded = 10000;
+  $port_proto = "TCP";
   $BUser = new BaseUser();
   if (($BUser->hasRole($roleneeded) == 0) && ($Use_Auth_System == 1))
-  {
-    header("Location: ". $BASE_urlpath . "/index.php");
-  }
+    base_header("Location: ". $BASE_urlpath . "/index.php");
 
   $qs = new QueryState();
   $qs->AddCannedQuery("most_frequent", $freq_num_uports, _MOSTFREQPORTS, "occur_d");
@@ -160,7 +160,7 @@
 
   /* Setup the Query Results Table */
   $qro = new QueryResultsOutput("base_stat_ports.php?caller=$caller".
-                                "&port_type=$port_type&proto=$proto");
+                                "&amp;port_type=$port_type&amp;proto=$proto");
 
   $qro->AddTitle(" ");
   $qro->AddTitle(_PORT, 
@@ -266,14 +266,14 @@
       }
 
       $url_param = $url_port_type."_port%5B0%5D%5B0%5D=+".
-                   "&".$url_port_type."_port%5B0%5D%5B1%5D=".$port_type_sql.
-                   "&".$url_port_type."_port%5B0%5D%5B2%5D=%3D".
-                   "&".$url_port_type."_port%5B0%5D%5B3%5D=".$url_port.
-                   "&".$url_port_type."_port%5B0%5D%5B4%5D=+".
-                   "&".$url_port_type."_port%5B0%5D%5B5%5D=+".
-                   "&".$url_port_type."_port_cnt=1".
-                   "&layer4=".$url_layer4.
-                   "&num_result_rows=-1&current_view=-1";
+                   "&amp;".$url_port_type."_port%5B0%5D%5B1%5D=".$port_type_sql.
+                   "&amp;".$url_port_type."_port%5B0%5D%5B2%5D=%3D".
+                   "&amp;".$url_port_type."_port%5B0%5D%5B3%5D=".$url_port.
+                   "&amp;".$url_port_type."_port%5B0%5D%5B4%5D=+".
+                   "&amp;".$url_port_type."_port%5B0%5D%5B5%5D=+".
+                   "&amp;".$url_port_type."_port_cnt=1".
+                   "&amp;layer4=".$url_layer4.
+                   "&amp;num_result_rows=-1&amp;current_view=-1";
 
       qroPrintEntryHeader($i);
 
@@ -293,14 +293,14 @@
 
       qroPrintEntry($currentPort);
       qroPrintEntry('<A HREF="base_stat_sensor.php?'.$url_param.'">'.$num_sensors.'</A>');
-      qroPrintEntry('<A HREF="base_qry_main.php?'.$url_param.'&new=1&submit='.QUERYDBP.
-                    '&sort_order=sig_a">'.$num_events.'</A>');
-      qroPrintEntry('<A HREF="base_stat_alerts.php?'.$url_param.'&sort_order=sig_a">'.
+      qroPrintEntry('<A HREF="base_qry_main.php?'.$url_param.'&amp;new=1&amp;submit='._QUERYDBP.
+                    '&amp;sort_order=sig_a">'.$num_events.'</A>');
+      qroPrintEntry('<A HREF="base_stat_alerts.php?'.$url_param.'&amp;sort_order=sig_a">'.
                     $num_sig.'</A>');
-      qroPrintEntry('<A HREF="base_stat_uaddr.php?'.$url_param.'&addr_type=1'.
-                    '&sort_order=addr_a">'.$num_sip);
-      qroPrintEntry('<A HREF="base_stat_uaddr.php?'.$url_param.'&addr_type=2'.
-                    '&sort_order=addr_a">'.$num_dip);
+      qroPrintEntry('<A HREF="base_stat_uaddr.php?'.$url_param.'&amp;addr_type=1'.
+                    '&amp;sort_order=addr_a">'.$num_sip);
+      qroPrintEntry('<A HREF="base_stat_uaddr.php?'.$url_param.'&amp;addr_type=2'.
+                    '&amp;sort_order=addr_a">'.$num_dip);
       qroPrintEntry($first_time);
       qroPrintEntry($last_time);
 
@@ -324,5 +324,5 @@
 
   $et->Mark("Get Query Elements");
   $et->PrintTiming();
-
+  echo "</body>\r\n</html>";
 ?>

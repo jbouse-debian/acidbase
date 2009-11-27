@@ -7,6 +7,7 @@
 ** (see the file 'base_main.php' for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
+**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Setup step 4, create the database stuff
@@ -35,7 +36,7 @@ if (file_exists('../base_conf.php'))
 	die ("If you wish to re-run the setup routine, please either move OR delete your previous base_conf file first.");
    
 ?>
-<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <!-- Basic Analysis and Security Engine (BASE) -->
 <HTML>
 
@@ -116,7 +117,7 @@ if (file_exists('../base_conf.php'))
              else
                 ErrorMessage("Successfully created user.");
              if ($userdelcnt[0] > 0 )
-                ErrorMessage("$userdelcnt[0] user(s) matching '$user' was(where) deleted.");
+                ErrorMessage("$userdelcnt[0] user(s) matching '$user' was(were) deleted.");
          }
   } else
      echo '<INPUT TYPE="submit" NAME="submit" VALUE="Create BASE AG">'; 
