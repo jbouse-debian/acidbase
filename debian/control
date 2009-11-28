@@ -9,7 +9,7 @@ Homepage: http://secureideas.sourceforge.net/
 
 Package: acidbase
 Architecture: all
-Depends: ${misc:Depends}, dbconfig-common, mysql-client | virtual-mysql-client, postgresql-client, php5, libphp-adodb (>= 4.62), libwww-perl
+Depends: ${misc:Depends}, dbconfig-common, mysql-client | virtual-mysql-client | postgresql-client, php5, libphp-adodb (>= 4.62), libwww-perl
 Suggests: snort-mysql | snort-pgsql
 Description: Basic Analysis and Security Engine
  BASE is based on the code from the Analysis Console for Intrusion Databases
