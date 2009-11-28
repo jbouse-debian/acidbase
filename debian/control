@@ -6,12 +6,10 @@ Uploaders: Javier Fernandez-Sanguino Pen~a <jfs@computer.org>
 Build-Depends: debhelper (>= 5.0.0), po-debconf, dpatch
 Standards-Version: 3.8.3
 Homepage: http://secureideas.sourceforge.net/
-Vcs-Cvs: -d:pserver:anonymous@secureideas.cvs.sf.net:/cvsroot/secureideas
-Vcs-Browser: http://secureideas.cvs.sf.net/secureideas
 
 Package: acidbase
 Architecture: all
-Depends: ${misc:Depends}, dbconfig-common, mysql-client | virtual-mysql-client, postgresql-client, php5 | php4 | php5-cli | php4-cli, libphp-adodb (>= 4.62), libwww-perl
+Depends: ${misc:Depends}, dbconfig-common, mysql-client | virtual-mysql-client, postgresql-client, php5, libphp-adodb (>= 4.62), libwww-perl
 Suggests: snort-mysql | snort-pgsql
 Description: Basic Analysis and Security Engine
  BASE is based on the code from the Analysis Console for Intrusion Databases
