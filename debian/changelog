@@ -1,3 +1,12 @@
+acidbase (1.4.4-2) unstable; urgency=low
+
+  * debian/control: Update depends against mysql & postgresql (LP:
+    #223405)
+  * debian/control: Add Vcs-* headers
+  * debian/gbp.conf: Add GBP config settings
+
+ -- Jeremy T. Bouse <jbouse@debian.org>  Sun, 13 Dec 2009 11:24:06 -0500
+
 acidbase (1.4.4-1) unstable; urgency=low
 
   * Imported Upstream version 1.4.4 (Closes: #501644, #552235)
