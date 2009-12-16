@@ -1,3 +1,10 @@
+acidbase (1.4.4-3) unstable; urgency=medium
+
+  * debian/control: Dependencies for php-mail and php-mail-mime (Closes:
+    #561321) - thanks to Thomas Mueller <thomas@chaschperli.ch>
+
+ -- Jeremy T. Bouse <jbouse@debian.org>  Wed, 16 Dec 2009 08:53:24 -0500
+
 acidbase (1.4.4-2) unstable; urgency=low
 
   * debian/control: Update depends against mysql & postgresql (LP:
