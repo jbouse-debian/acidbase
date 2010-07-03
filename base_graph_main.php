@@ -113,7 +113,7 @@
   */
   if ( $submit == "" )
   {
-    $height            = 400;
+    $height            = 800;
     $width             = 600;
     $pmargin0          = 50;
     $pmargin1          = 50;

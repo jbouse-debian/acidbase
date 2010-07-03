@@ -558,7 +558,42 @@
       -- Juergen Leising
     - Fixed Cross site scripting and local file include in base_local_rules.php -- Kevin Johnson Reported by Clint Ruoho
 
-
+11/03/09 1.4.5 (lilias)
+    - Fix for a bug with the archiving of alerts: While the alerts have been
+      archived correctly, any lookups of them in the archive database have
+      failed, because connecting to the archive database was performed
+      using the baseConnect() method only, and several sql queries in
+      base_qry_alert() are simply not compatible with baseConnect().
+      Using basePConnect() fixes this.  Actually, more a more a workaround
+      than a real fix.  Bug was reported at:
+     	https://sourceforge.net/forum/message.php?msg_id=7609952
+      -- Juergen Leising
+    - Fixed more XSS flaws in base_local_rules.php -- Thanks to Dave Hull for the scan -- Kevin Johnson
+    - Updated Snort SID lookup for new functionality in the snort.org web site -- Kevin Johnson
+    - Fixed src and dest IP address encoding problem in base_payload.php. Thanks to Brian
+      Brzezicki and Brad Benson (bug #2889623).  This refers to non-flop
+      databases only.
+    - Temporary fix for bug #2874199 -- Juergen Leising
+    - Fixed pcap download for FLoP-extended databases on 64-bit platforms. 
+      -- Juergen Leising
+    - Changed the default sort order from "none" to "time_d" (= descending order)
+      as suggested by Brian in bug #2899177 -- Juergen Leising
+    - Added some debug code to take on bug #2880551 -- Juergen Leising
+    - Fixed "Call to undefined method ProtocolFieldCriteria::ProtocolFieldCriteria() in /usr/share/base-1.4.5/includes/base_state_citems.inc.php" -- Juergen Leising
+    - More memory seems to be necessary for the world map functions. 256MB
+      should be enough, for now. Cf. base_graph_main.php. -- Juergen Leising 
+    - The font system in the PEAR::Image::Graph and Canvas library is
+      broken on fedora 12 with php-5.3.  This can not be fixed from inside BASE,
+      any more.  However, a fix is possible, if the IMAGE_CANVAS_SYSTEM_FONT_PATH
+      in /usr/share/pear/Image/Canvas.php from the PEAR::Image::Canvas
+      library gets defined properly.  The fontmap.txt file does NOT matter,
+      any more.  See docs/README.graph_alert_data for details. -- Juergen Leising
+    - Fixed bug with the labelling of the x-axis with the signature 
+      classifications chart. -- Juergen Leising
+    - Updated base-rss in the contrib -- Dan Michitsch
+    - Fixed Snort SID lookup, as described by Shawn Jefferson on the
+      "Snort-users" mailing list on Feb, 23rd 2010.  Such a lookup needs a URL,
+      such as http://www.snort.org/search/sid/1-2003 -- Juergen Leising
 
 
 

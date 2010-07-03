@@ -23,7 +23,7 @@ if ($debug_mode > 0)
 
 function print_element($item, $key)
 {
-	echo "<BR><BR>\n\n-------\n$item\n--------\n\n<BR><BR>";
+	echo "<BR><BR>\n\n-------\n" . htmlspecialchars($item) . "\n--------\n\n<BR><BR>";
 }
 
 
@@ -80,7 +80,7 @@ function pcre_grep_file_poor($file, $key, $sid)
 
 	if (!is_readable($file))
 	{
-		echo "ERROR: \"$file\" is not readable. Ignoring this file.\n<BR>";
+		echo "ERROR: \"" . htmlspecialchars($file) . "\" is not readable. Ignoring this file.\n<BR>";
 		return FALSE;
 	}
 
@@ -93,7 +93,7 @@ function pcre_grep_file_poor($file, $key, $sid)
 
 	if ($debug_mode > 0)
 	{
-		echo "file = \"$file\", pattern = \"$pattern\"\n<BR>";
+		echo "file = \"" . htmlspecialchars($file) . "\", pattern = \"" . htmlspecialchars($pattern) . "\"\n<BR>";
 	}
 
 	while (list($key, $val) = each($lines_array)) 
@@ -102,11 +102,11 @@ function pcre_grep_file_poor($file, $key, $sid)
 		$rv = preg_match($pattern, $val, $matches);
 		if ($rv)
 		{
-			echo "<TH ALIGN=LEFT>$file:</TH>\n";
+			echo "<TH ALIGN=LEFT>" . htmlspecialchars($file) . ":</TH>\n";
 			echo "<TR><TD>\n";
 			while (list($k, $rule) = each($matches))
 			{
-				echo $rule;
+				echo htmlspecialchars($rule);
 				echo "\n";
 			}
 			echo "</TD></TR>\n";
@@ -140,7 +140,7 @@ function search_dir($dir, $sid)
 
 	if ($debug_mode > 1)
 	{
-		echo "In front of glob, with \$dir = $dir\n<BR>";
+		echo "In front of glob, with \$dir = " . htmlspecialchars($dir) . "\n<BR>";
 	}
 
 
@@ -148,7 +148,7 @@ function search_dir($dir, $sid)
 	{
 		if ($debug_mode > 0)
 		{
-			echo "filename = $filename\n";
+			echo "filename = " . htmlspecialchars($filename) . "\n";
 		}
 
 		if (filetype($filename) == "dir")
@@ -171,7 +171,7 @@ function search_dir($dir, $sid)
 			}
 			else
 			{
-				echo "ERROR: \"$dir/$filename\" is not readable. Ignoring this file.";
+				echo "ERROR: \"" . htmlspecialchars($dir) ."/" . htmlspecialchars($filename) . "\" is not readable. Ignoring this file.";
 			}
 		}
 	}
@@ -191,7 +191,7 @@ if (file_exists($dir))
 	{
 		if (is_readable($dir))
 		{
-			echo "<H1>sid:$sid;</H1>\n";
+			echo "<H1>sid:" . htmlspecialchars($sid) . ";</H1>\n";
 
 			if ($debug_mode > 0)
 			{
@@ -211,22 +211,22 @@ if (file_exists($dir))
 			}
 			else
 			{
-				echo "ERROR: Could not find \"sig:$sid;\" in directory \"$dir\".\n<BR>";
+				echo "ERROR: Could not find \"sig:" . htmlspecialchars($sid) . ";\" in directory \"". htmlspecialchars($dir) . "\".\n<BR>";
 			}
 		}
 		else
 		{
-			echo "ERROR: Directory $dir can not be searched. It must also be readable for the user the web server is running as. However, this is not required by the web server per se, but by the glob() command of php.\n<BR>";
+			echo "ERROR: Directory " . htmlspecialchars($dir) . " can not be searched. It must also be readable for the user the web server is running as. However, this is not required by the web server per se, but by the glob() command of php.\n<BR>";
 		}
 	}
 	else
 	{
-		echo "ERROR: Directory \"$dir\" can not be searched. It must be executable (required by the web server).\n<BR>";
+		echo "ERROR: Directory \"" . htmlspecialchars($dir) . "\" can not be searched. It must be executable (required by the web server).\n<BR>";
 	}
 }
 else
 {
-	echo "ERROR: Directory \"$dir\" does not exist.\n<BR>";
+	echo "ERROR: Directory \"" . htmlspecialchars($dir) . "\" does not exist.\n<BR>";
 }
 
 

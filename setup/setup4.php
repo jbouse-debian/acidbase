@@ -48,7 +48,7 @@ if (file_exists('../base_conf.php'))
 <BODY>
 <TABLE WIDTH="100%" BORDER=0 CELLSPACING=0 CELLPADDING=5>
     <TR>
-      <TD class="mainheader"> &nbsp </TD>
+      <TD class="mainheader">&nbsp;</TD>
       <TD class="mainheadertitle">
          Basic Analysis and Security Engine (BASE) Setup Program
       </TD>
@@ -196,8 +196,8 @@ if (file_exists('../base_conf.php'))
            <P>
            <center>Now continue to <a href="setup5.php">step 5</a>...</center>'; 
 
-  echo "\n</FORM>\n";
-// vim: tabstop=2:shiftwidth=2:expandtab 
+  //echo "\n</FORM>\n";
 ?>
+</FORM>
 </BODY>
 </HTML>

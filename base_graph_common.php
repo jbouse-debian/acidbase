@@ -506,12 +506,27 @@ function GetClassificationDataSet(&$xdata, $chart_type, $data_source, $min_thres
    {
       if ( $myrow[1] >= $min_threshold )
       {
+         if ($debug_mode > 0)
+         {
+           // Sig. classification vs. number of alerts
+           error_log(__FILE__ . ":" . __LINE__ . ": \$myrow[0] = \""  . $myrow[0] . "\"");
+         }
+
+
          $xdata[$cnt][0] = strip_tags(GetSigClassName($myrow[0], $db)); 
+         if ($debug_mode > 0)
+         {
+           // Sig. classification vs. number of alerts
+           error_log(__FILE__ . ":" . __LINE__ . ": \$xdata[\$cnt][0] = \""  . $xdata[$cnt][0] . "\"");
+         }
+
          if (empty($xdata[$cnt][0]) || $xdata[$cnt][0] == "unclassified")
          {
            $xdata[$cnt][0] = $myrow[0];
          }
-         error_log("\$xdata[\$cnt][0] = \""  . $xdata[$cnt][0] . "\"");
+
+         
+
          $xdata[$cnt][1] = $myrow[1];
          ++$cnt;
       }

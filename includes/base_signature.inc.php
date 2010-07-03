@@ -335,7 +335,7 @@ function GetSignatureReference($sig_id, $db, $style)
 	          /* Hack to fix blank gid from barnyard -- Kevin Johnson */
 	          if ( $sig_gid != "") 
             {
-            	$ref = $ref.GetSingleSignatureReference("snort", $sig_gid .':'. $sig_sid, $style);
+            	$ref = $ref.GetSingleSignatureReference("snort", $sig_gid .'-'. $sig_sid, $style);
 	          } 
             else 
             {
@@ -615,18 +615,38 @@ function GetSigClassID($sig_id, $db)
 
 function GetSigClassName ($class_id, $db)
 {
+	GLOBAL $debug_mode;
+
+
   if ( $class_id == "" )
-    return "<I>unclassified</I>";
+	{
+		error_log(__FILE__ . ":" . __LINE__ . ": WARNING: \$class_id is empty. Returning \"unclassified\"");
+		return "<I>"._UNCLASS."</I>";
+	}
 
   $sql = "SELECT sig_class_name FROM sig_class ". 
          "WHERE sig_class_id = '$class_id'";
+
+	if ($debug_mode > 0)
+	{
+		error_log(__FILE__ . ":" . __LINE__ . ": sql = \"$sql\"");
+	}
   $result = $db->baseExecute($sql);
 
   $row = $result->baseFetchRow();
-  if ( $row == "" )  
+  if ( $row == "" ) 
+	{
+		if ($debug_mode > 0)
+		{
+			error_log(__FILE__ . ":" . __LINE__ . ": WARNING: Database query result is empty for \$class_id = \"$class_id\". Returning \"unclassified\""); 
+		}
+
     return "<I>"._UNCLASS."</I>";
+	}
   else
+	{
     return $row[0]; 
+	}
 }
 
 function GetTagTriger($current_sig, $db, $sid, $cid)
