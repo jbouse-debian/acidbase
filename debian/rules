@@ -58,6 +58,7 @@ install: build
 
 	# remove snortunified LICENCE, already listed in debian/copyright
 	rm $(CURDIR)/debian/acidbase/usr/share/acidbase/contrib/SnortUnified/LICENSE
+	rm -rf $(CURDIR)/debian/acidbase/usr/share/acidbase/contrib/SnortUnified/SnortUnified/CVS
 
 # Build architecture-independent files here.
 binary-arch: build install
