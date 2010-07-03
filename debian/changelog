@@ -1,3 +1,12 @@
+acidbase (1.4.5-1) unstable; urgency=low
+
+  * New upstream version -
+    - fixes undefined method errors in php 5.3 (Closes: #577570)
+    - addresses XSS vulnerabilities in CVE-2009-4839 (Closes: #587819)
+  * updated 02_update_external_links.dpatch for new version
+
+ -- Jeremy T. Bouse <jbouse@debian.org>  Sat, 03 Jul 2010 02:01:54 -0400
+
 acidbase (1.4.4-3) unstable; urgency=medium
 
   * debian/control: Dependencies for php-mail and php-mail-mime (Closes:
