@@ -8,18 +8,18 @@
 
 @DPATCH@
 diff -urNad acidbase~/base_conf.php.dist acidbase/base_conf.php.dist
---- acidbase~/base_conf.php.dist	2009-11-27 13:38:06.000000000 -0500
-+++ acidbase/base_conf.php.dist	2009-11-27 13:44:42.000000000 -0500
-@@ -356,6 +356,8 @@
+--- acidbase~/base_conf.php.dist	2010-07-03 01:41:42.000000000 -0400
++++ acidbase/base_conf.php.dist	2010-07-03 01:45:45.000000000 -0400
+@@ -357,6 +357,8 @@
  
  /* Whois query */
  $external_whois_link = 'http://www.dnsstuff.com/tools/whois.ch?ip=';
 +/* Alternative query */
 +//  $external_whois_link = 'http://www.samspade.org/t/ipwhois?a=';
  
+ 
  /* Local whois */
- /* IP addresses of whois servers. Updated on Aug, 1st 2009.
-@@ -383,6 +385,8 @@
+@@ -385,6 +387,8 @@
  
  /* DNS query */
  $external_dns_link = 'http://www.dnsstuff.com/tools/ptr.ch?ip=';
@@ -28,11 +28,11 @@ diff -urNad acidbase~/base_conf.php.dist acidbase/base_conf.php.dist
  
  /* SamSpade 'all' query */
  $external_all_link = 'http://www.whois.sc/';
-@@ -394,11 +398,10 @@
+@@ -396,11 +400,10 @@
  
  /* Signature references */
  $external_sig_link = array('bugtraq'   => array('http://www.securityfocus.com/bid/', ''),
--                           'snort'     => array('http://www.snort.org/pub-bin/sigs.cgi?sid=', ''),
+-                           'snort'     => array('http://www.snort.org/search/sid/', ''),
 +                           'snort'     => array('http://www.snortid.com/snortid.asp?QueryId=', ''),
                             'cve'       => array('http://cve.mitre.org/cgi-bin/cvename.cgi?name=', ''),
 -                           'arachnids' => array('http://www.whitehats.com/info/ids', ''),
