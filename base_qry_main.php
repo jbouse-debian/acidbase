@@ -103,7 +103,8 @@
     // If there was no previous sort order, default it to none.
     if ($sort_order == "" || !isset($sort_order))
     {
-      $sort_order = "none"; //default to none.
+      // $sort_order = "none"; //default to none.
+			$sort_order = "time_d"; // default set to "descending order"
     }
   }
 

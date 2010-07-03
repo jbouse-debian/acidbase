@@ -42,17 +42,30 @@ class baseCon {
 
   function baseDBConnect($method, $database, $host, $port, $username, $password, $force = 0)
   {
-    GLOBAL $archive_dbname, $archive_host, $archive_port, $archive_user, $archive_password;
+    GLOBAL $archive_dbname, $archive_host, $archive_port, $archive_user, $archive_password, $debug_mode;
     
     // Check archive cookie to see if they want to be using the archive tables
     // and check - do we force to use specified database even if archive cookie is set
     if ( (@$_COOKIE['archive'] == 1) && ($force != 1) )
     {
       // Connect to the archive tables
+      if ($debug_mode > 0)
+      {
+        print "<BR><BR>\n" . __FILE__ . ":" . __LINE__ . ": DEBUG: Connecting to archive db.<BR><BR>\n\n";
+      }
+
+      if ( $method == DB_CONNECT )
         $this->baseConnect($archive_dbname, $archive_host, $archive_port, $archive_user, $archive_password);
+      else
+        $this->basePConnect($archive_dbname, $archive_host, $archive_port, $archive_user, $archive_password);
 
     } else {
       // Connect to the main alert tables
+      if ($debug_mode > 0)
+      {
+        print "<BR><BR>\n" . __FILE__ . ":" . __LINE__ . ": DEBUG: Connecting to alert db.<BR><BR>\n\n";
+      }
+
       if ( $method == DB_CONNECT )
         $this->baseConnect($database, $host, $port, $username, $password);
       else
@@ -474,13 +487,16 @@ class baseRS {
 
   function baseFetchRow()
   {
+    GLOBAL $debug_mode;
+
+
      /* Workaround for the problem, that the database may contain NULL
       * whereas "NOT NULL" has been defined, when it was created */
      if (!is_object($this->row))
      {
        if ($debug_mode > 1)
        {
-         echo "<BR><BR>" . __FILE__ . ':' . __LINE__ . ": ERROR: \$this->row is not an object<BR><PRE>";
+         echo "<BR><BR>" . __FILE__ . ':' . __LINE__ . ": ERROR: \$this->row is not an object (1)<BR><PRE>";
          debug_print_backtrace();
          echo "<BR><BR>";
          echo "var_dump(\$this):<BR>";
@@ -518,7 +534,7 @@ class baseRS {
       if ($debug_mode > 1)
       {
         echo '<BR><BR>';
-        echo __FILE__ . ':' . __LINE__ . ': ERROR: $this->row is not an object.';
+        echo __FILE__ . ':' . __LINE__ . ': ERROR: $this->row is not an object (2).';
         echo '<BR><PRE>';
         debug_print_backtrace();
         echo '<BR><BR>var_dump($this):<BR>';
@@ -564,7 +580,7 @@ class baseRS {
       if ($debug_mode > 1)
       {
         echo '<BR><BR>';
-        echo __FILE__ . ':' . __LINE__ . ': ERROR: $this->row is not an object.';
+        echo __FILE__ . ':' . __LINE__ . ': ERROR: $this->row is not an object (3).';
         echo '<BR><PRE>';
         debug_print_backtrace();
         echo '<BR><BR>var_dump($this):<BR>';

@@ -4,10 +4,9 @@
 ** Copyright (C) 2004 BASE Project Team
 ** Copyright (C) 2000 Carnegie Mellon University
 ** 
-** (see the file 'base_main.php' for license details)
+** (see the file "base_main.php" for license details)
 **
 ** Project Leads: Kevin Johnson <kjohnson@secureideas.net>
-**                Sean Muller <samwise_diver@users.sourceforge.net>
 ** Built upon work by Roman Danyliw <rdd@cert.org>, <roman@danyliw.com>
 **
 ** Purpose: Vanilla Config file
@@ -18,15 +17,8 @@
 **
 ********************************************************************************
 */
-
-/*
- Create a unique cookie name for each BASE installation.
-*/
-$sessionName = str_replace(' ', '_', $BASE_installID . session_name());
-session_name($sessionName);
-
 session_start();
-$BASE_VERSION = '1.4.4 (dawn)';
+$BASE_VERSION = '1.4.5 (lilias)';
 
 /*
  Set the below to the language you would like people to use while viewing
@@ -40,6 +32,7 @@ $BASE_Language = 'english';
  accessible to the public or the network at large.  i.e. a home user testing it
  out!
 */
+
 $Use_Auth_System = 0;
 
 /*
@@ -62,6 +55,14 @@ $BASE_urlpath = '';
  */
 
 $BASE_installID = '';
+
+/*
+ * Create a unique cookie name for each BASE installation.
+ */
+
+$sessionName = str_replace(' ', '_', $BASE_installID . session_name());
+session_name($sessionName);
+
 
 /* Custom footer addition.  The below variable, if set, will cause
  *  base_main.php to include what ever file is specified.
@@ -145,14 +146,14 @@ $use_referential_integrity = 0;
  *   SMTP HELO statement. You will likely need to replace this with the name
  *   of the machine running BASE when connecting to a remote mail server.
  * - action_email_smtp_auth : Whether or not to authenticate with
- *                            the smtp host
+ *                            the smtp server
  *     0: We do NOT authenticate ourselves towards the smtp host
  *     1: We DO authenticate ourselves towards the smtp host
  *        with the following credentials:
  * - action_email_smtp_user : The user name with the smtp host
  * - action_email_smtp_pw : The password for this mail account
  * - action_email_from : email address to use in the FROM field of the mail message
- *                       MUST be the same email address used for the SMTP account
+ *                       MUST be the same email address as used for the SMTP account
  * - action_email_subject : subject to use for the mail message
  * - action_email_msg : additional text to include in the body of the mail message
  * - action_email_mode : specifies how the alert information should be enclosed
@@ -354,6 +355,7 @@ $show_first_last_links = 0;
 /* Whois query */
 $external_whois_link = 'http://www.dnsstuff.com/tools/whois.ch?ip=';
 
+
 /* Local whois */
 /* IP addresses of whois servers. Updated on Aug, 1st 2009.
  *
@@ -391,7 +393,7 @@ $external_port_link = array('sans'     => 'http://isc.sans.org/port.html?port=',
 
 /* Signature references */
 $external_sig_link = array('bugtraq'   => array('http://www.securityfocus.com/bid/', ''),
-                           'snort'     => array('http://www.snort.org/pub-bin/sigs.cgi?sid=', ''),
+                           'snort'     => array('http://www.snort.org/search/sid/', ''),
                            'cve'       => array('http://cve.mitre.org/cgi-bin/cvename.cgi?name=', ''),
                            'arachnids' => array('http://www.whitehats.com/info/ids', ''),
                            'mcafee'    => array('http://vil.nai.com/vil/content/v_', '.htm'),
@@ -432,6 +434,31 @@ $colored_alerts = 0;
 $priority_colors = array ('FF0000','FFFF00','FF9900','999999','FFFFFF','006600');
 
 
+/** Choose a font name for the BASE charts (graph alert graphics)
+ *
+ * The fonts in the PEAR::Image::Graph / PEAR::Image::Canvas libraries
+ * are broken.
+ *
+ * Better would be a scalable font, like DejaVuSans or Verdana.  A scalable
+ * font would allow us to get different (more appropriate) font sizes.  
+ * However, this won't work without minor or major modifications of 
+ * these libraries.
+ * See docs/README.graph_alert_data for details.
+ * 
+ * If you do NOT manage to tweak these libraries to get a proper font,
+ * choose "Image_Graph_Font".  However, this font is not scalable, 
+ * i.e. a headline would have the same font size as a small label. 
+ *
+ * Image_Graph_Font used to be a fail-safe font name.  But for php
+ * versions >= 5.3 even this does not seem to be true, any more.  
+ * So, as last resort, choose an empty string.
+ */
+// $graph_font_name = "Verdana";
+$graph_font_name = "DejaVuSans";
+// $graph_font_name = "Image_Graph_Font";
+// $graph_font_name = "";
+
+
 /** IP address to country support
  *
  * 1. First method for the mapping of ip addresses to country names:
@@ -457,8 +484,6 @@ $priority_colors = array ('FF0000','FFFF00','FF9900','999999','FFFFFF','006600')
  //$IP2CC = "/usr/bin/ip2cc";
 
 
-
-
 /*
  The below line should not be changed!
  */
@@ -469,5 +494,4 @@ define( '_BASE_INC', 1 );
 
 // Include for languages
 include("$BASE_path/languages/$BASE_Language.lang.php");
-
 ?>

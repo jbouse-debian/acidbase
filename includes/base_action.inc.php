@@ -932,6 +932,7 @@ function Action_archive_alert_op($sid, $cid, &$db, $action_arg, &$ctx)
    $insert_sql = array();
    $sql_cnt = 0;
    $archive_cnt = 0;
+	 $pcap_header = "";
 
    $sql = "SELECT hostname, interface, filter, detail, encoding FROM sensor ".
           "WHERE sid=$sid";

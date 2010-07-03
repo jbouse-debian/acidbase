@@ -137,7 +137,7 @@ if (@$_GET['action'] == "check")
 <tr><td colspan=2 align="center" class="setupTitle">Step 2 of 5</td><tr>
 <tr><td class="setupKey" width="50%">Pick a Database type:</td><td class="setupValue"><select name="dbtype">
 <option value="mysql" <?php if ($_SESSION['dbtype'] == 'mysql') echo "selected";?>>MySQL
-<option value="postgres" <?php if ($_SESSION['dbtype'] == 'postgres') echo "selected";?>>PostGRES
+<option value="postgres" <?php if ($_SESSION['dbtype'] == 'postgres') echo "selected";?>>PostgreSQL
 <option value="mssql" <?php if ($_SESSION['dbtype'] == 'mssql') echo "selected";?>>Microsoft SQL Server
 <option value="oci8" <?php if ($_SESSION['dbtype'] == 'oci8') echo "selected";?>>Oracle
 </select>[<a href="../help/base_setup_help.php#dbtype" onClick="javascript:window.open('../help/base_setup_help.php#dbtype','helpscreen','width=300,height=300');">?</a>]</td</tr>
@@ -146,15 +146,15 @@ if (@$_GET['action'] == "check")
 <tr><td class="setupKey">Database Host:</td><td class="setupValue"><input type="text" name="dbhost" value="<?php echo $_SESSION['dbhost'];?>"></td></tr>
 <tr><td class="setupKey">Database Port:<br>Leave blank for default!</td><td class="setupValue"><input type="text" name="dbport" value="<?php echo $_SESSION['dbport'];?>"></td></tr>
 <tr><td class="setupKey">Database User Name:</td><td class="setupValue"><input type="text" name="dbusername" value="<?php echo $_SESSION['dbusername'];?>"></td></tr>
-<tr><td class="setupKey">Database Password:</td><td class="setupValue"><input type="text" name="dbpasswd" value="<?php echo $_SESSION['dbpasswd'];?>"></td></tr>
+<tr><td class="setupKey">Database Password:</td><td class="setupValue"><input type="password" name="dbpasswd" value="<?php echo $_SESSION['dbpasswd'];?>"></td></tr>
 <tr><td colspan=2 align="center">&nbsp;</td></tr>
 <tr><td colspan=2 align="center"><input type="checkbox" name="usearchive" <?php if ($_SESSION['usearchive'] == 1 ) echo "checked";?>>Use Archive Database[<a href="../help/base_setup_help.php#usearchive" onClick="javascript:window.open('../help/base_setup_help.php#usearchive','helpscreen','width=300,height=300');">?</a>]</td></tr>
 <tr><td class="setupKey">Archive Database Name:</td><td class="setupValue"><input type="text" name="arcdbname" value="<?php echo $_SESSION['arcdbname'];?>"></td></tr>
 <tr><td class="setupKey">Archive Database Host:</td><td class="setupValue"><input type="text" name="arcdbhost" value="<?php echo $_SESSION['arcdbhost'];?>"></td></tr>
 <tr><td class="setupKey">Archive Database Port:<br>Leave blank for default!</td><td class="setupValue"><input type="text" name="arcdbport" value="<?php echo $_SESSION['arcdbport'];?>"></td></tr>
 <tr><td class="setupKey">Archive Database User Name:</td><td class="setupValue"><input type="text" name="arcdbusername" value="<?php echo $_SESSION['arcdbusername'];?>"></td></tr>
-<tr><td class="setupKey">Archive Database Password:</td><td class="setupValue"><input type="text" name="arcdbpasswd" value="<?php echo $_SESSION['arcdbpasswd'];?>"></td></tr>
-<tr><td colspan=2 align="center"><input type="submit"></td></tr>
-</table></form>
+<tr><td class="setupKey">Archive Database Password:</td><td class="setupValue"><input type="password" name="arcdbpasswd" value="<?php echo $_SESSION['arcdbpasswd'];?>"></td></tr>
+<tr><td colspan=2 align="center"><input type="submit" value="Continue"></td></tr>
+</table></center></form>
 </BODY>
 </HTML>

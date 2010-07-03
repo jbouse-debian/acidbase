@@ -136,7 +136,7 @@ Path to ADODB:
 <input type="text" name="adodbpath" value="<?php echo(@$_POST['adodbpath']); ?>">
 [<a href="../help/base_setup_help.php#adodb" onClick="javascript:window.open('../help/base_setup_help.php#adodb','helpscreen','width=300,height=300');">?</a>]
 </td></tr>
-<tr><td colspan=2 align="center"><input type="submit"></td></tr>
-</table></form>
+<tr><td colspan=2 align="center"><input type="submit" value="Continue"></td></tr>
+</table></center></form>
 </BODY>
 </HTML>

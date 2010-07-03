@@ -293,6 +293,17 @@ class MultipleElementCriteria extends BaseCriteria
 
 class ProtocolFieldCriteria extends MultipleElementCriteria
 {
+	function ProtocolFieldCriteria(&$db, &$cs, $export_name, $element_cnt, $field_list = Array() )
+	{
+		$tdb =& $db;
+		$cs =& $cs;
+
+		$this->MultipleElementCriteria($tdb, $cs, $export_name, $element_cnt, $field_list);
+
+	}
+
+
+
    function SanitizeElement($i)
    { 
       // Make a copy of the element array
@@ -712,6 +723,9 @@ class SensorCriteria extends SingleElementCriteria
  
    function PrintForm()
    {
+			GLOBAL $debug_mode;
+
+
       // How many sensors do we have?
       $number_sensors = 0;
       $number_sensors_lst = $this->db->baseExecute("SELECT count(*) FROM sensor");

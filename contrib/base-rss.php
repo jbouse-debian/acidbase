@@ -1,7 +1,10 @@
 <?php
 //
-//base-rss - Queries the snort database and returns an alerts RSS feed with links to BASE.
-//Copyright (C) 2006 Daniel Michitsch
+//base-rss (config for rss-core) - Queries the snort database and
+//returns an alerts RSS feed with links to BASE.
+//
+
+//Copyright (C) 2010 Daniel Michitsch
 //
 //This program is free software; you can redistribute it and/or
 //modify it under the terms of the GNU General Public License
@@ -18,81 +21,27 @@
 //Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //
 //
-include("../base_conf.php");
+// Copy this file to another file and change the values to make different RSS
+// feeds for different source subnets or for different alerts in the feed.
 
-function dec2IP ($dec) {
-        $hex = dec2hex ($dec);
-        if (strlen($hex) == 7) $hex = "0".$hex;
-        $one = hexdec(substr($hex,0,2));
-        $two = hexdec(substr($hex,2,2));
-        $three = hexdec(substr($hex,4,2));
-        $four = hexdec(substr($hex,6,2));
-        $ip = $one.".".$two.".".$three.".".$four;
-        return ($ip);
-}
-function dec2hex($dec) {
-        if($dec > 2147483648) {
-                $result = dechex($dec - 2147483648);
-                $prefix = dechex($dec / 268435456);
-                $suffix = substr($result,-7);
-                $hex = $prefix.str_pad($suffix, 7, "0000000", STR_PAD_LEFT);
-        }
-        else {
-                $hex = dechex($dec);
-        }
-        $hex = strtoupper ($hex);
-        return($hex);
-}
+// Title of the RSS feed
+$channel_title="Snort IDS - Alerts";
 
-mysql_connect($alert_host,$alert_user,$alert_password);
-@mysql_select_db($alert_dbname) or die( "Unable to select database");
-$query="SELECT * FROM `acid_event` ORDER BY `timestamp` DESC LIMIT 0 , 50";
-$result=mysql_query($query);
+// How many hours of past alerts to report on.
+// (Your RSS reader should refresh at least this often.)
+$time_window="2";
 
-$num=mysql_numrows($result);
+// Will ET TROJAN alerts will be in the RSS feed?
+// (Only applies if using the "Emerging Threats" ruleset.)
+// "true" will show only the ET TROJAN alerts. 
+// "false" will show any alerts except the ET TROJAN alerts.
+//
+//  No entry will show ALL alerts within the specified time window.
+$trojan_alerts="";
 
-mysql_close();
+// Only report on source IPs matching a regular expression.
+// ex. /^202\.12\.((19[2-9])|((20[0-9])|(210)))\./
+$src_ip_regex="/.*/";
 
-header("Content-Type: text/xml");
-header("Pragma: no-cache");
-header("Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0");
-echo "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n";
-echo "<rss version=\"0.91\">\n";
-echo "  <channel>\n";
-echo "    <title>Snort Alerts</title>\n";
-echo "    <link>http://".$_SERVER['SERVER_NAME'].$BASE_urlpath."</link>\n";
-echo "    <ttl>5</ttl>\n";
-
-$i=0;
-while ($i < $num) {
-
-$sid=mysql_result($result,$i,"sid");
-$cid=mysql_result($result,$i,"cid");
-$sig_name=mysql_result($result,$i,"sig_name");
-$sig_name=str_replace("<", "&lt;", $sig_name);
-$sig_name=str_replace(">", "&gt;", $sig_name);
-$sig_name=str_replace("&", "&amp;", $sig_name);
-$sig_name=str_replace("%", "&#37;", $sig_name);
-$timestamp=mysql_result($result,$i,"timestamp");
-$ip_src=dec2IP(mysql_result($result,$i,"ip_src"));
-$ip_dst=dec2IP(mysql_result($result,$i,"ip_dst"));
-$layer4_sport=mysql_result($result,$i,"layer4_sport");
-$layer4_dport=mysql_result($result,$i,"layer4_dport");
-$timestamp=mysql_result($result,$i,"timestamp");
-$timechars=array("-"," ",":");
-$guid=str_replace($timechars, "", $timestamp)+$cid;
-if (!empty($layer4_sport)) $layer4_sport=":".$layer4_sport;
-if (!empty($layer4_dport)) $layer4_dport=":".$layer4_dport;
-echo "    <item>\n";
-echo "      <title>$sig_name</title>\n";
-echo "      <link>http://".$_SERVER['SERVER_NAME'].$BASE_urlpath."/base_qry_alert.php?submit=%23$i-%28$sid-$cid%29&amp;sort_order=time_d</link>\n";
-echo "      <description>$ip_src$layer4_sport to $ip_dst$layer4_dport - $timestamp</description>\n";
-echo "      <guid>$guid</guid>\n";
-echo "    </item>\n";
-
-$i++;
-}
-
-echo "  </channel>\n";
-echo "</rss>\n";
+include("./rss-core.php");
 ?>

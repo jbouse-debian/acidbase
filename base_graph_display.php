@@ -20,7 +20,7 @@
 **   - title: chart title
 **   - xaxis_label: x-axis label
 **   - yaxis_label: y-axis label
-**   - xdata[][]: data and label array for the y-axis
+**   - xdata[][]: data and label array for the x-axis and the y-axis
 **   - yaxis_scale: (boolean) 0: linear; 1: logarithmic
 **   - rotate_xaxis_lbl: (boolean) rotate X-axis labels 90 degrees
 **   - style: [bar|line|pie] chooses the style of the chart
@@ -45,167 +45,16 @@
   // of a logarithmic y-axis.
   function replace_numbers($value)
   {
-    GLOBAL $xdata;
+    GLOBAL $xdata, $debug_mode;
+
+    if ($debug_mode > 1)
+    {
+      error_log(__FILE__ . ":" . __LINE__ . ": \$value = \"$value\"");
+    }
 
     $str = $xdata[$value][0];
     return $str;
   }
-
-
-
-  function check_fontmap($font_name, $fontmap)
-  {
-    GLOBAL $debug_mode;
-
-
-    $ok = 0;
-  
-    if (file_exists($fontmap))
-    // then we ASSUME, that this is the correct fontmap.txt file. Not necessarily true, though.
-    {
-      if (is_readable($fontmap))
-      {
-        $fd = file($fontmap);
-        foreach($fd as $line)
-        {
-          list($map_fontname, $fontfiles_str) = explode(',', $line);
-          $map_fontname = trim($map_fontname);
-          if (strcmp($font_name, $map_fontname) == 0)
-          // this line of fontmap.txt countains our font
-          // Now is there also a corresponding font file?
-          {
-            $fontfiles_str = trim($fontfiles_str);
-            if ($debug_mode > 1)
-            {
-              error_log("fontfiles_str = \"" . $fontfiles_str . "\"");
-            }
-            $filenames_array = explode(',', $fontfiles_str);
-            foreach($filenames_array as $single_filename)
-            {
-              $single_filename = trim($single_filename);
-              if ($debug_mode > 0)
-              {
-                error_log("single_filename = \"" . $single_filename . "\"");
-              }
-              if (file_exists($single_filename))
-              {
-                if (is_readable($single_filename))
-                { 
-                  $ok = 1;
-                  break;
-                }
-              }
-  
-              // trying to imitate fontMap() in Image_Canvas-0.3.1/Canvas/Tool.php in a simplified way
-              $image_canvas_system_font_path = ".";
-              if (array_key_exists("IMAGE_CANVAS_SYSTEM_FONT_PATH", $_SESSION))
-              {                
-                $image_canvas_system_font_path = $_SESSION['IMAGE_CANVAS_SYSTEM_FONT_PATH'];
-              }
-              elseif (array_key_exists("IMAGE_CANVAS_SYSTEM_FONT_PATH", $_SERVER))
-              {
-                $image_canvas_system_font_path = $_SERVER['IMAGE_CANVAS_SYSTEM_FONT_PATH'];
-              }
-              elseif (array_key_exists("IMAGE_CANVAS_SYSTEM_FONT_PATH", $_ENV))
-              {
-                $image_canvas_system_font_path = $_ENV['IMAGE_CANVAS_SYSTEM_FONT_PATH'];
-              }
-  
-              if (file_exists($image_canvas_system_font_path . '/' . $single_filename))
-              {
-                if (is_readable($image_canvas_system_font_path . '/' . $single_filename))
-                {
-                  $ok = 1;
-                  break;
-                }
-              }
-            }
-  
-  
-            if ($ok == 1)
-            {
-              break;
-            }
-          } // strcmp()
-  
-          if ($ok == 1)
-          {
-            if ($debug_mode > 0)
-            {
-              error_log("File for font " . $font_name . " found!");
-            }
-            break;
-          }
-        }
-      }
-      else
-      {
-        error_log(__FILE__ . ":" . __LINE__ . ": ERROR: \"$fontmap\" does exist, but it is NOT READABLE.<BR>\n");
-        return 0;
-      }
-    }
-
-
-
-    if ($ok == 1)
-    {
-      if ($debug_mode > 0)
-      {
-        error_log("Found! File for font " . $font_name . " could be found!");
-      }
-    }
-    return $ok;
-  }
-
-
-
-
-  function check_font($font_name)
-  {
-    GLOBAL $debug_mode;
-
-    $ok = 0;
-    $php_path = ini_get('include_path');
-    $php_path_array = explode(':', $php_path);
-    if ($debug_mode > 1)
-    {
-      error_log("Where is fontmap.txt?");
-    }
-    foreach($php_path_array as $single_path)
-    {
-      $where_is_it = "$single_path/Image/Canvas/Fonts/fontmap.txt";
-      if ($debug_mode > 1)
-      {
-        error_log($where_is_it);
-      }
-
-      if (file_exists($where_is_it))
-      {      
-        if (is_readable($where_is_it))
-        {
-          if ($debug_mode > 0)
-          {
-            error_log("fontmap is located in ". $where_is_it);
-          }
-          $rv = check_fontmap($font_name, $where_is_it);
-          if ($debug_mode > 0)
-          {
-            error_log("check_fontmap() returned " . $rv);
-          }
-          if ($rv == 1)
-          {
-            $ok = 1;
-          }
-          break;
-        }
-        else
-        {
-          error_log($where_is_it . " does exist, but is not readable.");
-        }
-      }
-    }
-    return $ok;
-  } // function check_font($font_name)
 
 
   $xdata = $_SESSION['xdata'];
@@ -230,6 +79,21 @@
   {
     ini_set("display_errors", "0");
   } 
+
+
+  // Using the world map requires quite some memory. 100 MB should be
+  // more than enough, I would have thought after some tests.  However,
+  // even this amount of memory can be insufficient under certain
+  // circumstances, which are not quite clear to me (bugs in PEAR::Image::
+  // Graph? Or ::Canvas???).  So, let's try and ask for 256 MB:
+  ini_set("memory_limit", "256M"); 
+
+
+  if ($debug_mode > 1)
+  {
+    error_log(__FILE__ . ":" . __LINE__ . ": count(\$xdata) = " . count($xdata));
+  }
+
 
   if ($chart_type == CHARTTYPE_SRC_COUNTRY_ON_MAP || $chart_type == CHARTTYPE_DST_COUNTRY_ON_MAP)
   {
@@ -345,87 +209,104 @@
   if ($rv != 1)
   // normal mode
   {
-    $font_name = "Verdana";
-    if (check_font($font_name))
-    {
-      $Font =& $Graph->addNew('font', $font_name);
-    }
-    else
-    {
-      $Font =& $Graph->addNew('Image_Graph_Font');
-      error_log(__FILE__ . ":" . __LINE__ . ": WARNING: ". $font_name . " could not be resolved into a readable font file. Check \"Image/Canvas/Fonts/fontmap.txt\" in your PEAR directory. This directory can be found by pear 'config-show' | grep \"PEAR directory\". Falling back to default font without the possibility to adjust any font sizes"); 
+		GLOBAL $graph_font_name, $debug_mode;
+
+
+    /* Say, $graph_font_name is being set to "DejaVuSans".  This means, that the
+       IMAGE_CANVAS_SYSTEM_FONT_PATH constant in Canvas.php must be set
+       to the directory, where "DejaVuSans.ttf" can be found.
+       For example: vim Canvas.php
+
+        define('IMAGE_CANVAS_SYSTEM_FONT_PATH', '/usr/share/fonts/dejavu/');
+    */
+
+		
+
+		if (!isset($graph_font_name))
+		{
+			// "Image_Graph_Font" used to be a fail-safe font name.  But even this
+			// does not seem to work, any more, for php >= 5.3.
+    	$graph_font_name = "";	
     }
 
+		if ($debug_mode > 0)
+		{
+			error_log(__FILE__ . ":" . __LINE__ . ": \$graph_font_name = \"$graph_font_name\"");
+		}
+
+		$Font =& $Graph->addNew('font', $graph_font_name);
+
+		
     if (($chart_type == CHARTTYPE_SRC_COUNTRY_ON_MAP) || ($chart_type == CHARTTYPE_DST_COUNTRY_ON_MAP))
-    // worldmap
+      // worldmap
     {
       $Font->setSize(8);
     }
     else
-    // all the other chart types
+      // all the other chart types
     {
       $Font->setSize(8);
     }
     $Graph->setFont($Font);
   }
-  else
-  // safe_mode
+else
+// safe_mode
+{
+  $Font =& $Graph->addNew('Image_Graph_Font');
+  $Font->setSize(8); // has no effect!
+  error_log(__FILE__ . ":" . __LINE__ . ": WARNING: safe_mode: Falling back to default font without the possibility to adjust any font sizes."); 
+}
+
+
+// Configure plotarea
+if (($chart_type == CHARTTYPE_SRC_COUNTRY_ON_MAP) || ($chart_type == CHARTTYPE_DST_COUNTRY_ON_MAP))
+{
+  //  PHP Fatal error:  Allowed memory size of 104857600 bytes exhausted (tried to allocate 37 bytes) in /usr/share/pear/Image/Canvas.php on line 179
+  //  ini_set("memory_limit", "100M");
+  //  $Legend->setPlotarea($Plotarea);
+}
+elseif($style == "pie") {
+  $Legend->setPlotarea($Plotarea);
+}
+else
+{
+  $Plotarea->setAxisPadding(30, 'top');
+  $Plotarea->setAxisPadding(30, 'bottom');
+  $Plotarea->setAxisPadding(10, 'left');
+  $Plotarea->setAxisPadding(10, 'right');
+}
+
+$AxisX =& $Plotarea->getAxis(IMAGE_GRAPH_AXIS_X);
+$AxisY =& $Plotarea->getAxis(IMAGE_GRAPH_AXIS_Y);
+
+
+if (($style != "pie") && ($chart_type != CHARTTYPE_SRC_COUNTRY_ON_MAP) && ($chart_type != CHARTTYPE_DST_COUNTRY_ON_MAP))
+{
+  // Arrows
+  $AxisX->showArrow();
+  $AxisY->showArrow();
+
+  // Grid lines for y-axis requested?
+  if ($yaxis_grid == 1)
   {
-    $Font =& $Graph->addNew('Image_Graph_Font');
-    $Font->setSize(8); // has no effect!
-    error_log(__FILE__ . ":" . __LINE__ . ": WARNING: safe_mode: Falling back to default font without the possibility to adjust any font sizes."); 
+    $GridY =& $Plotarea->addNew('bar_grid', IMAGE_GRAPH_AXIS_Y);
+    $GridY->setFillStyle(Image_Graph::factory('gradient', array(IMAGE_GRAPH_GRAD_VERTICAL, 'white', 'lightgrey')));
   }
 
 
-  // Configure plotarea
-  if (($chart_type == CHARTTYPE_SRC_COUNTRY_ON_MAP) || ($chart_type == CHARTTYPE_DST_COUNTRY_ON_MAP))
+  // Grid lines for x-axis requested?
+  if ($xaxis_grid == 1)
   {
-    //  PHP Fatal error:  Allowed memory size of 104857600 bytes exhausted (tried to allocate 37 bytes) in /usr/share/pear/Image/Canvas.php on line 179
-    //  ini_set("memory_limit", "100M");
-    //  $Legend->setPlotarea($Plotarea);
+    $Plotarea->addNew('line_grid', true, IMAGE_GRAPH_AXIS_X);
   }
-  elseif($style == "pie") {
-    $Legend->setPlotarea($Plotarea);
-  }
-  else
-  {
-    $Plotarea->setAxisPadding(30, 'top');
-    $Plotarea->setAxisPadding(30, 'bottom');
-    $Plotarea->setAxisPadding(10, 'left');
-    $Plotarea->setAxisPadding(10, 'right');
-  }
+}
 
-  $AxisX =& $Plotarea->getAxis(IMAGE_GRAPH_AXIS_X);
-  $AxisY =& $Plotarea->getAxis(IMAGE_GRAPH_AXIS_Y);
-
-
-  if (($style != "pie") && ($chart_type != CHARTTYPE_SRC_COUNTRY_ON_MAP) && ($chart_type != CHARTTYPE_DST_COUNTRY_ON_MAP))
-  {
-    // Arrows
-    $AxisX->showArrow();
-    $AxisY->showArrow();
-
-    // Grid lines for y-axis requested?
-    if ($yaxis_grid == 1)
-    {
-      $GridY =& $Plotarea->addNew('bar_grid', IMAGE_GRAPH_AXIS_Y);
-      $GridY->setFillStyle(Image_Graph::factory('gradient', array(IMAGE_GRAPH_GRAD_VERTICAL, 'white', 'lightgrey')));
-    }
-  
-
-    // Grid lines for x-axis requested?
-    if ($xaxis_grid == 1)
-    {
-      $Plotarea->addNew('line_grid', true, IMAGE_GRAPH_AXIS_X);
-    }
-  }
-
-  // Create the dataset -- Alejandro
-  $Dataset =& Image_Graph::factory('dataset');
+// Create the dataset -- Alejandro
+$Dataset =& Image_Graph::factory('dataset'); 
   for ($i = 0; $i < count($xdata); $i++) {
     if ($debug_mode > 1)
     {
-      error_log($i . ": \"" . $xdata[$i][0] . "\" - " . $xdata[$i][1]);
+      error_log(__FILE__ . ":" . __LINE__ . ": " . $i . ": \"" . $xdata[$i][0] . "\" - " . $xdata[$i][1]);
     }
 
     if (($chart_type == CHARTTYPE_SRC_COUNTRY_ON_MAP) || ($chart_type == CHARTTYPE_DST_COUNTRY_ON_MAP))
@@ -436,7 +317,7 @@
       {
         error_log("to be looked up: '$tmp', '$tmp_lower' ###");
       }
-      
+
       // special case '"I0" => "private network (rfc 1918)"' and
       // '"** (private network) " => "private network (rfc 1918)"'
       if (ereg("rfc 1918", $tmp, $substring) || (ereg("[*][*] \(private network\) ", $tmp_lower, $substring)))
@@ -503,7 +384,7 @@
   }
 
   
-  // What about the axes?
+  // Labelling of the axes?
   if (($chart_type == CHARTTYPE_SRC_COUNTRY_ON_MAP) || ($chart_type == CHARTTYPE_DST_COUNTRY_ON_MAP))
   {
     // Well, nothing to do here.
@@ -513,15 +394,30 @@
     $Plotarea->hideAxis();
     $Plot->explode(10);
   } else {
-    /*
-    $ArrayData =& Image_Graph::factory('Image_Graph_DataPreprocessor_Array',$Dataset);
+
+    if ($chart_type == CHARTTYPE_CLASSIFICATION)
+    {
+      $ArrayData =& Image_Graph::factory('Image_Graph_DataPreprocessor_Array',$xdata);
+
+    }
+    else
+    {
+      $ArrayData =& Image_Graph::factory('Image_Graph_DataPreprocessor_Array',$xdata[0]);
+    }
+
 
     // Prepare x-axis labels
     $AxisX->setDataPreprocessor($ArrayData);    
-     */
+     
+
+    if ($debug_mode > 1)
+    {
+      error_log(__FILE__ . ":" . __LINE__ . ": \$yaxis_scale = \"$yaxis_scale\"");
+    }
 
     // Part of that workaround for PEAR::Image_Canvas being unable to
     // deal with strings as x-axis lables in a proper way
+    // xxx jl: Hmmm. What has $yaxis_scale to do with AxisX??? Dead code, anyway.
     if ($yaxis_scale == 1)
     {
       $AxisX->setDataPreprocessor(Image_Graph::factory('Image_Graph_DataPreprocessor_Function', 'replace_numbers'));
@@ -529,21 +425,6 @@
 
 
     // Should they be rotated by 90 degress?
-
-    /* One possibility: We could make the decision here:
-     * 
-    if (
-         ($number_elements > 1) &&
-         (
-           ($xaxis_label == _CHRTTIME) ||
-           ($xaxis_label == _CHRTSIP) || 
-           ($xaxis_label == _CHRTDIP) ||
-           ($xaxis_label == _CHRTCLASS)
-         )
-       )
-     */
-
-    // Another possibility: Let the user decide:
     if ($rotate_xaxis_lbl == 1)
     {  
       // affects x-axis title and labels:
@@ -565,28 +446,28 @@
         case CHARTTYPE_HOUR:
         {
           // For time labels:
-          $AxisX->setLabelOption('offset', 130);
+          $AxisX->setLabelOption('offset', 200);
           break;
         } 
         case CHARTTYPE_DAY:
         case CHARTTYPE_WEEK:
         {
           // For days:
-          $AxisX->setLabelOption('offset', 45);
+          $AxisX->setLabelOption('offset', 60);
           break;
         }
         case CHARTTYPE_MONTH:
         case CHARTTYPE_YEAR:
         {
           // For months:
-          $AxisX->setLabelOption('offset', 30);
+          $AxisX->setLabelOption('offset', 40);
           break;
         }
         case CHARTTYPE_SRC_IP:
         case CHARTTYPE_DST_IP:
         {
           // for ip addresses:
-          $AxisX->setLabelOption('offset', 60);
+          $AxisX->setLabelOption('offset', 90);
           break;
         }
         case CHARTTYPE_DST_UDP_PORT:
@@ -595,7 +476,7 @@
         case CHARTTYPE_SRC_TCP_PORT:
         {
           // for port numbers
-          $AxisX->setLabelOption('offset', 18);
+          $AxisX->setLabelOption('offset', 25);
           break;
         }
         case CHARTTYPE_CLASSIFICATION:
@@ -607,7 +488,7 @@
         case CHARTTYPE_SENSOR:
         {
           // for host names of sensors
-          $AxisX->setLabelOption('offset', 70);
+          $AxisX->setLabelOption('offset', 90);
           break;
         }
         case CHARTTYPE_SRC_COUNTRY:
@@ -766,12 +647,92 @@
     error_log("$style is an unsupported chart style");
   }
 
+
+
   // Show time! -- Alejandro
-  $rv =& $Graph->done();
-  if (PEAR::isError($rv)) 
+  if (version_compare(PHP_VERSION, "5.0.0", "<"))
   {
-    error_log(__FILE__ . ":" . __LINE__ . ": ERROR: \$Graph->done() has failed.");
+    $rv =& $Graph->done();
+    if (PEAR::isError($rv)) 
+    {
+      error_log(__FILE__ . ":" . __LINE__ . ": ERROR: \$Graph->done() has failed.");
+    }
   }
+  else
+  {
+    try
+    {
+      // $error = 'Always throw this error (1)';
+      // throw new Exception($error);
+
+      $rv =& $Graph->done();
+      if (PEAR::isError($rv)) 
+      {
+        error_log(__FILE__ . ":" . __LINE__ . ": ERROR: \$Graph->done() has failed.");
+      }
+    }
+    catch (Exception $exc1)
+    {
+			$error = $exc1->getMessage();
+
+      // Write the error message to apache's error log
+			if (isset($error))
+			{
+      	error_log(__FILE__ . ":" . __LINE__ . ": ERROR: \$Graph->done() has failed: \"" . $error . "\"");
+			}
+			else
+			{
+				error_log(__FILE__ . ":" . __LINE__ . ": ERROR: \$Graph->done() has failed.");
+			}
+
+
+      // and try and write the error message in form of a png to the screen
+      try 
+      {
+        // $error = 'Always throw this error (2)';
+        // throw new Exception($error);
+
+        $im = @imagecreate(600, 80);
+
+        if (isset($im))
+        {
+          $background_color = imagecolorallocate($im, 255, 255, 255);
+          $text_color = imagecolorallocate($im, 233, 14, 91);
+
+
+          imagestring($im, 5, 10, 10, __FILE__ . ":" . __LINE__ . ":", $text_color);
+          imagestring($im, 5, 10, 30, "Graph->done() has failed:", $text_color);
+ 
+					if (isset($error))
+					{
+          	imagestring($im, 5, 10, 50, $error , $text_color);
+					}
+					else
+					{
+						imagestring($im, 5, 10, 50, "Unknown error." , $text_color);
+					}
+
+
+          imagepng($im);
+          imagedestroy($im);
+        }
+      }
+      catch (Exception $exc2)
+      {
+				$error = $exc2->getMessage();
+
+				if (isset($error))
+				{
+        	error_log(__FILE__ . ":" . __LINE__ . ": ERROR: Creating the error png has ALSO failed: \"" . $error . "\"");
+				}
+				else
+				{
+					error_log(__FILE__ . ":" . __LINE__ . ": ERROR: Creating the error png has ALSO failed.");
+				}
+      } // try - catch
+    } // try - catch 
+  } // if (version_compare(PHP_VERSION, "5.0.0", "<"))
+
 
   if ($debug_mode > 0)
   {
@@ -785,5 +746,4 @@
   {
     ini_set("display_errors", $old_display_error_type);
   }
-// vim:shiftwidth=2:tabstop=2:expandtab 
 ?>

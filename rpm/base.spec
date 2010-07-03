@@ -38,8 +38,8 @@
 
 ############ Main package "base" ##################
 Name: base
-Version: 1.4.4
-Release: 2
+Version: 1.4.5
+Release: 1
 Summary: BASE - Basic Analysis and Security Engine
 
 # Which categories for "Group:" are actually allowed?
@@ -504,6 +504,9 @@ fi
 
 
 %changelog
+* Fri Nov 20 2009 Juergen Leising <jleising@users.sourceforge.net> - 1.4.5-1
+Security fixes and a fix regarding the archive function.
+
 * Mon Aug 10 2009 Juergen Leising <jleising@users.sourceforge.net> - 1.4.4-2
 Fixed Cross site scripting and local file include in base_local_rules.php
 

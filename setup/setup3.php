@@ -73,12 +73,11 @@ if (@$_GET['action'] == "check")
 <form action=setup3.php?action=check method="POST">
 <center><table width="50%" border=1 class ="query">
 <tr><td colspan=2 align="center" class="setupTitle">Step 3 of 5</td><tr>
-<tr><td colspan=2 align="center">&nbsp;</td></tr>
 <tr><td colspan=2 align="center"><input type="checkbox" name="useuserauth" <?php if ($_SESSION['useuserauth']) echo "checked";?>>Use Authentication System [<a href="../help/base_setup_help.php#useauth" onClick="javascript:window.open('../help/base_setup_help.php#useauth','helpscreen','width=300,height=300');">?</a>]</td></tr>
 <tr><td class="setupKey">Admin User Name:</td><td class="setupValue"><input type="text" name="usrlogin" value="<?php echo $_SESSION['usrlogin'];?>"></td></tr>
 <tr><td class="setupKey">Password:</td><td class="setupValue"><input type="password" name="usrpasswd" value="<?php echo $_SESSION['usrpasswd'];?>"></td></tr>
 <tr><td class="setupKey">Full Name:</td><td class="setupValue"><input type="text" name="usrname" value="<?php echo $_SESSION['usrname'];?>"></td></tr>
-<tr><td colspan=2 align="center"><input type="submit"></td></tr>
-</table></form>
+<tr><td colspan=2 align="center"><input type="submit" value="Continue"></td></tr>
+</table></center></form>
 </BODY>
 </HTML>

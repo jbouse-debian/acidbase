@@ -44,7 +44,7 @@ function returnContents()
 ********************************************************************************
 */
     session_start();
-    $BASE_VERSION = \'1.4.4 (dawn)\';
+    $BASE_VERSION = \'1.4.5 (lilias)\';
     
     /*
      Set the below to the language you would like people to use while viewing
@@ -81,6 +81,14 @@ function returnContents()
      */
 
     $BASE_installID = \'\';
+
+    /*
+     * Create a unique cookie name for each BASE installation.
+     */
+
+    $sessionName = str_replace(\' \', \'_\', $BASE_installID . session_name());
+    session_name($sessionName);
+
 
     /* Custom footer addition.  The below variable, if set, will cause
     *  base_main.php to include what ever file is specified.
@@ -153,6 +161,11 @@ function returnContents()
 
 		/* SMTP Email Alert action
      *
+     * Requires the Pear-Mail package to be installed like so:
+     *
+     * # pear install --alldeps mail
+     *
+     *
      * - action_email_smtp_host : Which smtp server to use
      * - action_email_smtp_localhost : What name to use for this server in the 
      *   SMTP HELO statement. You will likely need to replace this with the name
@@ -184,9 +197,6 @@ function returnContents()
 
 		/* Variable to start the ability to handle themes... */
 		$base_style = \'base_style.css\';
-
-		/* File format of charts (png, jpeg, gif) */
-		$chart_file_format = \'png\';
 
 		/* Chart default colors - (red, green, blue)
 		 *    - $chart_bg_color_default    : background color of chart
@@ -408,7 +418,7 @@ function returnContents()
     
     /* Signature references */
     $external_sig_link = array(\'bugtraq\'   => array(\'http://www.securityfocus.com/bid/\', \'\'),
-                               \'snort\'     => array(\'http://www.snort.org/pub-bin/sigs.cgi?sid=\', \'\'),
+                               \'snort\'     => array(\'http://www.snort.org/search/sid/\', \'\'),
                                \'cve\'       => array(\'http://cve.mitre.org/cgi-bin/cvename.cgi?name=\', \'\'),
                                \'arachnids\' => array(\'http://www.whitehats.com/info/ids\', \'\'),
                                \'mcafee\'    => array(\'http://vil.nai.com/vil/content/v_\', \'.htm\'),
@@ -449,6 +459,31 @@ function returnContents()
     $priority_colors = array (\'FF0000\',\'FFFF00\',\'FF9900\',\'999999\',\'FFFFFF\',\'006600\');
 
 
+		/** Choose a font name for the BASE charts (graph alert graphics)
+		 *
+		 * The fonts in the PEAR::Image::Graph / PEAR::Image::Canvas libraries
+		 * are broken.
+		 *
+		 * Better would be a scalable font, like DejaVuSans or Verdana.  A scalable
+		 * font would allow us to get different (more appropriate) font sizes.  
+		 * However, this won\'t work without minor or major modifications of 
+		 * these libraries.
+		 * See docs/README.graph_alert_data for details.
+		 * 
+		 * If you do NOT manage to tweak these libraries to get a proper font,
+		 * choose "Image_Graph_Font".  However, this font is not scalable, 
+		 * i.e. a headline would have the same font size as a small label. 
+		 *
+		 * Image_Graph_Font used to be a fail-safe font name.  But for php
+		 * versions >= 5.3 even this does not seem to be true, any more.  
+		 * So, as last resort, choose an empty string.
+		 */
+		// $graph_font_name = "Verdana";
+   	$graph_font_name = "DejaVuSans";
+		// $graph_font_name = "Image_Graph_Font";
+		// $graph_font_name = "";
+
+
     /** IP address to country support
      *
      * 1. First method for the mapping of ip addresses to country names:
@@ -458,11 +493,11 @@ function returnContents()
      * then generate the country database in readable ASCII format,
      * similarly to this:
      *         cd /usr/lib/perl5/site_perl/5.8.8/Geo/
-     *         perl ipct2txt.pl ./ipscountry.dat /var/www/html/base/ips-ascii.txt
+     *         perl ipct2txt.pl ./ipscountry.dat /var/www/html/ips-ascii.txt
      *
      * Set the absolute path to this database accordingly:
      */
-     //$Geo_IPfree_file_ascii = "/var/www/html/base/ips-ascii.txt";
+     //$Geo_IPfree_file_ascii = "/var/www/html/ips-ascii.txt";
     
     /** 2. Second method for the mapping of ip addresses to country names:
      * 
