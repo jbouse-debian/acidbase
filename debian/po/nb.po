@@ -14,6 +14,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "X-Generator: KBabel 1.11.2\n"
 
 #. Type: select
@@ -37,7 +38,8 @@ msgstr "Versjon(er) av Apache som skal settes opp automatisk:"
 #. Type: select
 #. Description
 #: ../templates:1002
-msgid "BASE requires a few things to be set up in your web server configuration."
+msgid ""
+"BASE requires a few things to be set up in your web server configuration."
 msgstr "BASE trenger noen innstillinger i oppsettet til nett-tjeneren."
 
 #. Type: select
@@ -53,8 +55,8 @@ msgstr ""
 "Versjonen som er pakket i Debian kan som regel sette opp apache ved å "
 "plassere en symbolsk lenke i mappa /etc/APACHE-SERVER/conf.d- Velg «Ingen» "
 "hvis du ikke kjører apache eller foretrekker å sette opp nett-tjeneren selv. "
-"Hvis du velger en versjon som skal settes opp, så blir alle endringer i oppsettet "
-"også fjernet når pakka fjernes."
+"Hvis du velger en versjon som skal settes opp, så blir alle endringer i "
+"oppsettet også fjernet når pakka fjernes."
 
 #. Type: note
 #. Description
@@ -71,4 +73,3 @@ msgid ""
 msgstr ""
 "Du vil måtte gå til http://localhost/acidbase først for å tvinge fram "
 "database-endringene for BASE."
-

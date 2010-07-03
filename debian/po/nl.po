@@ -14,6 +14,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "X-Poedit-Language: Dutch\n"
 
 #. Type: select
@@ -37,14 +38,25 @@ msgstr "Automatisch te configureren versie(s) van Apache:"
 #. Type: select
 #. Description
 #: ../templates:1002
-msgid "BASE requires a few things to be set up in your web server configuration."
+msgid ""
+"BASE requires a few things to be set up in your web server configuration."
 msgstr "BASE vereist bepaalde instellingen in uw webserverconfiguratie."
 
 #. Type: select
 #. Description
 #: ../templates:1002
-msgid "The Debian packaged version can usually automatically configure apache by dropping a symlink into the /etc/APACHE-SERVER/conf.d directory. Select \"None\" if you aren't running apache or you would prefer to set up the web server yourself. If you select a version to configure, all configuration changes will also be removed when the package is purged."
-msgstr "Dit Debian-pakket kan de apache-configuratie gewoonlijk automatisch aanpassen door een symbolische link in de map '/etc/APACHE-SERVER/conf.d' te plaatsen. Als u geen apache draait of verkiest de webserver handmatig in te stellen kies dan 'Geen'. Als u een apache-versie laat configureren worden alle configuratie-aanpassingen verwijderd wanneer dit pakket gewist wordt."
+msgid ""
+"The Debian packaged version can usually automatically configure apache by "
+"dropping a symlink into the /etc/APACHE-SERVER/conf.d directory. Select "
+"\"None\" if you aren't running apache or you would prefer to set up the web "
+"server yourself. If you select a version to configure, all configuration "
+"changes will also be removed when the package is purged."
+msgstr ""
+"Dit Debian-pakket kan de apache-configuratie gewoonlijk automatisch "
+"aanpassen door een symbolische link in de map '/etc/APACHE-SERVER/conf.d' te "
+"plaatsen. Als u geen apache draait of verkiest de webserver handmatig in te "
+"stellen kies dan 'Geen'. Als u een apache-versie laat configureren worden "
+"alle configuratie-aanpassingen verwijderd wanneer dit pakket gewist wordt."
 
 #. Type: note
 #. Description
@@ -55,6 +67,9 @@ msgstr "OPGELET: Handmatige configuratie is vereist"
 #. Type: note
 #. Description
 #: ../templates:2001
-msgid "You will need to go to http://localhost/acidbase first to force the database modifications for BASE."
-msgstr "Om de database-aanpassingen voor BASE door te voeren dient u naar http://localhost/acidbase te gaan."
-
+msgid ""
+"You will need to go to http://localhost/acidbase first to force the database "
+"modifications for BASE."
+msgstr ""
+"Om de database-aanpassingen voor BASE door te voeren dient u naar http://"
+"localhost/acidbase te gaan."

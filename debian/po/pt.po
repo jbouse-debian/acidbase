@@ -15,6 +15,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: pt\n"
 
 #. Type: select
 #. Choices
@@ -33,7 +34,6 @@ msgstr "Nenhum"
 #: ../templates:1002
 msgid "Version(s) of Apache to configure automatically:"
 msgstr "Versões do Apache que devem ser configuradas automaticamente:"
-
 
 #. Type: select
 #. Description
@@ -57,8 +57,8 @@ msgstr ""
 "A versão Debian deste pacote normalmente pode configurar de forma automática "
 "o apache deixando um 'symlink' no directório /etc/APACHE-SERVER/conf.d. "
 "Seleccione \"Nenhum\" se não estiver a correr o apache ou se preferir "
-"configurar o servidor por si. Se seleccionou uma versão para configurar, todas "
-"as configurações serão removidas quando o pacote for purgado."
+"configurar o servidor por si. Se seleccionou uma versão para configurar, "
+"todas as configurações serão removidas quando o pacote for purgado."
 
 #. Type: note
 #. Description
