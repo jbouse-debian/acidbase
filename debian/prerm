@@ -4,7 +4,7 @@
 . /usr/share/debconf/confmodule
 # source dbconfig-common stuff
 dbc_dbtypes="mysql, pgsql"
-. /usr/share/dbconfig-common/dpkg/prerm
+. /usr/share/dbconfig-common/dpkg/frontend.prerm
 dbc_go acidbase $@
 
 # dh_installdeb will replace this with shell code automatically

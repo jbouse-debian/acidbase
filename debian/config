@@ -3,13 +3,13 @@
 # Source debconf library.
 . /usr/share/debconf/confmodule
 
-# source dbconfig-common stuff
-dbc_dbtypes="mysql, pgsql"
-dbc_dbuser="snort"
-dbc_dbname="snort"
+if [ -f /usr/share/dbconfig-common/dpkg/frontend.config ]; then
+	# source dbconfig-common stuff
+	dbc_dbtypes="mysql, pgsql"
+	dbc_dbuser="snort"
+	dbc_dbname="snort"
 
-if [ -f /usr/share/dbconfig-common/dpkg/config ]; then
-    . /usr/share/dbconfig-common/dpkg/config
+    . /usr/share/dbconfig-common/dpkg/frontend.config
     dbc_go acidbase $@
 fi
 
