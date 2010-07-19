@@ -3,7 +3,9 @@ Section: web
 Priority: optional
 Maintainer: Jeremy T. Bouse <jbouse@debian.org>
 Uploaders: Javier Fernandez-Sanguino Pen~a <jfs@computer.org>
-Build-Depends: debhelper (>= 5.0.0), po-debconf, dpatch
+Build-Depends: debhelper (>> 7.0.50),
+	po-debconf,
+	quilt (>= 0.46-7~)
 Standards-Version: 3.9.0
 Homepage: http://secureideas.sourceforge.net/
 Vcs-Git: git://git.debian.org/collab-maint/acidbase.git
@@ -11,8 +13,17 @@ Vcs-Browser: http://git.debian.org/?p=collab-maint/acidbase.git
 
 Package: acidbase
 Architecture: all
-Depends: ${misc:Depends}, dbconfig-common, mysql-client | virtual-mysql-client | postgresql-client, php5, libphp-adodb (>= 4.62), libwww-perl, php-mail, php-mail-mime
-Suggests: snort-mysql | snort-pgsql
+Depends: ${misc:Depends},
+	dbconfig-common,
+	mysql-client | virtual-mysql-client | postgresql-client,
+	php5,
+	libphp-adodb (>= 4.62),
+	php5-mysql | php5-pgsql,
+	libwww-perl,
+	php-mail,
+	php-mail-mime
+Suggests: snort-mysql | snort-pgsql,
+	php5-adodb
 Description: Basic Analysis and Security Engine
  BASE is based on the code from the Analysis Console for Intrusion Databases
  (ACID) project. This application provides a web front-end to query and analyze
@@ -22,4 +33,3 @@ Description: Basic Analysis and Security Engine
  detected on your network. It uses a user authentication and role-base system,
  so that you as the security admin can decide what and how much information
  each user can see.
-

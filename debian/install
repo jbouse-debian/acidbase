@@ -1,0 +1,11 @@
+debian/apache.conf etc/acidbase
+*.php usr/share/acidbase
+admin usr/share/acidbase
+contrib usr/share/acidbase
+help usr/share/acidbase
+images usr/share/acidbase
+includes usr/share/acidbase
+languages usr/share/acidbase
+setup usr/share/acidbase
+scripts usr/share/acidbase
+styles usr/share/acidbase

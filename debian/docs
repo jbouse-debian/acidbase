@@ -4,3 +4,6 @@ docs/README
 docs/README.mssql
 docs/TODO
 docs/UPGRADE
+debian/README.source
+base_conf.php.dist
+sql
