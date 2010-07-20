@@ -1,13 +1,7 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 12_remove_php_image_graph.dpatch by  <jbouse@debian.org>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Remove php image graph dependancies
-
-@DPATCH@
-diff -urNad acidbase~/base_graph_common.php acidbase/base_graph_common.php
---- acidbase~/base_graph_common.php	2009-11-27 14:27:39.000000000 -0500
-+++ acidbase/base_graph_common.php	2009-11-27 14:49:34.000000000 -0500
+Description: Remove php image graph dependancies
+Author: Jeremy T. Bouse <jbouse@debian.org>
+--- a/base_graph_common.php
++++ b/base_graph_common.php
 @@ -55,6 +55,21 @@
  
  
@@ -92,9 +86,8 @@ diff -urNad acidbase~/base_graph_common.php acidbase/base_graph_common.php
          $rv = ini_get("safe_mode");
          if ($rv == 1)
          {
-diff -urNad acidbase~/base_main.php acidbase/base_main.php
---- acidbase~/base_main.php	2009-11-27 14:27:39.000000000 -0500
-+++ acidbase/base_main.php	2009-11-27 14:34:23.000000000 -0500
+--- a/base_main.php
++++ b/base_main.php
 @@ -295,7 +295,6 @@
    <tr>
      <td align="center" valign="top">

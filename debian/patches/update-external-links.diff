@@ -1,15 +1,8 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## 02_update_external_links.dpatch by David Gil <dgil@telefonica.net>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: Fixed location of signatures for Nessus (although the previous link
-## DP: works) and for ICAT (it is now the NVD - National Vulnerability
-## DP: Database)
-
-@DPATCH@
-diff -urNad acidbase~/base_conf.php.dist acidbase/base_conf.php.dist
---- acidbase~/base_conf.php.dist	2010-07-03 01:41:42.000000000 -0400
-+++ acidbase/base_conf.php.dist	2010-07-03 01:45:45.000000000 -0400
+Description: Fixed location of signatures for Nessus (although the previous link
+	works) and for ICAT (it is now the NVD - National Vulnerability Database)
+Author: David Gil <dgil@telefonica.net>
+--- a/base_conf.php.dist
++++ b/base_conf.php.dist
 @@ -357,6 +357,8 @@
  
  /* Whois query */

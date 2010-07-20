@@ -1,0 +1,14 @@
+Description: Fixed an ugly warning displayed when the function argument
+	'$valid_data' is not set (with E_ALL turned on).
+Author: David Gil <dgil@telefonica.net>
+--- a/includes/base_state_common.inc.php
++++ b/includes/base_state_common.inc.php
+@@ -181,7 +181,7 @@
+    if ( ($valid_data & VAR_SCORE) > 0 ) 
+       $regex_mask = $regex_mask . "\-";
+ 
+-   return ereg_replace("[^".$regex_mask."]", "", $item);
++   return $regex_mask? ereg_replace("[^".$regex_mask."]", "", $item) : $item;
+ }
+ 
+ /* ***********************************************************************

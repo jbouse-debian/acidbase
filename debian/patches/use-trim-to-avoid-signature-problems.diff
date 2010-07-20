@@ -1,0 +1,14 @@
+Description: Added trim() to GetSingleSignatureReference in order to avoid
+	problems when signatures contain spaces (this happens with snortcenter)
+Author: David Gil <dgil@telefonica.net>
+--- a/includes/base_signature.inc.php
++++ b/includes/base_signature.inc.php
+@@ -108,7 +108,7 @@
+ 
+ 
+ 
+-   $tmp_ref_system_name = strtolower($ref_system);
++   $tmp_ref_system_name = trim(strtolower($ref_system));
+    if ( in_array($tmp_ref_system_name, array_keys($GLOBALS['external_sig_link'])) )
+    {
+       if ($tmp_ref_system_name == "local_rules_dir")
