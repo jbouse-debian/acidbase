@@ -1,3 +1,15 @@
+acidbase (1.4.5-2) unstable; urgency=low
+
+  * Use frontend dbconfig-common type to clear up issues (Closes:
+    #569317)
+  * Replace README.source from dpatch to quilt
+  * Add new 3.0 (quilt) source directory
+  * Update IfModule from mod_php4.c to mod_php5.c in apache.conf
+  * Update package to use debhelper 7
+  * Convert patches from dpatch to quilt
+
+ -- Jeremy T. Bouse <jbouse@debian.org>  Thu, 22 Jul 2010 20:53:06 -0400
+
 acidbase (1.4.5-1) unstable; urgency=low
 
   * New upstream version -
