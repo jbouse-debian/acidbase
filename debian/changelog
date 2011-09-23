@@ -1,3 +1,13 @@
+acidbase (1.4.5-3) unstable; urgency=low
+
+  * Added Danish translation of the debconf templates (Closes: #642338)
+    - thanks to Joe Dalton <joedalton2@yahoo.dk>
+  * Correct html format for looking up a snort reference (Closes:
+    #631559) - thanks to Jeff Green <jeff@kikisoso.org>
+  * Bump Standards-Version to 3.9.2 (no policy-related changes needed)
+
+ -- Jeremy T. Bouse <jbouse@debian.org>  Fri, 23 Sep 2011 16:01:13 -0400
+
 acidbase (1.4.5-2) unstable; urgency=low
 
   * Use frontend dbconfig-common type to clear up issues (Closes:
