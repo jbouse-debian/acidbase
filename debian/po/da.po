@@ -1,0 +1,75 @@
+# Danish translation acidbase.
+# Copyright (C) 2011 acidbase & nedenstående oversættere.
+# This file is distributed under the same license as the acidbase package.
+# Joe Hansen <joedalton2@yahoo.dk>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: acidbase\n"
+"Report-Msgid-Bugs-To: jbouse@debian.org\n"
+"POT-Creation-Date: 2006-09-03 11:24+0200\n"
+"PO-Revision-Date: 2011-09-21 17:30+01:00\n"
+"Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
+"Language-Team: Danish <debian-l10n-danish@lists.debian.org> \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. Type: select
+#. Choices
+#: ../templates:1001
+msgid "All"
+msgstr "Alle"
+
+#. Type: select
+#. Choices
+#: ../templates:1001
+msgid "None"
+msgstr "Ingen"
+
+#. Type: select
+#. Description
+#: ../templates:1002
+msgid "Version(s) of Apache to configure automatically:"
+msgstr "Versioner af Apache at konfigurere automatisk:"
+
+#. Type: select
+#. Description
+#: ../templates:1002
+msgid ""
+"BASE requires a few things to be set up in your web server configuration."
+msgstr ""
+"BASE kræver at nogle få ting sættes op i din internetservers konfiguration."
+
+#. Type: select
+#. Description
+#: ../templates:1002
+msgid ""
+"The Debian packaged version can usually automatically configure apache by "
+"dropping a symlink into the /etc/APACHE-SERVER/conf.d directory. Select "
+"\"None\" if you aren't running apache or you would prefer to set up the web "
+"server yourself. If you select a version to configure, all configuration "
+"changes will also be removed when the package is purged."
+msgstr ""
+"Den Debianpakkede version kan normalt automatisk konfigurere apache ved "
+"at smide en symbolsk henvisning i mappen /etc/APACHE-SERVER/conf.d. Vælg "
+"»Ingen« hvis du ikke kører apache eller du fortrækker at opsætte "
+"internetserveren selv. Hvis du vælger en version at konfigurere, vil alle "
+"konfigurationsændringer også blive fjernet, når pakken afinstalleres."
+
+#. Type: note
+#. Description
+#: ../templates:2001
+msgid "NOTE: Manual configuration required"
+msgstr "BEMÆRK: Manuel konfiguration krævet"
+
+#. Type: note
+#. Description
+#: ../templates:2001
+msgid ""
+"You will need to go to http://localhost/acidbase first to force the database "
+"modifications for BASE."
+msgstr ""
+"Du vil skulle gå til http://localhost/acidbase først for at fremtvinge "
+"databasemodifikationerne for BASE."
+
