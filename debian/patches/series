@@ -3,3 +3,4 @@ update-external-links.diff
 fix-warning-in-CleanVariable.diff
 use-trim-to-avoid-signature-problems.diff
 remove-php-image-graph.diff
+snort-html-reference.diff
