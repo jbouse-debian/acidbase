@@ -4,8 +4,7 @@ Priority: optional
 Maintainer: Jeremy T. Bouse <jbouse@debian.org>
 Uploaders: Javier Fernandez-Sanguino Pen~a <jfs@computer.org>
 Build-Depends: debhelper (>> 7.0.50),
-	po-debconf,
-	quilt (>= 0.46-7~)
+	po-debconf
 Standards-Version: 3.9.2
 Homepage: http://secureideas.sourceforge.net/
 Vcs-Git: git://git.debian.org/collab-maint/acidbase.git
