@@ -3,12 +3,12 @@ Section: web
 Priority: optional
 Maintainer: Jeremy T. Bouse <jbouse@debian.org>
 Uploaders: Javier Fernandez-Sanguino Pen~a <jfs@computer.org>
-Build-Depends: debhelper (>> 7.0.50),
+Build-Depends: debhelper (>> 9.0.0),
 	po-debconf
-Standards-Version: 3.9.2
+Standards-Version: 3.9.5
 Homepage: http://secureideas.sourceforge.net/
-Vcs-Git: git://git.debian.org/collab-maint/acidbase.git
-Vcs-Browser: http://git.debian.org/?p=collab-maint/acidbase.git
+Vcs-Git: git://github.com/jbouse-debian/acidbase.git
+Vcs-Browser: https://github.com/jbouse-debian/acidbase
 
 Package: acidbase
 Architecture: all
