@@ -1,3 +1,12 @@
+acidbase (1.4.5-4) unstable; urgency=medium
+
+  * Update package to clean up lintian findings
+  * debian/source/local-options: set unapply-patches option
+  * debian/watch: Don't need to use uupdate with gbp
+  * Update Standards-Version, DH Compat and Vcs
+
+ -- Jeremy T. Bouse <jbouse@debian.org>  Sun, 24 Aug 2014 18:14:12 -0400
+
 acidbase (1.4.5-3) unstable; urgency=low
 
   * Added Danish translation of the debconf templates (Closes: #642338)
@@ -187,14 +196,14 @@ acidbase (1.2.7-2) unstable; urgency=high
 acidbase (1.2.7-1) unstable; urgency=high
 
   * New upstream release.
-  [ David Gil ] 
+  [ David Gil ]
   * Depend on all database clients supported by the package until a better
     solution is adopted. See bugs #353617,#398634 for the discussion.
     Thanks to Lucas Nussbaum, Andreas Henriksson, Steinar H. Gunderson and
     Sean Finney for their work on this. (Closes: #398619)
   * Updated French debconf template translation (Closes: #395055).
   * RC bug fixed, urgency high.
-  [ Javier Fernandez-Sanguino ] 
+  [ Javier Fernandez-Sanguino ]
   * Remove extra space in debian/control before the Homepage
   * Add the license and author of the new contrib modules (for using
     snort unified files) included in this base release in debian/copyright
@@ -231,7 +240,7 @@ acidbase (1.2.5-1.1) unstable; urgency=medium
 acidbase (1.2.5-1) unstable; urgency=high
 
   * New upstream release, wich includes the following security improvements:
-     + Added XSSPrintSafe() (array safe htmlspecilchars() function) and made 
+     + Added XSSPrintSafe() (array safe htmlspecilchars() function) and made
        filterSql() use ADOdb qmagic()
      + Filtered all unfiltred (mainly auth system stuff) $_POST and $_GET
        variables using filterSql()
@@ -250,7 +259,7 @@ acidbase (1.2.5-1) unstable; urgency=high
 
   * Bump Standards-Version to 3.7.2 (no policy-related changes needed).
 
-  * Fix an annoying dbconfig-common error: Add dbc_dbtypes variable in 
+  * Fix an annoying dbconfig-common error: Add dbc_dbtypes variable in
     mantainer scripts, not only in config file.
     This is related to bug #372948 (dbconfig-common: can not determine the
     database type).
@@ -261,7 +270,7 @@ acidbase (1.2.5-1) unstable; urgency=high
 
 acidbase (1.2.4-1) unstable; urgency=high
 
-  * New upstream release, which fixes many bugs including the following security bug: 
+  * New upstream release, which fixes many bugs including the following security bug:
     - base_maintenance.php in BASE before 1.2.4 (melissa), when running in
       standalone mode, allows remote attackers to bypass authentication,
       possibly by setting the standalone parameter to "yes".
@@ -280,7 +289,7 @@ acidbase (1.2.4-1) unstable; urgency=high
      - French by "Steve" (Closes: #351230, #366432)
 
  -- David Gil <dgil@telefonica.net>  Mon, 03 Apr 2006 12:16:33 +0200
- 
+
 acidbase (1.2.2-1) unstable; urgency=low
 
   * New upstream release:
@@ -296,7 +305,7 @@ acidbase (1.2.2-1) unstable; urgency=low
   * Update Spanish po-debconf translation
 
  -- Javier Fernandez-Sanguino Pen~a <jfs@computer.org>  Sun,  5 Mar 2006 20:04:58 +0100
-  
+
 acidbase (1.2.1-4) unstable; urgency=low
 
   * Use dpatch system. Split .diff.gz into the following patches:
@@ -346,7 +355,7 @@ acidbase (1.2.1-1) unstable; urgency=low
   * SECURITY FIX:
     Add proper filtering in all ImportHTTP variables using either the new
     functions to check for numeric/alphanumeric chars or the filterSql()
-    function to prevent SQL injection attacks. This patch fixes CVE-2005-3325 
+    function to prevent SQL injection attacks. This patch fixes CVE-2005-3325
     but also other attack vectors not mentioned in the initial advisory
     (http://www.frsirt.com/english/advisories/2005/2188)
     (Closes: #336788)
@@ -398,7 +407,7 @@ acidbase (1.1.4-1) unstable; urgency=low
   * Applied patches included in the acidlab package that apply to this
     package too:
       - acidlab.011.diff: Added trim() to GetSingleSignatureReference in
-        order to avoid problems when signatures contain spaces (this 
+        order to avoid problems when signatures contain spaces (this
         happens with snortcenter)
       - acidlab.008.diff: update Whois servers' IP addresses (was Debian
         Bug #183623)
